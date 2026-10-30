@@ -27,7 +27,7 @@ import com.buuz135.industrial.api.straw.StrawHandler;
 import com.buuz135.industrial.utils.Reference;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
@@ -45,6 +45,6 @@ public class IFRegistries {
 
     private static <T> ResourceKey<Registry<T>> key(String name)
     {
-        return ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, name));
+        return ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Reference.MOD_ID, name));
     }
 }

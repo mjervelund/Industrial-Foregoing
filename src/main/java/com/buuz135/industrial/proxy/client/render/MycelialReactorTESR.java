@@ -37,7 +37,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
@@ -51,7 +51,7 @@ public class MycelialReactorTESR implements BlockEntityRenderer<MycelialReactorT
     public static RenderType createRenderType() {
         RenderType.CompositeState state = RenderType.CompositeState.builder()
                 .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader))
-                .setTextureState(new RenderStateShard.TextureStateShard(ResourceLocation.fromNamespaceAndPath("industrialforegoing", "textures/block/mycelial.png"), false, false))
+                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath("industrialforegoing", "textures/block/mycelial.png"), false, false))
                 .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
                     RenderSystem.enableBlend();
                     RenderSystem.depthMask(false);

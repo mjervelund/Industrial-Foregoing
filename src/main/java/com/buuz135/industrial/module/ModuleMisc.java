@@ -30,14 +30,14 @@ import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.TitaniumTab;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Mob;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 
 public class ModuleMisc implements IModule {
 
-    public static TitaniumTab TAB_MISC = new TitaniumTab(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "misc"));
+    public static TitaniumTab TAB_MISC = new TitaniumTab(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "misc"));
     public static BlockWithTile STASIS_CHAMBER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("stasis_chamber", () -> new StasisChamberBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_MISC), TAB_MISC);
     public static BlockWithTile MOB_DETECTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("mob_detector", () -> new MobDetectorBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_MISC), TAB_MISC);
     public static BlockWithTile ENCHANTMENT_SORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("enchantment_sorter", () -> new EnchantmentSorterBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_MISC), TAB_MISC);

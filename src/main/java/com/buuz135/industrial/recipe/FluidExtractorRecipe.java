@@ -33,7 +33,7 @@ import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -89,8 +89,8 @@ public class FluidExtractorRecipe implements Recipe<CraftingInput> {
         recipeOutput.accept(rl, recipe, advancementHolder);
     }
 
-    public static ResourceLocation generateRL(String key) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "fluid_extractor/" + key);
+    public static Identifier generateRL(String key) {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "fluid_extractor/" + key);
     }
 
     public boolean outputsLatex() {

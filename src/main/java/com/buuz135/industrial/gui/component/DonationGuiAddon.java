@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +37,11 @@ public class DonationGuiAddon extends BasicScreenAddon {
 
     @Override
     public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider iAssetProvider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
-        var rl = ResourceLocation.fromNamespaceAndPath("titanium", "textures/gui/background_alt.png");
+        var rl = Identifier.fromNamespaceAndPath("titanium", "textures/gui/background_alt.png");
         guiGraphics.blit(rl, getPosX() + guiX, getPosY() + guiY, 0, 0, 22, 22);
         guiGraphics.blit(rl, getPosX() + guiX, getPosY() + guiY + 22, 0, 81, 22, 3);
 
-        var rlDonate = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/donate.png");
+        var rlDonate = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/donate.png");
         guiGraphics.blit(rlDonate, getPosX() + guiX + 5, getPosY() + guiY + 5, 0, 0, 15, 15, 15, 15);
     }
 

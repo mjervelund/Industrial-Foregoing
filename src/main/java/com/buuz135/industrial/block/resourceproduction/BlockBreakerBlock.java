@@ -29,7 +29,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -62,8 +62,8 @@ public class BlockBreakerBlock extends IndustrialBlock<BlockBreakerTile> {
                 .define('D', Items.IRON_SHOVEL)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .define('R', Items.REDSTONE)
-                .define('G', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/gold")))
-                .define('S', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/iron")))
+                .define('G', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/gold")))
+                .define('S', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/iron")))
                 .save(consumer);
     }
 }

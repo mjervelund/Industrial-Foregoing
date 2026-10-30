@@ -37,7 +37,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -168,13 +168,13 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
 
         @Override
         @Nonnull
-        public ResourceLocation getModel(Direction upgradeSide, TransporterAction action) {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/transporters/world_transporter_" + action.name().toLowerCase(Locale.ROOT) + "_" + upgradeSide.getSerializedName().toLowerCase(Locale.ROOT));
+        public Identifier getModel(Direction upgradeSide, TransporterAction action) {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/transporters/world_transporter_" + action.name().toLowerCase(Locale.ROOT) + "_" + upgradeSide.getSerializedName().toLowerCase(Locale.ROOT));
         }
 
         @Override
-        public Set<ResourceLocation> getTextures() {
-            return Sets.newHashSet(ResourceLocation.parse("industrialforegoing:block/transporters/world"), ResourceLocation.parse("industrialforegoing:block/base/bottom"));
+        public Set<Identifier> getTextures() {
+            return Sets.newHashSet(Identifier.parse("industrialforegoing:block/transporters/world"), Identifier.parse("industrialforegoing:block/base/bottom"));
         }
 
         @Override
@@ -184,8 +184,8 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
 
         @Nonnull
         @Override
-        public ResourceLocation getItemModel() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/transporters/world_transporter_" + TransporterAction.EXTRACT.name().toLowerCase(Locale.ROOT) + "_" + Direction.NORTH.getSerializedName().toLowerCase(Locale.ROOT));
+        public Identifier getItemModel() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/transporters/world_transporter_" + TransporterAction.EXTRACT.name().toLowerCase(Locale.ROOT) + "_" + Direction.NORTH.getSerializedName().toLowerCase(Locale.ROOT));
         }
 
         @Override

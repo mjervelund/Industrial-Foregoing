@@ -49,7 +49,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -72,7 +72,7 @@ import java.util.function.BiFunction;
 
 public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<MaterialStoneWorkFactoryTile> {
 
-    public static ResourceLocation DEFAULT = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "stonework_generate/cobblestone");
+    public static Identifier DEFAULT = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "stonework_generate/cobblestone");
 
     private int maxProgress;
     private int powerPerOperation;
@@ -100,7 +100,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
     @Save
     private String generatorRecipe;
     private String previousGeneratorRecipeString;
-    private ResourceLocation cachedGeneratorRecipeResourceLocation;
+    private Identifier cachedGeneratorRecipeResourceLocation;
     @Save
     private SidedInventoryComponent<MaterialStoneWorkFactoryTile> inventoryFirst;
     @Save
@@ -321,9 +321,9 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                 || process(inventoryGenerator, inventoryFirst, ACTION_RECIPES[firstRecipeId], true);
     }
 
-    private ResourceLocation getGeneratorRecipeLocation() {
+    private Identifier getGeneratorRecipeLocation() {
         if (generatorRecipe != null && !generatorRecipe.equals(previousGeneratorRecipeString)) {
-            cachedGeneratorRecipeResourceLocation = ResourceLocation.parse(generatorRecipe);
+            cachedGeneratorRecipeResourceLocation = Identifier.parse(generatorRecipe);
             // Strings are immutable so this is fine.
             previousGeneratorRecipeString = generatorRecipe;
         }
@@ -341,9 +341,9 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         return recipes.stream().filter(stoneWorkGenerateRecipe -> stoneWorkGenerateRecipe.id().equals(DEFAULT)).map(RecipeHolder::value).findFirst();
     }
 
-    public ResourceLocation getNextRecipe(boolean next) {
+    public Identifier getNextRecipe(boolean next) {
         if (generatorRecipe != null) {
-            List<ResourceLocation> rls = this.level.getRecipeManager().getAllRecipesFor((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get()).stream().map(RecipeHolder::id).toList();
+            List<Identifier> rls = this.level.getRecipeManager().getAllRecipesFor((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get()).stream().map(RecipeHolder::id).toList();
             int currentIndex = rls.indexOf(this.getGeneratorRecipeLocation());
             if (next) {
                 this.generatorRecipe = rls.get((currentIndex + 1) % rls.size()).toString();

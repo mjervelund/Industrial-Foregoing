@@ -5,7 +5,7 @@ import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -16,12 +16,12 @@ import java.util.*;
 
 public abstract class CustomEmiRecipe implements EmiRecipe {
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final List<EmiIngredient> ingredients;
     private final EmiRecipeCategory category;
     private final List<EmiStack> output;
 
-    protected CustomEmiRecipe(ResourceLocation id, EmiRecipeCategory category, List<EmiIngredient> ingredients, List<EmiStack> output) {
+    protected CustomEmiRecipe(Identifier id, EmiRecipeCategory category, List<EmiIngredient> ingredients, List<EmiStack> output) {
         this.id = id;
         this.ingredients = ingredients;
         this.category = category;
@@ -75,7 +75,7 @@ public abstract class CustomEmiRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable ResourceLocation getId() {
+    public @Nullable Identifier getId() {
         return id;
     }
 

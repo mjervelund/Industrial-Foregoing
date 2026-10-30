@@ -9,7 +9,7 @@ import com.hrznstudio.titanium.client.screen.asset.DefaultAssetProvider;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class SporesRecreatorEmiRecipe extends CustomEmiRecipe {
     public SporesRecreatorEmiRecipe(EmiStack input) {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "/emi/spores_recreator/" + input.getItemStack().getItem().builtInRegistryHolder().getKey().location().toString().replace(':', '/')), IFEmiPlugin.SPORES_RECREATOR_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "/emi/spores_recreator/" + input.getItemStack().getItem().builtInRegistryHolder().getKey().location().toString().replace(':', '/')), IFEmiPlugin.SPORES_RECREATOR_EMI_CATEGORY,
                 List.of(input), List.of(input.copy().setAmount(2)));
     }
 

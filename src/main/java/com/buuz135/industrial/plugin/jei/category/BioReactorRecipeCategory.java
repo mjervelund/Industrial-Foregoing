@@ -33,7 +33,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -49,7 +49,7 @@ public class BioReactorRecipeCategory implements IRecipeCategory<BioReactorRecip
 
     public BioReactorRecipeCategory(IGuiHelper guiHelper, String title) {
         this.guiHelper = guiHelper;
-        tankOverlay = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 1, 207, 12, 48);
+        tankOverlay = guiHelper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 1, 207, 12, 48);
         this.title = Component.translatable(title);
     }
 
@@ -66,7 +66,7 @@ public class BioReactorRecipeCategory implements IRecipeCategory<BioReactorRecip
 
     @Override
     public IDrawable getBackground() {
-        return guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 27, 70, 50);
+        return guiHelper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 27, 70, 50);
     }
 
     @Nullable

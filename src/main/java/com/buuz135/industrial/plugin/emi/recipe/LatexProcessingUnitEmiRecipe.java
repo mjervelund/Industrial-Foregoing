@@ -11,7 +11,7 @@ import com.hrznstudio.titanium.client.screen.asset.DefaultAssetProvider;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluids;
@@ -25,7 +25,7 @@ public class LatexProcessingUnitEmiRecipe extends CustomEmiRecipe {
     public static final EmiStack WATER = EmiStack.of(Fluids.WATER.getSource(), 500);
 
     public LatexProcessingUnitEmiRecipe() {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "/emi/latex_processing_unit"), IFEmiPlugin.LATEX_PROCESSING_UNIT_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "/emi/latex_processing_unit"), IFEmiPlugin.LATEX_PROCESSING_UNIT_EMI_CATEGORY,
                 List.of(LATEX, WATER), List.of(EmiStack.of(ModuleCore.DRY_RUBBER.get())));
     }
 

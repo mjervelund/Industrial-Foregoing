@@ -34,7 +34,7 @@ import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -98,8 +98,8 @@ public class DissolutionChamberRecipe implements Recipe<CraftingInput> {
         recipeOutput.accept(rl, recipe, advancementHolder, conditions.toArray(new ICondition[conditions.size()]));
     }
 
-    public static ResourceLocation generateRL(String key) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "dissolution_chamber/" + key);
+    public static Identifier generateRL(String key) {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "dissolution_chamber/" + key);
     }
 
     public boolean matches(IItemHandler handler, FluidTankComponent tank) {

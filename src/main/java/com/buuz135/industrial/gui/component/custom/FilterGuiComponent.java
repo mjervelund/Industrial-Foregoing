@@ -32,14 +32,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class FilterGuiComponent extends PositionedGuiComponent {
 
-    public static final ResourceLocation BG_TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/conveyor.png");
+    public static final Identifier BG_TEXTURE = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/conveyor.png");
 
     public FilterGuiComponent(int x, int y, int xSize, int ySize) {
         super(x, y, xSize, ySize);

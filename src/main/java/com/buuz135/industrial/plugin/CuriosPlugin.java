@@ -68,7 +68,7 @@ public class CuriosPlugin implements FeaturePluginInstance {
                 AttachCapabilitiesEvent<ItemStack> stackEvent = (AttachCapabilitiesEvent<ItemStack>) event;
                 ItemStack stack = stackEvent.getObject();
                 if (stack.getItem() instanceof MeatFeederItem) {
-                    stackEvent.addCapability(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + "_curios"), new ICapabilityProvider() {
+                    stackEvent.addCapability(Identifier.fromNamespaceAndPath(Reference.MOD_ID, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + "_curios"), new ICapabilityProvider() {
                         @Override
                         public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
                             if (cap == CuriosCapability.ITEM) return LazyOptional.of(MeatFeedCurios::new).cast();
@@ -77,7 +77,7 @@ public class CuriosPlugin implements FeaturePluginInstance {
                     });
                 }
                 if (stack.getItem() instanceof ItemInfinityBackpack) {
-                    stackEvent.addCapability(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + "_curios"), new ICapabilityProvider() {
+                    stackEvent.addCapability(Identifier.fromNamespaceAndPath(Reference.MOD_ID, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + "_curios"), new ICapabilityProvider() {
                         @Override
                         public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
                             if (cap == CuriosCapability.ITEM)

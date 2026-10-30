@@ -48,7 +48,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -232,7 +232,7 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
                 CompoundTag upgradeTag = upgradesTag.getCompound(facing.getSerializedName());
                 TransporterTypeFactory factory = null;
                 for (TransporterTypeFactory transporterTypeFactory : TransporterTypeFactory.FACTORIES) {
-                    if (BuiltInRegistries.ITEM.getKey(transporterTypeFactory.getUpgradeItem()).equals(ResourceLocation.parse(upgradeTag.getString("factory")))) {
+                    if (BuiltInRegistries.ITEM.getKey(transporterTypeFactory.getUpgradeItem()).equals(Identifier.parse(upgradeTag.getString("factory")))) {
                         factory = transporterTypeFactory;
                         break;
                     }

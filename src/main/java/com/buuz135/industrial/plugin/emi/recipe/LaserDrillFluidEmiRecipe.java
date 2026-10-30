@@ -14,7 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.biome.Biome;
@@ -61,10 +61,10 @@ public class LaserDrillFluidEmiRecipe extends CustomEmiRecipe {
         widgets.addDrawable(0, 0, 0, 0, (draw, mouseX, mouseY, delta) -> {
             int recipeWidth = 82 + 35 + 35;
             RenderSystem.enableBlend();
-            var toasts = ResourceLocation.fromNamespaceAndPath("minecraft", "toast/tree");
+            var toasts = Identifier.fromNamespaceAndPath("minecraft", "toast/tree");
             draw.blitSprite(toasts, recipeWidth / 10 * 2, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
             draw.blitSprite(toasts, recipeWidth / 10 * 7, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
-            var icons = ResourceLocation.fromNamespaceAndPath("neoforge", "textures/gui/icons.png");
+            var icons = Identifier.fromNamespaceAndPath("neoforge", "textures/gui/icons.png");
             draw.blit(icons, recipeWidth / 10 * 7 + 1, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3 + 3, 0, 16, 16, 16);
 
             String minY = Component.translatable("text.industrialforegoing.miny").getString() + " " + recipe.value().rarity.get(recipe.value().pointer).depth_min();

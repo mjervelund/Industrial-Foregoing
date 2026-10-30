@@ -36,7 +36,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -106,8 +106,8 @@ public class LaserDrillFluidRecipe extends DrillRecipe<SizedFluidIngredient> {
         recipeOutput.accept(rl, recipe, advancementHolder, new ModLoadedCondition(modIdCondition));
     }
 
-    public static ResourceLocation generateRL(String key) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_fluid/" + key);
+    public static Identifier generateRL(String key) {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_fluid/" + key);
     }
 
     @Override

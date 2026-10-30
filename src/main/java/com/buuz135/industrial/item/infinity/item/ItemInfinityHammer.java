@@ -46,7 +46,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -242,8 +242,8 @@ public class ItemInfinityHammer extends ItemInfinity {
     public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
         var attributes = super.getDefaultAttributeModifiers(stack);
         InfinityTier infinityTier = InfinityTier.getTierBraquet(getPowerFromStack(stack)).getLeft();
-        attributes = attributes.withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_damage"), DAMAGE + Math.pow(2, infinityTier.getRadius()), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
-        attributes = attributes.withModifierAdded(Attributes.ATTACK_SPEED, new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_speed"), ATTACK_SPEED, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+        attributes = attributes.withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_damage"), DAMAGE + Math.pow(2, infinityTier.getRadius()), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+        attributes = attributes.withModifierAdded(Attributes.ATTACK_SPEED, new AttributeModifier(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_speed"), ATTACK_SPEED, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
         return attributes;
     }
 

@@ -49,7 +49,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -81,7 +81,7 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
 
     @Override
     public IDrawable getBackground() {
-        return guiHelper.drawableBuilder(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 0, 52, 26).addPadding(0, 60, 35, 65).build();
+        return guiHelper.drawableBuilder(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 0, 52, 26).addPadding(0, 60, 35, 65).build();
     }
 
     @Override
@@ -104,10 +104,10 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
         if (recipe.pointer < recipe.rarity.size() - 1)
             AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.BUTTON_ARROW_RIGHT), 137, 70);
         AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 60 + 35 + 3, 3);
-        var toasts = ResourceLocation.fromNamespaceAndPath("minecraft", "toast/tree");
+        var toasts = Identifier.fromNamespaceAndPath("minecraft", "toast/tree");
         guiGraphics.blitSprite(toasts, recipeWidth / 10 * 2, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
         guiGraphics.blitSprite(toasts, recipeWidth / 10 * 7, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
-        var icons = ResourceLocation.fromNamespaceAndPath("neoforge", "textures/gui/icons.png");
+        var icons = Identifier.fromNamespaceAndPath("neoforge", "textures/gui/icons.png");
         guiGraphics.blit(icons, recipeWidth / 10 * 7 + 1, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3 + 3, 0, 16, 16, 16);
 
         String minY = Component.translatable("text.industrialforegoing.miny").getString() + " " + recipe.rarity.get(recipe.pointer).depth_min();

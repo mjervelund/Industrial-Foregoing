@@ -15,7 +15,7 @@ import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,7 @@ public class DyeMixerEmiRecipe extends CustomEmiRecipe {
     private final ProgressBarEmiWidget blueWidget;
 
     public DyeMixerEmiRecipe(int red, int green, int blue, int dye) {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "/emi/dye_mixer_" + dye), IFEmiPlugin.DYE_MIXER_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "/emi/dye_mixer_" + dye), IFEmiPlugin.DYE_MIXER_EMI_CATEGORY,
                 List.of(EmiStack.EMPTY), List.of(EmiStack.of(DyeItem.byColor(DyeColor.byId(dye)))));
 
         var redProgress = new ProgressBarScreenAddon<>(20, 0, new ProgressBarComponent<>(0, 0, 3)) {

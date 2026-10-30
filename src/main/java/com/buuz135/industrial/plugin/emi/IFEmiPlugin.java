@@ -63,7 +63,7 @@ import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -129,7 +129,7 @@ public class IFEmiPlugin implements EmiPlugin {
                 .filter(resourceLocation -> resourceLocation.toString().startsWith("c:raw_materials/") && OreTitaniumFluidType.isValid(resourceLocation))
                 .forEach(resourceLocation -> {
                     TagKey<Item> tag = TagUtil.getItemTag(resourceLocation);
-                    TagKey<Item> dust = TagUtil.getItemTag(ResourceLocation.parse(resourceLocation.toString().replace("c:raw_materials/", "c:dusts/")));
+                    TagKey<Item> dust = TagUtil.getItemTag(Identifier.parse(resourceLocation.toString().replace("c:raw_materials/", "c:dusts/")));
                     washer.add(new OreFluidEntryRaw(tag, new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 100), OreTitaniumFluidType.getFluidWithTag(ModuleCore.RAW_ORE_MEAT, 100, resourceLocation)));
                     fluidEntryFermenters.add(new OreFluidEntryFermenter(OreTitaniumFluidType.getFluidWithTag(ModuleCore.RAW_ORE_MEAT, 100, resourceLocation), OreTitaniumFluidType.getFluidWithTag(ModuleCore.FERMENTED_ORE_MEAT, 200, resourceLocation)));
                     fluidSieve.add(new OreFluidEntrySieve(OreTitaniumFluidType.getFluidWithTag(ModuleCore.FERMENTED_ORE_MEAT, 100, resourceLocation), TagUtil.getItemWithPreference(dust), ItemTags.SAND));
@@ -188,7 +188,7 @@ public class IFEmiPlugin implements EmiPlugin {
                     display = mycelialGenerator.getBlock();
                 }
             }
-            MycelialGeneratorEmiCategory category = new MycelialGeneratorEmiCategory(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "mycellial_" + type.getName()), display.asItem(), type);
+            MycelialGeneratorEmiCategory category = new MycelialGeneratorEmiCategory(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "mycellial_" + type.getName()), display.asItem(), type);
             registry.addCategory(category);
             registry.addWorkstation(category, EmiStack.of(display));
             var recipes = type.getRecipes(IFAttachments.registryAccess()).stream().sorted(Comparator.comparingInt(value -> ((MycelialGeneratorRecipe) value).getTicks() * ((MycelialGeneratorRecipe) value).getPowerTick()).reversed()).collect(Collectors.toList());

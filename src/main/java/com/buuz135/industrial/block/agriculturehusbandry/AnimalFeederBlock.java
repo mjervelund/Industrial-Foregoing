@@ -29,7 +29,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -61,7 +61,7 @@ public class AnimalFeederBlock extends IndustrialBlock<AnimalFeederTile> {
                 .define('P', IndustrialTags.Items.PLASTIC)
                 .define('A', Items.GOLDEN_APPLE)
                 .define('C', Items.GOLDEN_CARROT)
-                .define('G', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/iron")))
+                .define('G', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/iron")))
                 .define('D', Tags.Items.DYES_PURPLE)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .save(consumer);

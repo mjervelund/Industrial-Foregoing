@@ -23,7 +23,7 @@
 package com.buuz135.industrial.utils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,9 +36,9 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 
 public class ItemStackUtils {
 
-    public static ResourceLocation getOreTag(ItemStack stack) {
+    public static Identifier getOreTag(ItemStack stack) {
         Item item = stack.getItem();
-        for (ResourceLocation resourceLocation : stack.getTags().map(TagKey::location).toList()) {
+        for (Identifier resourceLocation : stack.getTags().map(TagKey::location).toList()) {
             if (resourceLocation.toString().startsWith("c:raw_materials/")) {
                 return resourceLocation;
             }

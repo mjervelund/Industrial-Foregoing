@@ -54,7 +54,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -313,8 +313,8 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
         var attributes = super.getDefaultAttributeModifiers(stack);
-        attributes = attributes.withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_damage"), 3, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.ANY);
-        attributes = attributes.withModifierAdded(Attributes.ATTACK_SPEED, new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_speed"), -2.5D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.ANY);
+        attributes = attributes.withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_damage"), 3, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.ANY);
+        attributes = attributes.withModifierAdded(Attributes.ATTACK_SPEED, new AttributeModifier(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "base_attack_speed"), -2.5D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.ANY);
         return attributes;
     }
 

@@ -33,13 +33,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class InfinityLauncherProjectileRenderer extends EntityRenderer<InfinityLauncherProjectileEntity> {
 
-    public static final ModelLayerLocation PROJECTILE_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "infinity_launcher_projectile"), "main");
-    public static final ResourceLocation PROJECTILE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/item/infinity_launcher_projectile.png");
+    public static final ModelLayerLocation PROJECTILE_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_launcher_projectile"), "main");
+    public static final Identifier PROJECTILE = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/item/infinity_launcher_projectile.png");
     private final InfinityLauncherProjectileModel projectileModel;
 
     public InfinityLauncherProjectileRenderer(EntityRendererProvider.Context p_174008_) {
@@ -60,7 +60,7 @@ public class InfinityLauncherProjectileRenderer extends EntityRenderer<InfinityL
     }
 
     @Override
-    public ResourceLocation getTextureLocation(InfinityLauncherProjectileEntity p_114482_) {
+    public Identifier getTextureLocation(InfinityLauncherProjectileEntity p_114482_) {
         return PROJECTILE;
     }
 }

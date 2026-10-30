@@ -29,7 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -37,12 +37,12 @@ import java.util.List;
 
 public class TextureGuiComponent extends PositionedGuiComponent {
 
-    private final ResourceLocation resourceLocation;
+    private final Identifier resourceLocation;
     private final int textureX;
     private final int textureY;
     private final List<Component> tooltip;
 
-    public TextureGuiComponent(int x, int y, int xSize, int ySize, ResourceLocation resourceLocation, int textureX, int textureY, String... tooltip) {
+    public TextureGuiComponent(int x, int y, int xSize, int ySize, Identifier resourceLocation, int textureX, int textureY, String... tooltip) {
         super(x, y, xSize, ySize);
         this.resourceLocation = resourceLocation;
         this.textureX = textureX;

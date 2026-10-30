@@ -122,7 +122,7 @@ public class IndustrialSerializableProvider {
 
     }
 
-    /*public void save(RecipeOutput consumerIn, Recipe recipe, ResourceLocation id)
+    /*public void save(RecipeOutput consumerIn, Recipe recipe, Identifier id)
     {
         this.validate(id);
 
@@ -132,7 +132,7 @@ public class IndustrialSerializableProvider {
                 .rewards(AdvancementRewards.Builder.recipe(id))
                 .requirements(AdvancementRequirements.Strategy.OR);
         criteria.forEach(advancementBuilder::addCriterion);
-        ResourceLocation advancementId = id.withPrefix("recipes/" + category.getFolderName() + "/" );
+        Identifier advancementId = id.withPrefix("recipes/" + category.getFolderName() + "/" );
 
 
 

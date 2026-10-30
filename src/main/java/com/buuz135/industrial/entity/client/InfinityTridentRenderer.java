@@ -33,13 +33,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class InfinityTridentRenderer extends EntityRenderer<InfinityTridentEntity> {
 
-    public static final ModelLayerLocation TRIDENT_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "infinity_trident"), "main");
-    public static final ResourceLocation TRIDENT = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/item/infinity_trident.png");
+    public static final ModelLayerLocation TRIDENT_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_trident"), "main");
+    public static final Identifier TRIDENT = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/item/infinity_trident.png");
     private final InfinityTridentModel tridentModel;
 
     public InfinityTridentRenderer(EntityRendererProvider.Context p_174286_) {
@@ -60,7 +60,7 @@ public class InfinityTridentRenderer extends EntityRenderer<InfinityTridentEntit
     }
 
     @Override
-    public ResourceLocation getTextureLocation(InfinityTridentEntity entity) {
+    public Identifier getTextureLocation(InfinityTridentEntity entity) {
         return TRIDENT;
     }
 }

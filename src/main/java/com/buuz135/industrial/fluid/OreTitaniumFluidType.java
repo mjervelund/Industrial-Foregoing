@@ -28,7 +28,7 @@ import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +46,7 @@ public class OreTitaniumFluidType extends FluidType {
 
     public static HashMap<String, TagKey<Item>> TAG_CACHE = new HashMap<>();
 
-    public static FluidStack getFluidWithTag(OreFluidInstance fluidInstance, int amount, ResourceLocation itemITag) {
+    public static FluidStack getFluidWithTag(OreFluidInstance fluidInstance, int amount, Identifier itemITag) {
         FluidStack stack = new FluidStack(fluidInstance.getSourceFluid(), amount);
         stack.set(IFAttachments.ORE_FLUID_TAG, itemITag.toString());
         return stack;
@@ -56,8 +56,8 @@ public class OreTitaniumFluidType extends FluidType {
         return stack.getOrDefault(IFAttachments.ORE_FLUID_TAG, "");
     }
 
-    public static boolean isValid(ResourceLocation resourceLocation) {
-        TagKey<Item> key = TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "dusts/" + resourceLocation.toString().replace("c:raw_materials/", "")));
+    public static boolean isValid(Identifier resourceLocation) {
+        TagKey<Item> key = TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "dusts/" + resourceLocation.toString().replace("c:raw_materials/", "")));
         return BuiltInRegistries.ITEM.getTag(key).isPresent() && !TagUtil.getAllEntries(BuiltInRegistries.ITEM, key).isEmpty();
     }
 
@@ -66,7 +66,7 @@ public class OreTitaniumFluidType extends FluidType {
         if (TAG_CACHE.containsKey(tag)) {
             return TagUtil.getItemWithPreference(TAG_CACHE.get(tag));
         }
-        var itemTag = TagUtil.getItemTag(ResourceLocation.parse(tag.replace("c:raw_materials/", "c:dusts/")));
+        var itemTag = TagUtil.getItemTag(Identifier.parse(tag.replace("c:raw_materials/", "c:dusts/")));
         TAG_CACHE.put(tag, itemTag);
         return TagUtil.getItemWithPreference(itemTag);
     }
@@ -81,7 +81,7 @@ public class OreTitaniumFluidType extends FluidType {
         String extra = "";
         if (stack.has(IFAttachments.ORE_FLUID_TAG)) {
             String tag = stack.get(IFAttachments.ORE_FLUID_TAG);
-            List<Item> items = TagUtil.getAllEntries(BuiltInRegistries.ITEM, TagUtil.getItemTag(ResourceLocation.parse(tag.replace("c:raw_materials/", "c:dusts/")))).stream().toList();
+            List<Item> items = TagUtil.getAllEntries(BuiltInRegistries.ITEM, TagUtil.getItemTag(Identifier.parse(tag.replace("c:raw_materials/", "c:dusts/")))).stream().toList();
             if (items.size() > 0) {
                 extra = " (" + Component.translatable(items.get(0).getDescriptionId()).getString() + ")";
             }
@@ -101,7 +101,7 @@ public class OreTitaniumFluidType extends FluidType {
 
     public static class Client extends ClientFluidTypeExtensions {
 
-        public Client(ResourceLocation still, ResourceLocation flow) {
+        public Client(Identifier still, Identifier flow) {
             super(still, flow);
         }
 
@@ -109,7 +109,7 @@ public class OreTitaniumFluidType extends FluidType {
         public int getTintColor(FluidStack stack) {
             if (Minecraft.getInstance().level != null && stack.has(IFAttachments.ORE_FLUID_TAG)) {
                 String tag = stack.get(IFAttachments.ORE_FLUID_TAG);
-                List<Item> items = TagUtil.getAllEntries(BuiltInRegistries.ITEM, TagUtil.getItemTag(ResourceLocation.parse(tag.replace("c:raw_materials/", "c:dusts/")))).stream().toList();
+                List<Item> items = TagUtil.getAllEntries(BuiltInRegistries.ITEM, TagUtil.getItemTag(Identifier.parse(tag.replace("c:raw_materials/", "c:dusts/")))).stream().toList();
                 if (items.size() > 0) {
                     return ItemStackUtils.getColor(new ItemStack(items.get(0)));
                 }

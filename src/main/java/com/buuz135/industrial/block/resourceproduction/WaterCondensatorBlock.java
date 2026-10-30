@@ -31,7 +31,7 @@ import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -69,7 +69,7 @@ public class WaterCondensatorBlock extends IndustrialBlock<WaterCondensatorTile>
                 .define('L', Items.PISTON)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .define('R', Items.REDSTONE)
-                .define('G', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/iron")))
+                .define('G', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/iron")))
                 .save(consumer);
     }
 

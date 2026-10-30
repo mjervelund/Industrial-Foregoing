@@ -23,17 +23,17 @@
 package com.buuz135.industrial.gui.component;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class StateButtonInfo {
 
     private final int state;
-    private final ResourceLocation texture;
+    private final Identifier texture;
     private final int textureX;
     private final int textureY;
     private final Component[] tooltip;
 
-    public StateButtonInfo(int state, ResourceLocation texture, int textureX, int textureY, String[] tooltip) {
+    public StateButtonInfo(int state, Identifier texture, int textureX, int textureY, String[] tooltip) {
         this.state = state;
         this.texture = texture;
         this.textureX = textureX;
@@ -48,7 +48,7 @@ public class StateButtonInfo {
         return state;
     }
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return texture;
     }
 

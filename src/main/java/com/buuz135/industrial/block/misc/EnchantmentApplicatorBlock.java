@@ -29,7 +29,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -56,7 +56,7 @@ public class EnchantmentApplicatorBlock extends IndustrialBlock<EnchantmentAppli
                 .define('P', IndustrialTags.Items.PLASTIC)
                 .define('B', Blocks.ANVIL)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_ADVANCED)
-                .define('G', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/gold")))
+                .define('G', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/gold")))
                 .save(consumer);
     }
 }

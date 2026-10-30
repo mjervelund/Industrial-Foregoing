@@ -13,7 +13,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,7 +26,7 @@ public class SludgeRefinerEmiRecipe extends CustomEmiRecipe {
     private static List<EmiStack> POSSIBLE_OUTPUTS = null;
 
     public SludgeRefinerEmiRecipe(EmiStack output) {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "/emi/sludge_refiner/" + output.getItemStack().getItem().builtInRegistryHolder().getKey().location().toString().replace(':', '/')), IFEmiPlugin.SLUDGE_REFINER_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "/emi/sludge_refiner/" + output.getItemStack().getItem().builtInRegistryHolder().getKey().location().toString().replace(':', '/')), IFEmiPlugin.SLUDGE_REFINER_EMI_CATEGORY,
                 List.of(SLUDGE), List.of(output));
     }
 

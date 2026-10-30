@@ -27,19 +27,19 @@ import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
 public class TextureScreenAddon extends BasicScreenAddon {
 
-    private final ResourceLocation resourceLocation;
+    private final Identifier resourceLocation;
     private final int textureX;
     private final int textureY;
     private final int xSize;
     private final int ySize;
 
-    public TextureScreenAddon(int x, int y, int xSize, int ySize, ResourceLocation resourceLocation, int textureX, int textureY) {
+    public TextureScreenAddon(int x, int y, int xSize, int ySize, Identifier resourceLocation, int textureX, int textureY) {
         super(x, y);
         this.resourceLocation = resourceLocation;
         this.textureX = textureX;

@@ -38,7 +38,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -235,7 +235,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
                 CompoundTag upgradeTag = upgradesTag.getCompound(facing.getSerializedName());
                 ConveyorUpgradeFactory factory = null;
                 for (ConveyorUpgradeFactory conveyorUpgradeFactory : ConveyorUpgradeFactory.FACTORIES) {
-                    if (BuiltInRegistries.ITEM.getKey(conveyorUpgradeFactory.getUpgradeItem()).equals(ResourceLocation.parse(upgradeTag.getString("factory")))) {
+                    if (BuiltInRegistries.ITEM.getKey(conveyorUpgradeFactory.getUpgradeItem()).equals(Identifier.parse(upgradeTag.getString("factory")))) {
                         factory = conveyorUpgradeFactory;
                         break;
                     }

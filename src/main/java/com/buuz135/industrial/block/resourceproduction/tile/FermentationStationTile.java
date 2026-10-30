@@ -40,7 +40,7 @@ import com.hrznstudio.titanium.container.addon.IContainerAddon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
@@ -185,7 +185,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
             var toDrain = Math.min(SealType.values()[this.seal].sealAmount.apply(this.input), this.input.getFluidAmount());
             if (toDrain > 0) {
                 int multipliedAmount = productionType.amount * toDrain;
-                FluidStack stack = OreTitaniumFluidType.getFluidWithTag(ModuleCore.FERMENTED_ORE_MEAT, multipliedAmount, ResourceLocation.parse(OreTitaniumFluidType.getFluidTag(this.input.getFluid())));
+                FluidStack stack = OreTitaniumFluidType.getFluidWithTag(ModuleCore.FERMENTED_ORE_MEAT, multipliedAmount, Identifier.parse(OreTitaniumFluidType.getFluidTag(this.input.getFluid())));
                 this.output.fillForced(stack, IFluidHandler.FluidAction.EXECUTE);
                 this.catalyst.drainForced(productionType.neededFluid.getAmount() * toDrain / 100, IFluidHandler.FluidAction.EXECUTE);
                 this.input.drainForced(toDrain, IFluidHandler.FluidAction.EXECUTE);

@@ -36,7 +36,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -74,7 +74,7 @@ public class ItemStackTankScreenAddon extends BasicScreenAddon {
             int topBottomPadding = asset.getFluidRenderPadding(Direction.UP) + asset.getFluidRenderPadding(Direction.DOWN);
             int offset = (stored * (area.height - topBottomPadding) / capacity);
             IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
-            ResourceLocation flowing = renderProperties.getStillTexture(fluidStack);
+            Identifier flowing = renderProperties.getStillTexture(fluidStack);
             if (flowing != null) {
                 AbstractTexture texture = screen.getMinecraft().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS); //getAtlasSprite
                 if (texture instanceof TextureAtlas) {

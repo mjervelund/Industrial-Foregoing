@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PageDissolution extends PageDoubleRecipeRegistry<DissolutionChamberRecipe> {
-    public final ResourceLocation patchouliTexture = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/patchouli.png");
+    public final Identifier patchouliTexture = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/patchouli.png");
 
     @SuppressWarnings("unchecked")
     public PageDissolution() {
@@ -86,7 +86,7 @@ public class PageDissolution extends PageDoubleRecipeRegistry<DissolutionChamber
             return;
 
         final IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluid.getFluid());
-        ResourceLocation flowing = fluidTypeExtensions.getStillTexture(fluid);
+        Identifier flowing = fluidTypeExtensions.getStillTexture(fluid);
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
         if (texture instanceof TextureAtlas atlas) {
             TextureAtlasSprite sprite = atlas.getSprite(flowing);

@@ -8,14 +8,14 @@ import com.buuz135.industrial.utils.Reference;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FluidSieveEmiRecipe extends CustomEmiRecipe {
 
     private final OreFluidEntrySieve recipe;
 
     public FluidSieveEmiRecipe(OreFluidEntrySieve recipe) {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "fluid_sieve_" + ResourceLocation.parse(OreTitaniumFluidType.getFluidTag(recipe.getInput())).getPath()), IFEmiPlugin.FLUID_SIEVE_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "fluid_sieve_" + Identifier.parse(OreTitaniumFluidType.getFluidTag(recipe.getInput())).getPath()), IFEmiPlugin.FLUID_SIEVE_EMI_CATEGORY,
                 combineIng(fromInput(recipe.getInput()), fromInput(EmiIngredient.of(recipe.getSieveItem()))),
                 fromOutput(EmiStack.of(recipe.getOutput())));
         this.recipe = recipe;

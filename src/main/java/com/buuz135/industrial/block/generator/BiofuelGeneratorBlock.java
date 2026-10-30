@@ -29,7 +29,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -59,7 +59,7 @@ public class BiofuelGeneratorBlock extends IndustrialBlock<BiofuelGeneratorTile>
                 .define('P', IndustrialTags.Items.PLASTIC)
                 .define('D', Blocks.FURNACE)
                 .define('S', Blocks.PISTON)
-                .define('A', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/gold")))
+                .define('A', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/gold")))
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .save(consumer);
     }

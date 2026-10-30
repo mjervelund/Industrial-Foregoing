@@ -40,7 +40,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -161,7 +161,7 @@ public class ConveyorDroppingUpgrade extends ConveyorUpgrade {
                 return ConveyorDroppingUpgrade.this.filter;
             }
         });
-        ResourceLocation res = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
+        Identifier res = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
         componentList.add(new TexturedStateButtonGuiComponent(16, 133, 20, 18, 18,
                 new StateButtonInfo(0, res, 1, 214, new String[]{"whitelist"}),
                 new StateButtonInfo(1, res, 20, 214, new String[]{"blacklist"})) {
@@ -184,8 +184,8 @@ public class ConveyorDroppingUpgrade extends ConveyorUpgrade {
         }
 
         @Override
-        public Set<ResourceLocation> getTextures() {
-            return Collections.singleton(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_dropping_upgrade"));
+        public Set<Identifier> getTextures() {
+            return Collections.singleton(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_dropping_upgrade"));
         }
 
         @Nonnull
@@ -201,14 +201,14 @@ public class ConveyorDroppingUpgrade extends ConveyorUpgrade {
 
         @Override
         @Nonnull
-        public ResourceLocation getModel(Direction upgradeSide, Direction conveyorFacing) {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_upgrade_dropping");
+        public Identifier getModel(Direction upgradeSide, Direction conveyorFacing) {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_upgrade_dropping");
         }
 
         @Nonnull
         @Override
-        public ResourceLocation getItemModel() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "conveyor_dropping_upgrade");
+        public Identifier getItemModel() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "conveyor_dropping_upgrade");
         }
 
         @Override

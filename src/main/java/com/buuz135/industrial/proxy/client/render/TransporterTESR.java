@@ -37,7 +37,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -46,7 +46,7 @@ import java.util.Map;
 
 public class TransporterTESR implements BlockEntityRenderer<TransporterTile> {
 
-    public static ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("industrialforegoing", "textures/block/transporters/particle.png");
+    public static Identifier TEXTURE = Identifier.fromNamespaceAndPath("industrialforegoing", "textures/block/transporters/particle.png");
 
     public static RenderType TYPE = createRenderType();
 

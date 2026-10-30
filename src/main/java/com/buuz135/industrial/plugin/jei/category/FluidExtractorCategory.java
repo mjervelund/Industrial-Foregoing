@@ -41,7 +41,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class FluidExtractorCategory implements IRecipeCategory<FluidExtractorRec
 
     public FluidExtractorCategory(IGuiHelper guiHelper) {
         this.guiHelper = guiHelper;
-        this.tankOverlay = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 1, 207, 12, 48);
+        this.tankOverlay = guiHelper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 1, 207, 12, 48);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class FluidExtractorCategory implements IRecipeCategory<FluidExtractorRec
 
     @Override
     public IDrawable getBackground() {
-        return guiHelper.drawableBuilder(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 27, 76, 50).addPadding(0, 0, 0, 74).build();
+        return guiHelper.drawableBuilder(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 27, 76, 50).addPadding(0, 0, 0, 74).build();
     }
 
     @Override

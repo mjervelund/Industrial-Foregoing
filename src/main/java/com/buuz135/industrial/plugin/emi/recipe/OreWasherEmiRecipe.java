@@ -12,7 +12,7 @@ import dev.emi.emi.api.neoforge.NeoForgeEmiStack;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,7 +24,7 @@ public class OreWasherEmiRecipe extends CustomEmiRecipe {
     private final OreFluidEntryRaw recipe;
 
     public OreWasherEmiRecipe(OreFluidEntryRaw recipe) {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "washing_" + ResourceLocation.parse(OreTitaniumFluidType.getFluidTag(recipe.getOutput())).getPath()), IFEmiPlugin.ORE_WASHER_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "washing_" + Identifier.parse(OreTitaniumFluidType.getFluidTag(recipe.getOutput())).getPath()), IFEmiPlugin.ORE_WASHER_EMI_CATEGORY,
                 combineIng(fromInput(recipe.getInput()), fromInput(EmiIngredient.of(recipe.getOre()))),
                 fromOutput(NeoForgeEmiStack.of(recipe.getOutput())));
         this.recipe = recipe;

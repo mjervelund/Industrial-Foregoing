@@ -27,15 +27,15 @@ import com.hrznstudio.titanium.api.client.GenericAssetType;
 import com.hrznstudio.titanium.api.client.IAsset;
 import com.hrznstudio.titanium.api.client.IAssetType;
 import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 
 public class IndustrialAssetProvider implements IAssetProvider {
 
-    public static final ResourceLocation ASSET_LOCATION = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
-    public static final ResourceLocation ASSET_EXTRA_LOCATION = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines_extra.png");
+    public static final Identifier ASSET_LOCATION = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
+    public static final Identifier ASSET_EXTRA_LOCATION = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines_extra.png");
 
     public static final IAssetType<IAsset> BUTTON_SHOW_AREA = new GenericAssetType<>(IAssetProvider.DEFAULT_PROVIDER::getAsset, IAsset.class);
     public static final IAssetType<IAsset> BUTTON_HIDE_AREA = new GenericAssetType<>(IAssetProvider.DEFAULT_PROVIDER::getAsset, IAsset.class);
@@ -58,7 +58,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_LOCATION;
         }
     };
@@ -70,7 +70,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_LOCATION;
         }
     };
@@ -81,7 +81,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_LOCATION;
         }
     };
@@ -93,7 +93,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_LOCATION;
         }
     };
@@ -104,7 +104,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -115,7 +115,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -126,7 +126,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -137,7 +137,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -148,7 +148,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -159,7 +159,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -170,7 +170,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public ResourceLocation getResourceLocation() {
+        public Identifier getResourceLocation() {
             return ASSET_EXTRA_LOCATION;
         }
     };

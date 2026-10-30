@@ -44,7 +44,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -163,7 +163,7 @@ public class ConveyorBlinkingUpgrade extends ConveyorUpgrade {
                 return ConveyorBlinkingUpgrade.this.filter;
             }
         });
-        ResourceLocation res = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
+        Identifier res = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
         componentList.add(new TexturedStateButtonGuiComponent(10, 80, 19, 18, 18,
                 new StateButtonInfo(0, res, 1, 214, new String[]{"whitelist"}),
                 new StateButtonInfo(1, res, 20, 214, new String[]{"blacklist"})) {
@@ -229,8 +229,8 @@ public class ConveyorBlinkingUpgrade extends ConveyorUpgrade {
         }
 
         @Override
-        public Set<ResourceLocation> getTextures() {
-            return Collections.singleton(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_blinking_upgrade"));
+        public Set<Identifier> getTextures() {
+            return Collections.singleton(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_blinking_upgrade"));
         }
 
         @Nonnull
@@ -246,14 +246,14 @@ public class ConveyorBlinkingUpgrade extends ConveyorUpgrade {
 
         @Override
         @Nonnull
-        public ResourceLocation getModel(Direction upgradeSide, Direction conveyorFacing) {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_upgrade_blinking");
+        public Identifier getModel(Direction upgradeSide, Direction conveyorFacing) {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_upgrade_blinking");
         }
 
         @Nonnull
         @Override
-        public ResourceLocation getItemModel() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "conveyor_blinking_upgrade");
+        public Identifier getItemModel() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "conveyor_blinking_upgrade");
         }
 
         @Override

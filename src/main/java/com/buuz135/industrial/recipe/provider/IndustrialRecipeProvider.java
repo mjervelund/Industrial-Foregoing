@@ -38,7 +38,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -126,7 +126,7 @@ public class IndustrialRecipeProvider extends RecipeProvider {
             TitaniumShapelessRecipeBuilder.shapelessRecipe(ModuleCore.LASER_LENS[value.getId()].get())
                     .requires(Ingredient.of(Arrays.stream(ModuleCore.LASER_LENS).map(itemRegistryObject -> new ItemStack(itemRegistryObject.get())).collect(Collectors.toList()).stream()))
                     .requires(value.getTag())
-                    .save(consumer, ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "laser_lens_" + value.getSerializedName() + "_recolor"));
+                    .save(consumer, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_lens_" + value.getSerializedName() + "_recolor"));
         }
         IndustrialSerializableProvider.init(consumer);
     }

@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
 import com.hrznstudio.titanium.api.IRecipeProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
@@ -60,12 +60,12 @@ public abstract class TransporterTypeFactory implements IRecipeProvider {
     }
 
     @Nonnull
-    public abstract ResourceLocation getModel(Direction upgradeSide, TransporterAction action);
+    public abstract Identifier getModel(Direction upgradeSide, TransporterAction action);
 
     @Nonnull
-    public abstract ResourceLocation getItemModel();
+    public abstract Identifier getItemModel();
 
-    public Set<ResourceLocation> getTextures() {
+    public Set<Identifier> getTextures() {
         return Collections.emptySet();
     }
 

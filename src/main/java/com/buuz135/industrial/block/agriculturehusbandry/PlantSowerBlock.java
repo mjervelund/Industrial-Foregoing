@@ -31,7 +31,7 @@ import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Blocks;
@@ -73,7 +73,7 @@ public class PlantSowerBlock extends IndustrialBlock<PlantSowerTile> {
                 .define('L', Items.PISTON)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .define('R', Items.REDSTONE)
-                .define('G', TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gears/iron")))
+                .define('G', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/iron")))
                 .save(consumer);
     }
 }

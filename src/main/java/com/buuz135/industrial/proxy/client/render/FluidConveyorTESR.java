@@ -41,7 +41,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.joml.Matrix4f;
@@ -51,7 +51,7 @@ import java.awt.*;
 
 public class FluidConveyorTESR implements BlockEntityRenderer<ConveyorTile> {
 
-    public static RenderType createRenderType(ResourceLocation texture) {
+    public static RenderType createRenderType(Identifier texture) {
         RenderType.CompositeState state = RenderType.CompositeState.builder()
                 .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader))
                 .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
@@ -101,7 +101,7 @@ public class FluidConveyorTESR implements BlockEntityRenderer<ConveyorTile> {
                 float posY = 2 / 16f - 1 / 32f;
                 float right = 1 / 16f;
                 float left = 15 / 16f;
-                VertexConsumer buffer = typeBuffer.getBuffer(createRenderType(ResourceLocation.fromNamespaceAndPath(flow.contents().name().getNamespace(), "textures/" + flow.contents().name().getPath() + ".png")));
+                VertexConsumer buffer = typeBuffer.getBuffer(createRenderType(Identifier.fromNamespaceAndPath(flow.contents().name().getNamespace(), "textures/" + flow.contents().name().getPath() + ".png")));
                 //ConveyorBlock.EnumSides sides = te.getWorld().getBlockState(te.getPos()).getBlock().getExtendedState(te.getWorld().getBlockState(te.getPos()), te.getWorld(), te.getPos()).get(ConveyorBlock.SIDES);
                 ConveyorBlock.EnumSides sides = ConveyorBlock.EnumSides.NONE;
                 if (sides == ConveyorBlock.EnumSides.BOTH || sides == ConveyorBlock.EnumSides.RIGHT) right = 0;
@@ -116,7 +116,7 @@ public class FluidConveyorTESR implements BlockEntityRenderer<ConveyorTile> {
                 buffer.addVertex(matrix, right, posY, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0.5f, 16f / (flow.contents().height() * flow.contents().getUniqueFrames().count()) + animation);
                 buffer.addVertex(matrix, left, posY, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 16f / (flow.contents().height() * flow.contents().getUniqueFrames().count()) + animation);
 
-                buffer = typeBuffer.getBuffer(createRenderType(ResourceLocation.fromNamespaceAndPath(still.contents().name().getNamespace(), "textures/" + still.contents().name().getPath() + ".png")));
+                buffer = typeBuffer.getBuffer(createRenderType(Identifier.fromNamespaceAndPath(still.contents().name().getNamespace(), "textures/" + still.contents().name().getPath() + ".png")));
                 animation = still.uvShrinkRatio() * (te.getLevel().getGameTime() % (still.contents().getUniqueFrames().count() * 16));
                 boolean shouldRenderPrev = !(te.getLevel().getBlockEntity(te.getBlockPos().relative(facing.getOpposite())) instanceof ConveyorTile) || ((ConveyorTile) te.getLevel().getBlockEntity(te.getBlockPos().relative(facing.getOpposite()))).getTank().getFluidAmount() <= 0;
                 if (shouldRenderPrev) {

@@ -30,14 +30,14 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.TitaniumTab;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleGenerator implements IModule {
 
-    public static TitaniumTab TAB_GENERATOR = new TitaniumTab(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "generator"));
+    public static TitaniumTab TAB_GENERATOR = new TitaniumTab(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "generator"));
 
     public static BlockWithTile PITIFUL_GENERATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("pitiful_generator", () -> new PitifulGeneratorBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_GENERATOR), TAB_GENERATOR);
     public static BlockWithTile BIOREACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("bioreactor", () -> new BioReactorBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_GENERATOR), TAB_GENERATOR);

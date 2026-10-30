@@ -47,7 +47,7 @@ import com.mojang.math.Transformation;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -59,7 +59,7 @@ import java.util.HashMap;
 
 public class ModuleTransportStorage implements IModule {
 
-    public static TitaniumTab TAB_TRANSPORT = new TitaniumTab(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "transport"));
+    public static TitaniumTab TAB_TRANSPORT = new TitaniumTab(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "transport"));
 
     public static ConveyorUpgradeFactory upgrade_extraction = new ConveyorExtractionUpgrade.Factory();
     public static ConveyorUpgradeFactory upgrade_insertion = new ConveyorInsertionUpgrade.Factory();
@@ -70,14 +70,14 @@ public class ModuleTransportStorage implements IModule {
     public static ConveyorUpgradeFactory upgrade_splitting = new ConveyorSplittingUpgrade.Factory();
 
     public static BlockWithTile CONVEYOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("conveyor", () -> new ConveyorBlock(TAB_TRANSPORT), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_TRANSPORT), TAB_TRANSPORT);
-    public static HashMap<ResourceLocation, BakedModel> CONVEYOR_UPGRADES_CACHE = new HashMap<>();
+    public static HashMap<Identifier, BakedModel> CONVEYOR_UPGRADES_CACHE = new HashMap<>();
 
     public static TransporterTypeFactory ITEM_TRANSPORTER = new TransporterItemType.Factory();
     public static TransporterTypeFactory FLUID_TRANSPORTER = new TransporterFluidType.Factory();
     public static TransporterTypeFactory WORLD_TRANSPORTER = new TransporterWorldType.Factory();
 
     public static BlockWithTile TRANSPORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("transporter", () -> new TransporterBlock(), blockRegistryObject -> () -> new TransporterBlock.Item(blockRegistryObject.get(), TAB_TRANSPORT), TAB_TRANSPORT);
-    public static HashMap<ResourceLocation, BakedModel> TRANSPORTER_CACHE = new HashMap<>();
+    public static HashMap<Identifier, BakedModel> TRANSPORTER_CACHE = new HashMap<>();
 
     @Override
     public void generateFeatures(DeferredRegistryHelper registryHelper) {
@@ -98,7 +98,7 @@ public class ModuleTransportStorage implements IModule {
             for (Direction upgradeFacing : transporterTypeFactory.getValidFacings()) {
                 for (TransporterTypeFactory.TransporterAction actions : TransporterTypeFactory.TransporterAction.values()) {
                     try {
-                        ResourceLocation resourceLocation = transporterTypeFactory.getModel(upgradeFacing, actions);
+                        Identifier resourceLocation = transporterTypeFactory.getModel(upgradeFacing, actions);
                         var modelResourceLocation = new ModelResourceLocation(resourceLocation, "standalone");
                         UnbakedModel unbakedModel = event.getModelBakery().getModel(resourceLocation);
                         ModelBaker baker = modelBakery.new ModelBakerImpl((modelLoc, material) -> material.sprite(), modelResourceLocation);
@@ -115,7 +115,7 @@ public class ModuleTransportStorage implements IModule {
             for (Direction upgradeFacing : conveyorUpgradeFactory.getValidFacings()) {
                 for (Direction conveyorFacing : ConveyorBlock.FACING.getPossibleValues()) {
                     try {
-                        ResourceLocation resourceLocation = conveyorUpgradeFactory.getModel(upgradeFacing, conveyorFacing);
+                        Identifier resourceLocation = conveyorUpgradeFactory.getModel(upgradeFacing, conveyorFacing);
                         var modelResourceLocation = new ModelResourceLocation(resourceLocation, "standalone");
                         UnbakedModel unbakedModel = event.getModelBakery().getModel(resourceLocation);
                         ModelBaker baker = modelBakery.new ModelBakerImpl((modelLoc, material) -> material.sprite(), modelResourceLocation);

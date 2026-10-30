@@ -45,7 +45,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -172,7 +172,7 @@ public class ConveyorBouncingUpgrade extends ConveyorUpgrade {
                 return ConveyorBouncingUpgrade.this.filter;
             }
         });
-        ResourceLocation res = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
+        Identifier res = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
         componentList.add(new TexturedStateButtonGuiComponent(10, 80, 19, 18, 18,
                 new StateButtonInfo(0, res, 1, 214, new String[]{"whitelist"}),
                 new StateButtonInfo(1, res, 20, 214, new String[]{"blacklist"})) {
@@ -237,23 +237,23 @@ public class ConveyorBouncingUpgrade extends ConveyorUpgrade {
         }
 
         @Override
-        public Set<ResourceLocation> getTextures() {
-            return ImmutableSet.of(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_north"),
-                    ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_east"),
-                    ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_west"),
-                    ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_south"));
+        public Set<Identifier> getTextures() {
+            return ImmutableSet.of(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_north"),
+                    Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_east"),
+                    Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_west"),
+                    Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_bouncing_upgrade_south"));
         }
 
         @Override
         @Nonnull
-        public ResourceLocation getModel(Direction upgradeSide, Direction conveyorFacing) {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_upgrade_bouncing_" + conveyorFacing.getSerializedName().toLowerCase(Locale.ROOT));
+        public Identifier getModel(Direction upgradeSide, Direction conveyorFacing) {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_upgrade_bouncing_" + conveyorFacing.getSerializedName().toLowerCase(Locale.ROOT));
         }
 
         @Nonnull
         @Override
-        public ResourceLocation getItemModel() {
-            return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "conveyor_bouncing_upgrade");
+        public Identifier getItemModel() {
+            return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "conveyor_bouncing_upgrade");
         }
 
         @Nonnull

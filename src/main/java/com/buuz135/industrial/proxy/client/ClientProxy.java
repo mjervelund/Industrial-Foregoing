@@ -57,7 +57,7 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -79,7 +79,7 @@ import java.util.Calendar;
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ClientProxy extends CommonProxy {
 
-    public static ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
+    public static Identifier GUI = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
     public static BakedModel ears_baked;
     public static BakedModel HYDROPONIC_SIM_PROCESSOR;
 
@@ -174,7 +174,7 @@ public class ClientProxy extends CommonProxy {
                 var blacklisted = false;
                 if (stack.has(IFAttachments.MOB_IMPRISONMENT_TOOL)) {
                     var tag = stack.get(IFAttachments.MOB_IMPRISONMENT_TOOL);
-                    ResourceLocation id = ResourceLocation.parse(tag.getString("entity"));
+                    Identifier id = Identifier.parse(tag.getString("entity"));
                     var type = BuiltInRegistries.ENTITY_TYPE.get(id);
                     info = SpawnEggItem.byId(type);
                     blacklisted = ((MobImprisonmentToolItem) ModuleTool.MOB_IMPRISONMENT_TOOL.get()).isBlacklisted(type);
@@ -209,13 +209,13 @@ public class ClientProxy extends CommonProxy {
         Minecraft instance = Minecraft.getInstance();
         EntityRenderDispatcher manager = instance.getEntityRenderDispatcher();
 
-        ItemProperties.register(ModuleTool.INFINITY_LAUNCHER.get(), ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cooldown"), (stack, world, entity, number) -> {
+        ItemProperties.register(ModuleTool.INFINITY_LAUNCHER.get(), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cooldown"), (stack, world, entity, number) -> {
             if (entity instanceof Player) {
                 return ((Player) entity).getCooldowns().isOnCooldown(stack.getItem()) ? 1 : 2;
             }
             return 2f;
         });
-        ItemProperties.register(ModuleCore.MACHINE_SETTINGS_COPIER.get(), ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "stored"), (stack, world, entity, number) -> {
+        ItemProperties.register(ModuleCore.MACHINE_SETTINGS_COPIER.get(), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "stored"), (stack, world, entity, number) -> {
             return stack.has(IFAttachments.SETTINGS_COPIER) ? 1 : 0;
         });
     }

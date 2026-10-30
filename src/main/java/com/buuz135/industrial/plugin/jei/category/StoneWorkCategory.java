@@ -34,7 +34,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class StoneWorkCategory implements IRecipeCategory<StoneWorkWrapper> {
     private final IGuiHelper helper;
@@ -55,7 +55,7 @@ public class StoneWorkCategory implements IRecipeCategory<StoneWorkWrapper> {
 
     @Override
     public IDrawable getBackground() {
-        return helper.createDrawable(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 94, 0, 160, 26);
+        return helper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 94, 0, 160, 26);
     }
 
     @Override

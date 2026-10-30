@@ -31,7 +31,7 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
@@ -55,7 +55,7 @@ public class CrusherRecipe implements Recipe<CraftingInput> {
         this(input, output, null);
     }
 
-    public CrusherRecipe(Ingredient input, Ingredient output, ResourceLocation isTag) {
+    public CrusherRecipe(Ingredient input, Ingredient output, Identifier isTag) {
         this.input = input;
         this.output = output;
         this.isTag = isTag;
@@ -66,12 +66,12 @@ public class CrusherRecipe implements Recipe<CraftingInput> {
 
     public Ingredient input;
     public Ingredient output;
-    private ResourceLocation isTag;
+    private Identifier isTag;
 
     public static void init(RecipeOutput output) {
-        createRecipe(output, "cobblestone", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "cobblestones/normal"))), Ingredient.of(Items.GRAVEL)));
-        createRecipe(output, "gravel", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "gravels"))), Ingredient.of(Items.SAND)));
-        createRecipe(output, "sand", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "sands"))), Ingredient.of(TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", "silicon"))), ResourceLocation.fromNamespaceAndPath("c", "silicon")));
+        createRecipe(output, "cobblestone", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "cobblestones/normal"))), Ingredient.of(Items.GRAVEL)));
+        createRecipe(output, "gravel", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gravels"))), Ingredient.of(Items.SAND)));
+        createRecipe(output, "sand", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "sands"))), Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "silicon"))), Identifier.fromNamespaceAndPath("c", "silicon")));
     }
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, CrusherRecipe recipe) {
@@ -87,8 +87,8 @@ public class CrusherRecipe implements Recipe<CraftingInput> {
         recipeOutput.accept(rl, recipe, advancementHolder, conditions.toArray(new ICondition[conditions.size()]));
     }
 
-    public static ResourceLocation generateRL(String key) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "crusher/" + key);
+    public static Identifier generateRL(String key) {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "crusher/" + key);
     }
 
     @Override

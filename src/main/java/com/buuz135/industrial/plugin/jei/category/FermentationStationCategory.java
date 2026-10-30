@@ -39,7 +39,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FermentationStationCategory implements IRecipeCategory<OreFluidEntryFermenter> {
 
@@ -48,7 +48,7 @@ public class FermentationStationCategory implements IRecipeCategory<OreFluidEntr
 
     public FermentationStationCategory(IGuiHelper helper) {
         this.helper = helper;
-        tankOverlay = helper.createDrawable(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 1, 207, 12, 48);
+        tankOverlay = helper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 1, 207, 12, 48);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class FermentationStationCategory implements IRecipeCategory<OreFluidEntr
     @Override
     public IDrawable getBackground() {
         int offset = 45;
-        return helper.createDrawable(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 142 + offset, 29, 112 - offset, 60);
+        return helper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 142 + offset, 29, 112 - offset, 60);
     }
 
     @Override

@@ -7,7 +7,7 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -20,7 +20,7 @@ import java.util.*;
 
 public abstract class DrillRecipe<I> implements Recipe<CraftingInput> {
 
-    public static ResourceLocation EMPTY = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
+    public static Identifier EMPTY = Identifier.fromNamespaceAndPath("minecraft", "empty");
     
     public I output;
     public List<LaserDrillRarity> rarity;
@@ -54,8 +54,8 @@ public abstract class DrillRecipe<I> implements Recipe<CraftingInput> {
         recipeOutput.accept(rl, recipe, advancementHolder, new ModLoadedCondition(modIdCondition));
     }
 
-    public static ResourceLocation generateRL(String key) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_fluid/" + key);
+    public static Identifier generateRL(String key) {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_fluid/" + key);
     }
 
     @Override

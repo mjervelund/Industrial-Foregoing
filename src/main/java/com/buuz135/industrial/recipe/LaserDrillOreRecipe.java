@@ -36,7 +36,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
@@ -221,7 +221,7 @@ public class LaserDrillOreRecipe extends DrillRecipe<SizedIngredient> {
     }
 
     public static void createTagRecipe(RecipeOutput recipeOutput, String tagString, int color, LaserDrillRarity... rarity) {
-        var tag = TagUtil.getItemTag(ResourceLocation.fromNamespaceAndPath("c", tagString));
+        var tag = TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", tagString));
         var output = SizedIngredient.of(tag, 1);
         var recipe = new LaserDrillOreRecipe(output, color, rarity);
         var rl = generateRL(tagString);
@@ -232,8 +232,8 @@ public class LaserDrillOreRecipe extends DrillRecipe<SizedIngredient> {
         recipeOutput.accept(rl, recipe, advancementHolder, new NotCondition(new TagEmptyCondition(tag)));
     }
 
-    public static ResourceLocation generateRL(String key) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_ore/" + key);
+    public static Identifier generateRL(String key) {
+        return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_ore/" + key);
     }
 
     @Override

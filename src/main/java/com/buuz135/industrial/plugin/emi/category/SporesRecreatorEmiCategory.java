@@ -4,10 +4,10 @@ import com.buuz135.industrial.module.ModuleResourceProduction;
 import com.buuz135.industrial.utils.Reference;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class SporesRecreatorEmiCategory extends EmiRecipeCategory {
-    public static ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "spores_recreator");
+    public static Identifier ID = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "spores_recreator");
 
     public SporesRecreatorEmiCategory() {
         super(ID, EmiStack.of(ModuleResourceProduction.SPORES_RECREATOR.asItem()));

@@ -40,7 +40,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ import java.util.List;
 
 public class GuiTransporter extends AbstractContainerScreen<ContainerTransporter> implements ICanSendNetworkMessage {
 
-    public static final ResourceLocation BG_TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/conveyor.png");
+    public static final Identifier BG_TEXTURE = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/conveyor.png");
 
     private TransporterType upgrade;
     private List<IGuiComponent> componentList;

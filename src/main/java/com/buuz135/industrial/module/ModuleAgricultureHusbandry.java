@@ -33,14 +33,14 @@ import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.TitaniumTab;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 
 public class ModuleAgricultureHusbandry implements IModule {
 
-    public static TitaniumTab TAB_AG_HUS = new TitaniumTab(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "ag_hus"));
+    public static TitaniumTab TAB_AG_HUS = new TitaniumTab(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "ag_hus"));
 
     public static BlockWithTile PLANT_GATHERER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("plant_gatherer", () -> new PlantGathererBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_AG_HUS), TAB_AG_HUS);
     public static BlockWithTile SEWER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("sewer", () -> new SewerBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_AG_HUS), TAB_AG_HUS);

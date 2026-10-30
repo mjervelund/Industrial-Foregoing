@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -19,7 +19,7 @@ public record EntityIngredient(@Nullable EntityType<?> entityType, @Nullable Tag
 
     public static final EntityIngredient EMPTY = new EntityIngredient(null, null);
 
-    public static final EntityIngredient ANY = new EntityIngredient(null, TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace("any")));
+    public static final EntityIngredient ANY = new EntityIngredient(null, TagKey.create(Registries.ENTITY_TYPE, Identifier.withDefaultNamespace("any")));
 
     public static final Codec<EntityIngredient> CODEC = Codec.either(
             BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("type").codec(),

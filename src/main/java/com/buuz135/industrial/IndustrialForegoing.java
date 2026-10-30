@@ -52,7 +52,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -112,8 +112,8 @@ public class IndustrialForegoing extends ModuleController {
         if (dist.isClient()) {
             EventManager.mod(FMLClientSetupEvent.class).process(fmlClientSetupEvent -> fmlClientSetupEvent.enqueueWork(() -> new ClientProxy().run())).subscribe();
             EventManager.mod(ModelEvent.RegisterAdditional.class).process(modelRegistryEvent -> {
-                modelRegistryEvent.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/catears"), "standalone"));
-                modelRegistryEvent.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "item/clean_hydroponic_simulation_processor"), "standalone"));
+                modelRegistryEvent.register(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/catears"), "standalone"));
+                modelRegistryEvent.register(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "item/clean_hydroponic_simulation_processor"), "standalone"));
             }).subscribe();
             this.initClient();
         }
@@ -127,7 +127,7 @@ public class IndustrialForegoing extends ModuleController {
         })).subscribe();*/
         RewardGiver giver = RewardManager.get().getGiver(UUID.fromString("d28b7061-fb92-4064-90fb-7e02b95a72a6"), "Buuz135");
         try {
-            CAT_EARS = new Reward(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cat_ears"), new URL("https://raw.githubusercontent.com/Buuz135/Industrial-Foregoing/master/contributors.json"), () -> iDist -> {
+            CAT_EARS = new Reward(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cat_ears"), new URL("https://raw.githubusercontent.com/Buuz135/Industrial-Foregoing/master/contributors.json"), () -> iDist -> {
             }, new String[]{"normal", "cat", "spooky", "snowy"});
             giver.addReward(CAT_EARS);
         } catch (MalformedURLException e) {
@@ -176,7 +176,7 @@ public class IndustrialForegoing extends ModuleController {
                         .stream()
                         .filter(block -> !block.getClass().equals(LiquidBlock.class))
                         .filter(basicBlock -> Optional.ofNullable(BuiltInRegistries.BLOCK.getKey(basicBlock))
-                                .map(ResourceLocation::getNamespace)
+                                .map(Identifier::getNamespace)
                                 .filter(Reference.MOD_ID::equalsIgnoreCase)
                                 .isPresent())
                         .collect(Collectors.toList())
@@ -221,8 +221,8 @@ public class IndustrialForegoing extends ModuleController {
             registerMenuScreensEvent.register((MenuType<? extends ContainerConveyor>) ContainerConveyor.TYPE.get(), GuiConveyor::new);
         }).subscribe();
         EventManager.mod(ModelEvent.BakingCompleted.class).process(event -> {
-            ClientProxy.ears_baked = event.getModels().get(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/catears"), "standalone"));
-            ClientProxy.HYDROPONIC_SIM_PROCESSOR = event.getModels().get(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "item/clean_hydroponic_simulation_processor"), "standalone"));
+            ClientProxy.ears_baked = event.getModels().get(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/catears"), "standalone"));
+            ClientProxy.HYDROPONIC_SIM_PROCESSOR = event.getModels().get(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "item/clean_hydroponic_simulation_processor"), "standalone"));
         }).subscribe();
         ClientProxy.OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", -1, "key.industrialforegoing.category");
         EventManager.mod(RegisterKeyMappingsEvent.class).process(event -> {

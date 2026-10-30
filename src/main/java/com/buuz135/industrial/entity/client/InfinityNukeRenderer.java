@@ -33,19 +33,19 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class InfinityNukeRenderer extends EntityRenderer<InfinityNukeEntity> {
 
-    public static final ResourceLocation NUKE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/entity/infinity_nuke_entity.png");
+    public static final Identifier NUKE = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/entity/infinity_nuke_entity.png");
     private final InfinityNukeModel nukeModel;
     private final InfinityNukeModelArmed nukeModelArmed;
     private final InfinityNukeModelArmed nukeModelArmedBig;
 
-    public static final ModelLayerLocation NUKE_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke_entity"), "main");
-    public static final ModelLayerLocation NUKE_ARMED_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke_entity"), "armed");
-    public static final ModelLayerLocation NUKE_ARMED_BIG_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke_entity"), "armed_big");
+    public static final ModelLayerLocation NUKE_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke_entity"), "main");
+    public static final ModelLayerLocation NUKE_ARMED_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke_entity"), "armed");
+    public static final ModelLayerLocation NUKE_ARMED_BIG_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke_entity"), "armed_big");
 
 
     public InfinityNukeRenderer(EntityRendererProvider.Context p_174008_) {
@@ -71,7 +71,7 @@ public class InfinityNukeRenderer extends EntityRenderer<InfinityNukeEntity> {
             this.nukeModelArmed.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
             if (entityIn.isDataExploding() && entityIn.level().getRandom().nextDouble() < 0.96) {
                 float f = partialTicks + entityIn.getDataTicksExploding() + 10;
-                ivertexbuilder = net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect(bufferIn, RenderType.energySwirl(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/block/mycelial_clean.png"), f * (entityIn.getDataTicksExploding() / 50000f), f * (entityIn.getDataTicksExploding() / 50000f)), false, false);
+                ivertexbuilder = net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect(bufferIn, RenderType.energySwirl(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/block/mycelial_clean.png"), f * (entityIn.getDataTicksExploding() / 50000f), f * (entityIn.getDataTicksExploding() / 50000f)), false, false);
                 //matrixStackIn.scale(1.1f,1.1f,1.1f);
                 nukeModelArmedBig.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
             }
@@ -84,7 +84,7 @@ public class InfinityNukeRenderer extends EntityRenderer<InfinityNukeEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(InfinityNukeEntity entity) {
+    public Identifier getTextureLocation(InfinityNukeEntity entity) {
         return NUKE;
     }
 

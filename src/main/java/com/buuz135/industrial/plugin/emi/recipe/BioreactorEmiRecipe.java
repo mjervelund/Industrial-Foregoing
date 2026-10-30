@@ -8,7 +8,7 @@ import dev.emi.emi.api.neoforge.NeoForgeEmiStack;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -23,7 +23,7 @@ public class BioreactorEmiRecipe extends CustomEmiRecipe {
 
 
     public BioreactorEmiRecipe(TagKey<Item> stack, FluidStack fluid) {
-        super(ResourceLocation.fromNamespaceAndPath(stack.location().getNamespace(), "emi_" + stack.location().getPath()), IFEmiPlugin.BIOREACTOR_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(stack.location().getNamespace(), "emi_" + stack.location().getPath()), IFEmiPlugin.BIOREACTOR_EMI_CATEGORY,
                 fromInput(EmiIngredient.of(stack)),
                 fromOutput(NeoForgeEmiStack.of(fluid)));
     }

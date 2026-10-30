@@ -28,7 +28,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -176,7 +176,7 @@ public class MycelialDataManager extends SavedData {
             lastRun = nbt.getLong("Run");
             lastTracked = nbt.getLong("Track");
             pos = BlockPos.of(nbt.getLong("Pos"));
-            this.world = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(nbt.getString("RKValue")));
+            this.world = ResourceKey.create(Registries.DIMENSION, Identifier.parse(nbt.getString("RKValue")));
         }
     }
 }

@@ -36,7 +36,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -52,13 +52,13 @@ public class ContributorsCatEarsRender extends RenderLayer<AbstractClientPlayer,
     @Override
     public void render(PoseStack stack, MultiBufferSource buffer, int p_225628_3_, AbstractClientPlayer entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if (!ClientRewardStorage.REWARD_STORAGE.getRewards().containsKey(entitylivingbaseIn.getUUID())) return;
-        if (!ClientRewardStorage.REWARD_STORAGE.getRewards().get(entitylivingbaseIn.getUUID()).getEnabled().containsKey(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cat_ears")))
+        if (!ClientRewardStorage.REWARD_STORAGE.getRewards().get(entitylivingbaseIn.getUUID()).getEnabled().containsKey(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cat_ears")))
             return;
         stack.pushPose();
         stack.translate(0, -0.015f, 0);
         if (!entitylivingbaseIn.getInventory().armor.get(3).isEmpty()) stack.translate(0, -0.02f, 0);
         if (entitylivingbaseIn.isCrouching()) stack.translate(0, 0.27f, 0);
-        String type = ClientRewardStorage.REWARD_STORAGE.getRewards().get(entitylivingbaseIn.getUUID()).getEnabled().get(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "cat_ears"));
+        String type = ClientRewardStorage.REWARD_STORAGE.getRewards().get(entitylivingbaseIn.getUUID()).getEnabled().get(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cat_ears"));
         stack.mulPose(Axis.YP.rotationDegrees(90));
         stack.mulPose(Axis.XP.rotationDegrees(180));
         stack.mulPose(Axis.YN.rotationDegrees(netHeadYaw));

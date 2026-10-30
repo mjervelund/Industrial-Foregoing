@@ -31,7 +31,7 @@ import com.hrznstudio.titanium.block.RotatableBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
@@ -54,8 +54,8 @@ public class IndustrialBlockstateProvider extends BlockStateProvider {
         this.blocks = blocks;
     }
 
-    public static ResourceLocation getModel(Block block) {
-        return ResourceLocation.fromNamespaceAndPath(BuiltInRegistries.BLOCK.getKey(block).getNamespace(), "block/" + BuiltInRegistries.BLOCK.getKey(block).getPath());
+    public static Identifier getModel(Block block) {
+        return Identifier.fromNamespaceAndPath(BuiltInRegistries.BLOCK.getKey(block).getNamespace(), "block/" + BuiltInRegistries.BLOCK.getKey(block).getPath());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class IndustrialBlockstateProvider extends BlockStateProvider {
         //for (ConveyorBlock.EnumType type : ConveyorBlock.TYPE.getAllowedValues()) {
         //    for (Direction direction : ConveyorBlock.FACING.getAllowedValues()) {
         //        conveyor.partialState().with(ConveyorBlock.TYPE, type).with(ConveyorBlock.FACING, direction)
-        //                .addModels(new ConfiguredModel(new BlockModelBuilder(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_" + type.getName().toLowerCase(Locale.ROOT) + "_" + direction.getName().toLowerCase(Locale.ROOT)), helper).parent(new ModelFile.UncheckedModelFile(type.getModel())).texture("2", type.getTexture()), 0, (int) direction.getOpposite().getHorizontalAngle(), false));
+        //                .addModels(new ConfiguredModel(new BlockModelBuilder(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/conveyor_" + type.getName().toLowerCase(Locale.ROOT) + "_" + direction.getName().toLowerCase(Locale.ROOT)), helper).parent(new ModelFile.UncheckedModelFile(type.getModel())).texture("2", type.getTexture()), 0, (int) direction.getOpposite().getHorizontalAngle(), false));
         //    }
         //}
     }

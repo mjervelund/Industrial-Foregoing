@@ -11,7 +11,7 @@ import com.hrznstudio.titanium.client.screen.asset.DefaultAssetProvider;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,7 +23,7 @@ public class SewageComposterEmiRecipe extends CustomEmiRecipe {
     public static final EmiStack SEWAGE = EmiStack.of(ModuleCore.SEWAGE.getSourceFluid().get(), 1000);
 
     public SewageComposterEmiRecipe() {
-        super(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "/emi/sewage_composter"), IFEmiPlugin.SEWAGE_COMPOSTER_EMI_CATEGORY,
+        super(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "/emi/sewage_composter"), IFEmiPlugin.SEWAGE_COMPOSTER_EMI_CATEGORY,
                 List.of(SEWAGE), List.of(EmiStack.of(ModuleCore.FERTILIZER.get())));
     }
 

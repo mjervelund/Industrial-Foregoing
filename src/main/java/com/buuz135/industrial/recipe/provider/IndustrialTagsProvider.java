@@ -31,7 +31,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
@@ -63,8 +63,8 @@ public class IndustrialTagsProvider {
             tag(BlockTags.MOSS_REPLACEABLE).remove(ModuleAgricultureHusbandry.HYDROPONIC_BED.getBlock());
 
             TagAppender<Block> tTagAppender = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
-            tag(TagUtil.getBlockTag(ResourceLocation.parse("c:storage_blocks"))).add(ModuleCore.PINK_SLIME_BLOCK.get());
-            tag(TagUtil.getBlockTag(ResourceLocation.parse("c:storage_blocks/pink_slime"))).add(ModuleCore.PINK_SLIME_BLOCK.get());
+            tag(TagUtil.getBlockTag(Identifier.parse("c:storage_blocks"))).add(ModuleCore.PINK_SLIME_BLOCK.get());
+            tag(TagUtil.getBlockTag(Identifier.parse("c:storage_blocks/pink_slime"))).add(ModuleCore.PINK_SLIME_BLOCK.get());
             BuiltInRegistries.BLOCK.stream().filter(block -> BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(Reference.MOD_ID)).forEach(block -> tTagAppender.add(BuiltInRegistries.BLOCK.getResourceKey(block).get()));
         }
     }
@@ -90,8 +90,8 @@ public class IndustrialTagsProvider {
             tag(IndustrialTags.Items.GEAR_IRON).add(ModuleCore.IRON_GEAR.get());
             tag(IndustrialTags.Items.GEARS).add(ModuleCore.DIAMOND_GEAR.get(), ModuleCore.GOLD_GEAR.get(), ModuleCore.IRON_GEAR.get());
 
-            tag(TagUtil.getItemTag(ResourceLocation.parse("c:ingots"))).add(ModuleCore.PINK_SLIME_INGOT.get());
-            tag(TagUtil.getItemTag(ResourceLocation.parse("c:ingots/pink_slime"))).add(ModuleCore.PINK_SLIME_INGOT.get());
+            tag(TagUtil.getItemTag(Identifier.parse("c:ingots"))).add(ModuleCore.PINK_SLIME_INGOT.get());
+            tag(TagUtil.getItemTag(Identifier.parse("c:ingots/pink_slime"))).add(ModuleCore.PINK_SLIME_INGOT.get());
         }
     }
 

@@ -29,13 +29,13 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.TitaniumTab;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 ;
 
 public class ModuleResourceProduction implements IModule {
 
-    public static TitaniumTab TAB_RESOURCE = new TitaniumTab(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "resource_production"));
+    public static TitaniumTab TAB_RESOURCE = new TitaniumTab(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "resource_production"));
 
     public static BlockWithTile RESOURCEFUL_FURNACE = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("resourceful_furnace", () -> new ResourcefulFurnaceBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_RESOURCE), TAB_RESOURCE);
     public static BlockWithTile SLUDGE_REFINER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("sludge_refiner", () -> new SludgeRefinerBlock(), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_RESOURCE), TAB_RESOURCE);
