@@ -34,7 +34,8 @@ import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -104,9 +105,9 @@ public class WitherBuilderTile extends IndustrialAreaWorkingTile<WitherBuilderTi
                 ItemStackUtils.shrink(handler, slot, 1);
             }
         }
-        var wither = (WitherBoss) EntityType.WITHER.create(level);
+        var wither = EntityTypes.WITHER.create(level, EntitySpawnReason.TRIGGERED);
         BlockPos pos = this.worldPosition.offset(0, 2, 0);
-        wither.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5f);
+        wither.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5f);
         wither.yBodyRot = this.getFacingDirection().getAxis() != Direction.Axis.X ? 0.0F : 90.0F;
         wither.makeInvulnerable();
         level.addFreshEntity(wither);

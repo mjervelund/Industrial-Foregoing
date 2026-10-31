@@ -27,11 +27,16 @@ import com.hrznstudio.titanium.block.RotatableBlock;
 import com.hrznstudio.titanium.block.tile.BasicTile;
 import com.hrznstudio.titanium.tab.TitaniumTab;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class IndustrialBlock<T extends BasicTile<T>> extends RotatableBlock<T> {
 
@@ -50,5 +55,12 @@ public abstract class IndustrialBlock<T extends BasicTile<T>> extends RotatableB
                 industrialMachineTile.setUuid(placer.getStringUUID());
             }
         }
+    }
+
+    /**
+     * Block item tooltip lines. Blocks no longer have appendHoverText in 26.3; ClientProxy calls this
+     * from ItemTooltipEvent for IF block items.
+     */
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
     }
 }

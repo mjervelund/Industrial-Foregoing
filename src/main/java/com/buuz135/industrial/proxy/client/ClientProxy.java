@@ -73,6 +73,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.minecraft.world.item.BlockItem;
+import com.buuz135.industrial.block.IndustrialBlock;
 
 import java.util.Calendar;
 
@@ -204,6 +206,9 @@ public class ClientProxy extends CommonProxy {
             if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1 && Calendar.getInstance().get(Calendar.MONTH) == Calendar.APRIL) {
                 event.getToolTip().add(Component.literal(Component.translatable("text.industrialforegoing.proxy.client.alt_f4").getString()).withStyle(ChatFormatting.DARK_AQUA));
             }
+        }).subscribe();
+        EventManager.forge(ItemTooltipEvent.class).filter(event -> event.getItemStack().getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IndustrialBlock<?>).process(event -> {
+            ((IndustrialBlock<?>) ((BlockItem) event.getItemStack().getItem()).getBlock()).appendHoverText(event.getItemStack(), event.getContext(), event.getToolTip(), event.getFlags());
         }).subscribe();
 
         Minecraft instance = Minecraft.getInstance();

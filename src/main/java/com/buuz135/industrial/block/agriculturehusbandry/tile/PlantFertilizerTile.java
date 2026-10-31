@@ -36,6 +36,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -72,10 +73,10 @@ public class PlantFertilizerTile extends IndustrialAreaWorkingTile<PlantFertiliz
                 BlockState state = this.level.getBlockState(pointer);
                 Block block = state.getBlock();
                 if (block instanceof BonemealableBlock) {
-                    if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state) && ((BonemealableBlock) block).isBonemealSuccess(level, level.getRandom(), pointer, state)) {
+                    if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state, BonemealSource.INTERACTION) && ((BonemealableBlock) block).isBonemealSuccess(level, level.getRandom(), pointer, state, BonemealSource.INTERACTION)) {
                         ItemStackUtils.shrink(fertilizer, slot, 1);
-                        ((BonemealableBlock) block).performBonemeal((ServerLevel) level, level.getRandom(), pointer, state);
-                        if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state)) {
+                        ((BonemealableBlock) block).performBonemeal((ServerLevel) level, level.getRandom(), pointer, state, BonemealSource.INTERACTION);
+                        if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state, BonemealSource.INTERACTION)) {
                             return new WorkAction(0.25f, powerPerOperation);
                         } else {
                             increasePointer();

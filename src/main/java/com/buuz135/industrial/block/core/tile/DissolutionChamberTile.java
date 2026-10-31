@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.core.tile;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
@@ -137,7 +138,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
                     if (dissolutionChamberRecipe.outputFluid.isPresent() && !dissolutionChamberRecipe.outputFluid.get().isEmpty())
                         TankUtils.fillForced(outputFluid, dissolutionChamberRecipe.outputFluid.get().copy(), false);
                     ItemStack outputStack = dissolutionChamberRecipe.output.get().copy();
-                    outputStack.getItem().onCraftedBy(outputStack, this.level, null);
+                    outputStack.onCraftedBySystem(this.level);
                     ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
                     checkForRecipe();
                 }
@@ -196,7 +197,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
         }
         if (tag.contains("DC_filter")) {
             for (String psFilter : tag.getCompoundOrEmpty("DC_filter").keySet()) {
-                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("DC_filter").getCompoundOrEmpty(psFilter));
+                input.getFilter()[Integer.parseInt(psFilter)] = ItemStackSerialization.load(this.level.registryAccess(), tag.getCompoundOrEmpty("DC_filter").getCompoundOrEmpty(psFilter));
             }
         }
         super.loadSettings(player, tag);
@@ -207,7 +208,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
         tag.putBoolean("DC_locked", input.isLocked());
         CompoundTag filterTag = new CompoundTag();
         for (int i = 0; i < input.getFilter().length; i++) {
-            filterTag.put(i + "", input.getFilter()[i].saveOptional(this.level.registryAccess()));
+            filterTag.put(i + "", ItemStackSerialization.save(this.level.registryAccess(), input.getFilter()[i]));
         }
         tag.put("DC_filter", filterTag);
         super.saveSettings(player, tag);

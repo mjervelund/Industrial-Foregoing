@@ -140,7 +140,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
             if (mobs.size() > 0) {
                 Mob entity = mobs.get(0);
                 FakePlayer player = IndustrialForegoing.getFakePlayer(this.level, this.getBlockPos(), this.getUuid());
-                if (entity.getType().is(IndustrialTags.EntityTypes.MOB_CRUSHER_INSTANT_KILL_BLACKLIST)) {
+                if (entity.is(IndustrialTags.EntityTypes.MOB_CRUSHER_INSTANT_KILL_BLACKLIST)) {
                     return damage(entity, player);
                 } else {
                     return instantKill(entity, player);
@@ -163,7 +163,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
         }
         //Loot from table
         DamageSource source = player.damageSources().playerAttack(player);
-        LootTable table = this.level.getServer().reloadableRegistries().getLootTable(entity.getLootTable());
+        LootTable table = entity.getLootTable().map(key -> this.level.getServer().reloadableRegistries().getLootTable(key)).orElse(LootTable.EMPTY);
         LootParams.Builder context = new LootParams.Builder((ServerLevel) this.level)
                 .withParameter(LootContextParams.THIS_ENTITY, entity)
                 .withParameter(LootContextParams.DAMAGE_SOURCE, source)

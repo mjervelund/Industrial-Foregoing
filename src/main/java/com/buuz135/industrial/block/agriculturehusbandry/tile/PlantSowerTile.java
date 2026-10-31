@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
@@ -166,7 +167,7 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
         }
         if (tag.contains("PS_filter")) {
             for (String psFilter : tag.getCompoundOrEmpty("PS_filter").keySet()) {
-                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("PS_filter").getCompoundOrEmpty(psFilter));
+                input.getFilter()[Integer.parseInt(psFilter)] = ItemStackSerialization.load(this.level.registryAccess(), tag.getCompoundOrEmpty("PS_filter").getCompoundOrEmpty(psFilter));
             }
         }
         super.loadSettings(player, tag);
@@ -177,7 +178,7 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
         tag.putBoolean("PS_locked", input.isLocked());
         CompoundTag filterTag = new CompoundTag();
         for (int i = 0; i < input.getFilter().length; i++) {
-            filterTag.put(i + "", input.getFilter()[i].saveOptional(this.level.registryAccess()));
+            filterTag.put(i + "", ItemStackSerialization.save(this.level.registryAccess(), input.getFilter()[i]));
         }
         tag.put("PS_filter", filterTag);
         super.saveSettings(player, tag);

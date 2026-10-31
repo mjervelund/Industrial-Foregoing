@@ -21,7 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -94,15 +94,15 @@ public class MobDuplicatorTile extends IndustrialAreaWorkingTile<MobDuplicatorTi
                 int tries = 20;
                 Vec3 random = blockPosToVec3d(blocks.get(this.level.getRandom().nextInt(blocks.size())));
                 random = random.add(0.5, 0, 0.5);
-                entity.moveTo(random.x, random.y, random.z, level.getRandom().nextFloat() * 360F, 0);
+                entity.snapTo(random.x, random.y, random.z, level.getRandom().nextFloat() * 360F, 0);
                 entity.setUUID(UUID.randomUUID());
                 if (entity instanceof Mob) {
-                    ((Mob) entity).finalizeSpawn((ServerLevelAccessor) this.level, this.level.getCurrentDifficultyAt(this.worldPosition), MobSpawnType.MOB_SUMMONED, null);
+                    ((Mob) entity).finalizeSpawn((ServerLevelAccessor) this.level, ((ServerLevelAccessor) this.level).getCurrentDifficultyAt(this.worldPosition), EntitySpawnReason.MOB_SUMMONED, null);
                 }
                 while (tries > 0 && !canEntitySpawn(entity)) {
                     random = blockPosToVec3d(blocks.get(this.level.getRandom().nextInt(blocks.size())));
                     random = random.add(0.5, 0, 0.5);
-                    entity.moveTo(random.x, random.y, random.z, level.getRandom().nextFloat() * 360F, 0);
+                    entity.snapTo(random.x, random.y, random.z, level.getRandom().nextFloat() * 360F, 0);
                     --tries;
                 }
                 if (tries <= 0) {

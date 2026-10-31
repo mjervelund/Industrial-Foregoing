@@ -26,6 +26,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.StemBlock;
@@ -174,9 +175,9 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                 //    return new WorkAction(1, 0);
                 if (state.getBlock() instanceof BonemealableBlock) {
                     BonemealableBlock growable = (BonemealableBlock) this.level.getBlockState(up).getBlock();
-                    if (growable.isValidBonemealTarget(this.level, up, this.level.getBlockState(up)) || state.getBlock() instanceof StemBlock) {
+                    if (growable.isValidBonemealTarget(this.level, up, this.level.getBlockState(up), BonemealSource.INTERACTION) || state.getBlock() instanceof StemBlock) {
                         if (this.etherBuffer.getProgress() > 0) {
-                            growable.performBonemeal((ServerLevel) this.level, this.level.getRandom(), up, this.level.getBlockState(up));
+                            growable.performBonemeal((ServerLevel) this.level, this.level.getRandom(), up, this.level.getBlockState(up), BonemealSource.INTERACTION);
                             this.etherBuffer.setProgress(this.etherBuffer.getProgress() - 1);
                         } else {
                             for (int i = 0; i < 4; i++) {
