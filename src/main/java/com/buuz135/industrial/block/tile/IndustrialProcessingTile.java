@@ -58,7 +58,7 @@ public abstract class IndustrialProcessingTile<T extends IndustrialProcessingTil
         this.addProgressBar(progressBar = new ProgressBarComponent<T>(x, y, getMaxProgress()) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
-                    public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+                    public List<IFactory<?>> getScreenAddons() {
                         return Collections.singletonList(() -> new ProgressBarScreenAddon(x, y, progressBar) {
                             @Override
                             public List<Component> getTooltipLines() {

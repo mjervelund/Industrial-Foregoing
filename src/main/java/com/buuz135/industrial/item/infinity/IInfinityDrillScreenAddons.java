@@ -31,6 +31,6 @@ import java.util.function.Supplier;
 
 public interface IInfinityDrillScreenAddons {
 
-    List<IFactory<? extends IScreenAddon>> getScreenAddons(Supplier<ItemStack> stack);
+    List<IFactory<?>> getScreenAddons(Supplier<ItemStack> stack);
 
 }

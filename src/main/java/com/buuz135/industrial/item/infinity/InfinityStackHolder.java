@@ -45,8 +45,8 @@ public class InfinityStackHolder extends ItemStackHolderCapability implements IS
     }
 
     @Override
-    public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
-        List<IFactory<? extends IScreenAddon>> factory = new ArrayList<>();
+    public List<IFactory<?>> getScreenAddons() {
+        List<IFactory<?>> factory = new ArrayList<>();
         if (getHolder().get().getItem() instanceof IInfinityDrillScreenAddons) {
             factory.addAll(((IInfinityDrillScreenAddons) getHolder().get().getItem()).getScreenAddons(getHolder()));
         }

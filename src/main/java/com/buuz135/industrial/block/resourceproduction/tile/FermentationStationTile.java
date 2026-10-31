@@ -116,7 +116,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
         addButton(new ButtonComponent(75, 22, 14, 14) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() ->
                         new StateButtonAddon(this, Arrays.stream(SealType.values()).map(sealType -> sealType.info).toArray(StateButtonInfo[]::new)) {
                             @Override
@@ -132,7 +132,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
         addButton(new ButtonComponent(110, 22, 14, 14) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() ->
                         new StateButtonAddon(this, Arrays.stream(ProductionType.values()).map(sealType -> sealType.info).toArray(StateButtonInfo[]::new)) {
                             @Override

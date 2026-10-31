@@ -69,8 +69,8 @@ public abstract class IndustrialAreaWorkingTile<T extends IndustrialAreaWorkingT
         addButton(areaButton = new ButtonComponent(154 - 18, 84, 14, 14) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
-                List<IFactory<? extends IScreenAddon>> addons = new ArrayList<>();
+            public List<IFactory<?>> getScreenAddons() {
+                List<IFactory<?>> addons = new ArrayList<>();
                 addons.add(() -> new StateButtonAddon(areaButton, new StateButtonInfo(0, IndustrialAssetProvider.BUTTON_SHOW_AREA, "text.industrialforegoing.button.show_area"), new StateButtonInfo(1, IndustrialAssetProvider.BUTTON_HIDE_AREA, "text.industrialforegoing.button.hide_area")) {
                     @Override
                     public int getState() {
@@ -86,8 +86,8 @@ public abstract class IndustrialAreaWorkingTile<T extends IndustrialAreaWorkingT
         addButton(particleButton = new ButtonComponent(154 - 18 - 18, 84, 14, 14) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
-                List<IFactory<? extends IScreenAddon>> addons = new ArrayList<>();
+            public List<IFactory<?>> getScreenAddons() {
+                List<IFactory<?>> addons = new ArrayList<>();
                 addons.add(() -> new StateButtonAddon(particleButton, new StateButtonInfo(0, IndustrialAssetProvider.BUTTON_HIDE_PARTICLE, "text.industrialforegoing.button.hide_particles"), new StateButtonInfo(1, IndustrialAssetProvider.BUTTON_SHOW_PARTICLE, "text.industrialforegoing.button.show_particles")) {
                     @Override
                     public int getState() {

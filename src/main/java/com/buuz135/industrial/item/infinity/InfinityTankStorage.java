@@ -125,8 +125,8 @@ public class InfinityTankStorage implements IFluidHandlerItem, IScreenAddonProvi
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public @NotNull List<IFactory<? extends IScreenAddon>> getScreenAddons() {
-        List<IFactory<? extends IScreenAddon>> list = new ArrayList<>();
+    public @NotNull List<IFactory<?>> getScreenAddons() {
+        List<IFactory<?>> list = new ArrayList<>();
         for (int i = 0; i < this.tanks.size(); i++) {
             var tankDefinition = this.tanks.get(i);
             int finalI = i;

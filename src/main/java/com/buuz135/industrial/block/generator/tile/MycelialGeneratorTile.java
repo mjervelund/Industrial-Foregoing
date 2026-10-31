@@ -117,7 +117,7 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
         bar = new ProgressBarComponent<MycelialGeneratorTile>(30, 20, 0, 100) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new ProgressBarScreenAddon(30, 20, bar) {
                     @Override
                     @OnlyIn(Dist.CLIENT)

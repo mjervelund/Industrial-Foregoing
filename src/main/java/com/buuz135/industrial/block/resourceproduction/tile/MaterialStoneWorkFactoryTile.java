@@ -138,7 +138,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         addButton(new ButtonComponent(54, 64, 18, 18) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
                     public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
@@ -202,7 +202,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         addButton(new ButtonComponent(62 + 20 * 1, 64, 18, 18) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
                     public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
@@ -228,7 +228,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         addButton(new ButtonComponent(62 + 20 * 2, 64, 18, 18) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
                     public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
@@ -254,7 +254,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         addButton(new ButtonComponent(62 + 20 * 3, 64, 18, 18) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
                     public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
@@ -280,7 +280,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         addButton(new ButtonComponent(62 + 20 * 4, 64, 18, 18) {
             @Override
             @OnlyIn(Dist.CLIENT)
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+            public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
                     public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {

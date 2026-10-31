@@ -505,8 +505,8 @@ public class ItemInfinityBackpack extends ItemInfinity {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public List<IFactory<? extends IScreenAddon>> getScreenAddons(Supplier<ItemStack> stack) {
-        List<IFactory<? extends IScreenAddon>> factory = new ArrayList<>();
+    public List<IFactory<?>> getScreenAddons(Supplier<ItemStack> stack) {
+        List<IFactory<?>> factory = new ArrayList<>();
         for (int i = 0; i < BackpackDataManager.SLOT_AMOUNT; i++) {
             int x = i % 8;
             int y = i / 8;

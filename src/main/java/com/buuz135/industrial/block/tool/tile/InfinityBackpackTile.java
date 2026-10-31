@@ -151,9 +151,9 @@ public class InfinityBackpackTile extends BasicTile<InfinityBackpackTile> implem
         return getStackMenuProvider().getDisplayName();
     }
 
-    public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+    public List<IFactory<?>> getScreenAddons() {
         var backpackItem = (ItemInfinityBackpack) ModuleTool.INFINITY_BACKPACK.get();
-        List<IFactory<? extends IScreenAddon>> addons = new ArrayList(backpackItem.getScreenAddons(this::getBackpack));
+        List<IFactory<?>> addons = new ArrayList(backpackItem.getScreenAddons(this::getBackpack));
         var energy = this.backpack.isEmpty() ? null : ItemAccess.forStack(this.backpack).getCapability(Capabilities.Energy.ITEM);
         if (energy instanceof IScreenAddonProvider addonProvider) {
             addons.addAll(addonProvider.getScreenAddons());
