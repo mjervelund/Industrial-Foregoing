@@ -8,8 +8,8 @@
     "id": "industrialforegoing:latex"
   },
   "result": {
-    "Name": "minecraft:stripped_dark_oak_log",
-    "Properties": {
+    "id": "minecraft:stripped_dark_oak_log",
+    "properties": {
       "axis": "y"
     }
   }

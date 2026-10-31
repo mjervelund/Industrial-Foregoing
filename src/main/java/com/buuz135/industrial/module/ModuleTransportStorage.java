@@ -36,13 +36,12 @@ import com.buuz135.industrial.gui.conveyor.ContainerConveyor;
 import com.buuz135.industrial.gui.transporter.ContainerTransporter;
 import com.buuz135.industrial.item.ItemConveyorUpgrade;
 import com.buuz135.industrial.item.ItemTransporterType;
-import com.buuz135.industrial.proxy.client.model.ConveyorBlockModel;
-import com.buuz135.industrial.proxy.client.model.TransporterBlockModel;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.TitaniumTab;
+import com.buuz135.industrial.proxy.client.TransportStorageClientEvents;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -52,7 +51,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.model.standalone.SimpleUnbakedStandaloneModel;
 import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
@@ -87,43 +85,9 @@ public class ModuleTransportStorage implements IModule {
         ContainerTransporter.TYPE = registryHelper.registerGeneric(Registries.MENU, "transporter", () -> IMenuTypeExtension.create(ContainerTransporter::new));
         TransporterTypeFactory.FACTORIES.forEach(transporterTypeFactory -> registryHelper.registerGeneric(Registries.ITEM, transporterTypeFactory.getName() + "_transporter_type", () -> new ItemTransporterType(transporterTypeFactory, TAB_TRANSPORT)));
         if (FMLEnvironment.getDist().isClient()) {
-            this.onClient();
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void registerStandalone(ModelEvent.RegisterStandalone event) {
-        // Upgrade models are standalone models added to the conveyor/transporter block model per installed upgrade
-        for (TransporterTypeFactory transporterTypeFactory : TransporterTypeFactory.FACTORIES) {
-            for (Direction upgradeFacing : transporterTypeFactory.getValidFacings()) {
-                for (TransporterTypeFactory.TransporterAction actions : TransporterTypeFactory.TransporterAction.values()) {
-                    Identifier id = transporterTypeFactory.getModel(upgradeFacing, actions);
-                    StandaloneModelKey<BlockStateModelPart> key = new StandaloneModelKey<>(id::toString);
-                    TRANSPORTER_CACHE.put(id, key);
-                    event.register(key, SimpleUnbakedStandaloneModel.simpleModelWrapper(id));
-                }
-            }
-        }
-        for (ConveyorUpgradeFactory conveyorUpgradeFactory : ConveyorUpgradeFactory.FACTORIES) {
-            for (Direction upgradeFacing : conveyorUpgradeFactory.getValidFacings()) {
-                for (Direction conveyorFacing : ConveyorBlock.FACING.getPossibleValues()) {
-                    Identifier id = conveyorUpgradeFactory.getModel(upgradeFacing, conveyorFacing);
-                    StandaloneModelKey<BlockStateModelPart> key = new StandaloneModelKey<>(id::toString);
-                    CONVEYOR_UPGRADES_CACHE.put(id, key);
-                    event.register(key, SimpleUnbakedStandaloneModel.simpleModelWrapper(id));
-                }
-            }
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void modifyBakingResult(ModelEvent.ModifyBakingResult event) {
-        var models = event.getBakingResult().blockStateModels();
-        for (BlockState state : TRANSPORTER.getBlock().getStateDefinition().getPossibleStates()) {
-            models.computeIfPresent(state, (s, model) -> new TransporterBlockModel(model));
-        }
-        for (BlockState state : CONVEYOR.getBlock().getStateDefinition().getPossibleStates()) {
-            models.computeIfPresent(state, (s, model) -> new ConveyorBlockModel(model));
+            // Client model hooks live in a client-only class: @OnlyIn no longer strips methods, and the
+            // dedicated server cannot load the model classes they reference.
+            TransportStorageClientEvents.register();
         }
     }
 
@@ -136,14 +100,4 @@ public class ModuleTransportStorage implements IModule {
     private void onClientSetupTransporter(FMLClientSetupEvent event) {
         MenuScreens.register(ContainerTransporter.TYPE, GuiTransporter::new);
     }*/
-
-    @OnlyIn(Dist.CLIENT)
-    private void onClient() {
-        //EventManager.mod(FMLClientSetupEvent.class).process(this::onClientSetupConveyor).subscribe();
-        EventManager.mod(ModelEvent.RegisterStandalone.class).process(this::registerStandalone).subscribe();
-        //EventManager.mod(TextureStitchEvent.Pre.class).process(this::textureStitch).subscribe();
-        EventManager.mod(ModelEvent.ModifyBakingResult.class).process(this::modifyBakingResult).subscribe();
-        //EventManager.mod(TextureStitchEvent.Pre.class).process(this::transporterTextureStitch).subscribe();
-        //EventManager.mod(FMLClientSetupEvent.class).process(this::onClientSetupTransporter).subscribe();
-    }
 }

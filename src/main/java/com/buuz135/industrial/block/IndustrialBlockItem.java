@@ -14,7 +14,7 @@ public class IndustrialBlockItem extends BlockItem{
     private TitaniumTab group;
 
     public IndustrialBlockItem(Block blockIn, TitaniumTab group) {
-        super(blockIn, new Item.Properties());
+        super(blockIn, com.hrznstudio.titanium.module.DeferredRegistryHelper.applyItemRegistrationId(new Item.Properties().useBlockDescriptionPrefix()));
         this.group = group;
     }
 

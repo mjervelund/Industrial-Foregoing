@@ -23,11 +23,9 @@ package com.buuz135.industrial.entity;
 
 import com.buuz135.industrial.item.infinity.item.ItemInfinityNuke;
 import com.buuz135.industrial.module.ModuleTool;
-import com.buuz135.industrial.proxy.client.sound.TickeableSound;
+import com.buuz135.industrial.proxy.client.sound.NukeClientSounds;
 import com.buuz135.industrial.utils.explosion.ExplosionTickHandler;
 import com.buuz135.industrial.utils.explosion.ProcessExplosion;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -67,10 +65,8 @@ public class InfinityNukeEntity extends Entity {
     private int radius = 1;
     private int ticksExploding = 1;
     private ProcessExplosion explosionHelper;
-    @OnlyIn(Dist.CLIENT)
-    private TickeableSound chargingSound;
-    @OnlyIn(Dist.CLIENT)
-    private TickeableSound explodingSound;
+    // Client sound state, owned by NukeClientSounds (typed Object so the server never loads client sound classes).
+    private Object clientSounds;
 
     public InfinityNukeEntity(EntityType<? extends InfinityNukeEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
@@ -120,22 +116,21 @@ public class InfinityNukeEntity extends Entity {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     private void tickClient() {
-        if (chargingSound == null && this.getEntityData().get(EXPLODING)) {
-            Minecraft.getInstance().getSoundManager().play(chargingSound = new TickeableSound(this.level(), this.blockPosition(), ModuleTool.NUKE_CHARGING.get(), getRadius(), 10, this.level().getRandom()));
-        }
-        if (chargingSound != null) {
-            chargingSound.setDistance(getRadius());
-            chargingSound.increase();
-            if (!Minecraft.getInstance().getSoundManager().isActive(chargingSound) && explodingSound == null) {
-                explodingSound = new TickeableSound(this.level(), this.blockPosition(), ModuleTool.NUKE_EXPLOSION.get(), getRadius(), 10, this.level().getRandom());
-                explodingSound.setPitch(1);
-                Minecraft.getInstance().getSoundManager().play(explodingSound);
-            }
-        }
+        NukeClientSounds.tick(this);
     }
 
+    public Object getClientSounds() {
+        return clientSounds;
+    }
+
+    public void setClientSounds(Object clientSounds) {
+        this.clientSounds = clientSounds;
+    }
+
+    public boolean isExplodingSynced() {
+        return this.getEntityData().get(EXPLODING);
+    }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -192,9 +187,8 @@ public class InfinityNukeEntity extends Entity {
         return super.interact(player, hand, location);
     }
 
-    @OnlyIn(Dist.CLIENT)
     private void arm() {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ModuleTool.NUKE_ARMING.get(), SoundSource.BLOCKS, 1, 1, Minecraft.getInstance().level.getRandom(), this.blockPosition()));
+        NukeClientSounds.arm(this);
     }
 
     @Override

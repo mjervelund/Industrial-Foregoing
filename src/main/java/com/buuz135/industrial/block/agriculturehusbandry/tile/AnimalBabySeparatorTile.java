@@ -84,12 +84,18 @@ public class AnimalBabySeparatorTile extends IndustrialAreaWorkingTile<AnimalBab
     @OnlyIn(Dist.CLIENT)
     public void initClient() {
         super.initClient();
+        // withoutTooltip() is called inside the anonymous class: calling it here makes the server verifier load
+        // client GUI classes when Titanium links this tile (see IFClientScreenAddons).
         addGuiAddonFactory(() -> new ItemGuiAddon(42, 20) {
+            {
+                withoutTooltip();
+            }
+
             @Override
             public ItemStack getItemStack() {
                 return new ItemStack(movingAdults ? Items.WHEAT : Items.WHEAT_SEEDS);
             }
-        }.withoutTooltip());
+        });
     }
 
     @Override

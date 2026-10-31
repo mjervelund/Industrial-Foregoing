@@ -148,7 +148,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                         getRecipe().ifPresent(recipe -> {
                             AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                             //RenderSystem.setupGui3DDiffuseLighting();
-                            guiGraphics.item(recipe.output, guiX + getPosX() + 1, guiY + getPosY() + 1);
+                            guiGraphics.item(recipe.getOutput(), guiX + getPosX() + 1, guiY + getPosY() + 1);
 //                            Lighting.turnOff();
 //                            RenderSystem.enableAlphaTest();
                         });
@@ -158,7 +158,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                     public List<Component> getTooltipLines() {
                         List<Component> lines = new ArrayList<>();
                         getRecipe().ifPresent(recipe -> {
-                            lines.add(Component.literal(ChatFormatting.GOLD + LangUtil.getString("tooltip.industrialforegoing.generating") + ChatFormatting.WHITE + recipe.output.getHoverName().getString()));
+                            lines.add(Component.literal(ChatFormatting.GOLD + LangUtil.getString("tooltip.industrialforegoing.generating") + ChatFormatting.WHITE + recipe.getOutput().getHoverName().getString()));
                             lines.add(Component.literal(ChatFormatting.GOLD + LangUtil.getString("tooltip.industrialforegoing.needs")));
                             lines.add(Component.literal(ChatFormatting.YELLOW + " - " + ChatFormatting.WHITE + recipe.waterNeed + ChatFormatting.DARK_AQUA + LangUtil.getString("tooltip.industrialforegoing.mb_of", LangUtil.getString("block.minecraft.water"))));
                             lines.add(Component.literal(ChatFormatting.YELLOW + " - " + ChatFormatting.WHITE + recipe.lavaNeed + ChatFormatting.DARK_AQUA + LangUtil.getString("tooltip.industrialforegoing.mb_of", LangUtil.getString("block.minecraft.lava"))));
@@ -317,7 +317,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
 
     @Override
     public boolean canIncrease() {
-        return getRecipe().map(recipe -> recipe.canIncrease(water, lava) && ItemUtil.insertItemReturnRemaining(inventoryGenerator, recipe.output.copy(), true, null).isEmpty()).orElse(false)
+        return getRecipe().map(recipe -> recipe.canIncrease(water, lava) && ItemUtil.insertItemReturnRemaining(inventoryGenerator, recipe.getOutput(), true, null).isEmpty()).orElse(false)
                 || process(inventoryThird, inventoryFourth, ACTION_RECIPES[fourthRecipeId], true)
                 || process(inventorySecond, inventoryThird, ACTION_RECIPES[thirdRecipeId], true)
                 || process(inventoryFirst, inventorySecond, ACTION_RECIPES[secondRecipeId], true)
@@ -375,7 +375,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         return () -> {
             if (!process(inventoryThird, inventoryFourth, ACTION_RECIPES[fourthRecipeId], false) && !process(inventorySecond, inventoryThird, ACTION_RECIPES[thirdRecipeId], false) && !process(inventoryFirst, inventorySecond, ACTION_RECIPES[secondRecipeId], false) && !process(inventoryGenerator, inventoryFirst, ACTION_RECIPES[firstRecipeId], false)) {
                 getRecipe().ifPresent(recipe -> {
-                    ItemStack output = recipe.output.copy();
+                    ItemStack output = recipe.getOutput();
                     if (ItemUtil.insertItemReturnRemaining(inventoryGenerator, output, false, null).isEmpty()) {
                         recipe.consume(water, lava);
                     }

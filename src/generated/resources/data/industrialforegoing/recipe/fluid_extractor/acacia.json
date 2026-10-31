@@ -8,8 +8,8 @@
     "id": "industrialforegoing:latex"
   },
   "result": {
-    "Name": "minecraft:stripped_acacia_log",
-    "Properties": {
+    "id": "minecraft:stripped_acacia_log",
+    "properties": {
       "axis": "y"
     }
   }

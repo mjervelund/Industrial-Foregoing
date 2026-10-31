@@ -72,7 +72,7 @@ side = "BOTH"
 [[dependencies."${mod_id}"]] #optional
 modId = "titanium" #mandatory
 type = "required"
-versionRange = "[26.3-4.0,)" #mandatory
+versionRange = "[4.0,)" #mandatory
 ordering = "NONE"
 side = "BOTH"
 [[dependencies."${mod_id}"]] #optional

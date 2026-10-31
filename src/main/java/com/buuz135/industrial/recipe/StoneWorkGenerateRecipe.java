@@ -32,6 +32,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -42,18 +43,24 @@ import net.minecraft.world.level.block.Blocks;
 public class StoneWorkGenerateRecipe implements IndustrialRecipe {
 
     public static final MapCodec<StoneWorkGenerateRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
-            ItemStack.CODEC.fieldOf("output").forGetter(o -> o.output),
+            ItemStackTemplate.CODEC.fieldOf("output").forGetter(o -> o.output),
             Codec.INT.fieldOf("waterNeed").forGetter(o -> o.waterNeed),
             Codec.INT.fieldOf("lavaNeed").forGetter(o -> o.lavaNeed),
             Codec.INT.fieldOf("waterConsume").forGetter(o -> o.waterConsume),
             Codec.INT.fieldOf("lavaConsume").forGetter(o -> o.lavaConsume)
-    ).apply(in, StoneWorkGenerateRecipe::new));
-    public ItemStack output;
+    ).apply(in, StoneWorkGenerateRecipe::fromCodec));
+    // 26.3: recipes are parsed with the datapack registries, before item/fluid components are bound, so outputs are
+    // stored as ItemStackTemplate/FluidStackTemplate (same JSON shape) and stacks are created on use.
+    public ItemStackTemplate output;
     public int waterNeed;
     public int lavaNeed;
     public int waterConsume;
     public int lavaConsume;
     public StoneWorkGenerateRecipe(ItemStack output, int waterNeed, int lavaNeed, int waterConsume, int lavaConsume) {
+        this(ItemStackTemplate.fromNonEmptyStack(output), waterNeed, lavaNeed, waterConsume, lavaConsume);
+    }
+
+    private StoneWorkGenerateRecipe(ItemStackTemplate output, int waterNeed, int lavaNeed, int waterConsume, int lavaConsume) {
         this.output = output;
         this.waterNeed = waterNeed;
         this.lavaNeed = lavaNeed;
@@ -61,6 +68,15 @@ public class StoneWorkGenerateRecipe implements IndustrialRecipe {
         this.lavaConsume = lavaConsume;
     }
     public StoneWorkGenerateRecipe() {
+    }
+
+    private static StoneWorkGenerateRecipe fromCodec(ItemStackTemplate output, int waterNeed, int lavaNeed, int waterConsume, int lavaConsume) {
+        return new StoneWorkGenerateRecipe(output, waterNeed, lavaNeed, waterConsume, lavaConsume);
+    }
+
+    /** A new stack of the output. */
+    public ItemStack getOutput() {
+        return output.create();
     }
 
     public static void init(RecipeOutput output) {

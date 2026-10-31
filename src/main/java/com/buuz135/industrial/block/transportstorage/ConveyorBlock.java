@@ -528,7 +528,7 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
         private TitaniumTab group;
 
         public ConveyorItem(Block block, TitaniumTab group) {
-            super(block, new Item.Properties());
+            super(block, com.hrznstudio.titanium.module.DeferredRegistryHelper.applyItemRegistrationId(new Item.Properties().useBlockDescriptionPrefix()));
             //this.setRegistryName(Reference.MOD_ID, "conveyor");
             this.group = group;
         }

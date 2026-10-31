@@ -39,6 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 
 public class FluidExtractorRecipe implements IndustrialRecipe {
 
@@ -46,24 +47,41 @@ public class FluidExtractorRecipe implements IndustrialRecipe {
             Ingredient.CODEC.fieldOf("input").forGetter(o -> o.input),
             BlockState.CODEC.fieldOf("result").forGetter(o -> o.result),
             Codec.FLOAT.fieldOf("breakChance").forGetter(o -> o.breakChance),
-            FluidStack.CODEC.fieldOf("output").forGetter(o -> o.output),
+            FluidStackTemplate.CODEC.fieldOf("output").forGetter(o -> o.output),
             Codec.BOOL.fieldOf("defaultRecipe").forGetter(o -> o.defaultRecipe)
-    ).apply(in, FluidExtractorRecipe::new));
+    ).apply(in, FluidExtractorRecipe::fromCodec));
 
     public Ingredient input;
     public BlockState result;
     public float breakChance;
-    public FluidStack output;
+    // 26.3: recipes are parsed with the datapack registries, before item/fluid components are bound, so outputs are
+    // stored as ItemStackTemplate/FluidStackTemplate (same JSON shape) and stacks are created on use.
+    public FluidStackTemplate output;
     public boolean defaultRecipe;
 
     public FluidExtractorRecipe(Ingredient input, BlockState result, float breakChance, FluidStack output, boolean defaultRecipe) {
         this.input = input;
         this.result = result;
         this.breakChance = breakChance;
-        this.output = output;
+        this.output = FluidStackTemplate.fromNonEmptyStack(output);
         this.defaultRecipe = defaultRecipe;
     }
     public FluidExtractorRecipe() {
+    }
+
+    private static FluidExtractorRecipe fromCodec(Ingredient input, BlockState result, float breakChance, FluidStackTemplate output, boolean defaultRecipe) {
+        FluidExtractorRecipe recipe = new FluidExtractorRecipe();
+        recipe.input = input;
+        recipe.result = result;
+        recipe.breakChance = breakChance;
+        recipe.output = output;
+        recipe.defaultRecipe = defaultRecipe;
+        return recipe;
+    }
+
+    /** A new stack of the fluid output. */
+    public FluidStack getOutput() {
+        return output.create();
     }
 
     public static void init(RecipeOutput output) {
@@ -88,7 +106,7 @@ public class FluidExtractorRecipe implements IndustrialRecipe {
     }
 
     public boolean outputsLatex() {
-        return output.getFluid().isSame(ModuleCore.LATEX.getSourceFluid().get());
+        return output.fluid().value().isSame(ModuleCore.LATEX.getSourceFluid().get());
     }
 
     public boolean matches(Level world, BlockPos pos) {

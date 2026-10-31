@@ -28,6 +28,7 @@ import com.buuz135.industrial.block.transportstorage.TransporterBlock;
 import com.buuz135.industrial.gui.transporter.ContainerTransporter;
 import com.buuz135.industrial.item.addon.ProcessingAddonItem;
 import com.buuz135.industrial.module.ModuleTransportStorage;
+import com.buuz135.industrial.proxy.client.IFClientScreenAddons;
 import com.buuz135.industrial.proxy.client.model.TransporterModelData;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.api.IFactory;
@@ -37,7 +38,6 @@ import com.hrznstudio.titanium.api.client.AssetTypes;
 import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.block.tile.ActiveTile;
-import com.hrznstudio.titanium.client.screen.addon.AssetScreenAddon;
 import com.hrznstudio.titanium.component.inventory.InventoryComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.sideness.IFacingComponent;
@@ -273,7 +273,9 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
 
     @OnlyIn(Dist.CLIENT)
     public IFactory<? extends IScreenAddon> getAugmentBackground() {
-        return () -> new AssetScreenAddon(AssetTypes.AUGMENT_BACKGROUND, 175, 4, true);
+        // Method reference to a client class: a lambda here returns IScreenAddon, which makes the server verifier load
+        // client GUI classes when Titanium links this tile (see IFClientScreenAddons).
+        return IFClientScreenAddons::augmentBackground;
     }
 
     private List<ItemStack> getItemStackAugments() {

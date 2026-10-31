@@ -36,12 +36,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.NeoForgeConditions;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import java.util.ArrayList;
@@ -55,41 +57,63 @@ public class DissolutionChamberRecipe implements IndustrialRecipe {
             Ingredient.CODEC.listOf(0, 8).fieldOf("input").forGetter(o -> o.input),
             SizedFluidIngredient.CODEC.fieldOf("inputFluid").forGetter(o -> o.inputFluid),
             Codec.INT.fieldOf("processingTime").forGetter(o -> o.processingTime),
-            ItemStack.CODEC.optionalFieldOf("output").forGetter(o -> o.output),
-            FluidStack.CODEC.optionalFieldOf("outputFluid").forGetter(o -> o.outputFluid)
-    ).apply(in, DissolutionChamberRecipe::new));
+            ItemStackTemplate.CODEC.optionalFieldOf("output").forGetter(o -> o.output),
+            FluidStackTemplate.CODEC.optionalFieldOf("outputFluid").forGetter(o -> o.outputFluid)
+    ).apply(in, DissolutionChamberRecipe::fromCodec));
 
     public List<Ingredient> input;
     public SizedFluidIngredient inputFluid;
     public int processingTime;
-    public Optional<ItemStack> output;
-    public Optional<FluidStack> outputFluid;
+    // 26.3: recipes are parsed with the datapack registries, before item/fluid components are bound, so outputs are
+    // stored as ItemStackTemplate/FluidStackTemplate (same JSON shape) and stacks are created on use.
+    public Optional<ItemStackTemplate> output;
+    public Optional<FluidStackTemplate> outputFluid;
 
     public DissolutionChamberRecipe(List<Ingredient> input, SizedFluidIngredient inputFluid, int processingTime, Optional<ItemStack> output, Optional<FluidStack> outputFluid) {
         this.input = input;
         this.inputFluid = inputFluid;
         this.processingTime = processingTime;
-        this.output = output;
-        this.outputFluid = outputFluid;
+        this.output = output.filter(stack -> !stack.isEmpty()).map(ItemStackTemplate::fromNonEmptyStack);
+        this.outputFluid = outputFluid.filter(stack -> !stack.isEmpty()).map(FluidStackTemplate::fromNonEmptyStack);
     }
 
     public DissolutionChamberRecipe(List<Ingredient> input, FluidStack inputFluid, int processingTime, Optional<ItemStack> output, Optional<FluidStack> outputFluid) {
         this.input = input;
         this.inputFluid = SizedFluidIngredient.of(inputFluid.getFluid(), inputFluid.getAmount());
         this.processingTime = processingTime;
-        this.output = output;
-        this.outputFluid = outputFluid;
+        this.output = output.filter(stack -> !stack.isEmpty()).map(ItemStackTemplate::fromNonEmptyStack);
+        this.outputFluid = outputFluid.filter(stack -> !stack.isEmpty()).map(FluidStackTemplate::fromNonEmptyStack);
     }
 
     public DissolutionChamberRecipe() {
 
     }
 
+    private static DissolutionChamberRecipe fromCodec(List<Ingredient> input, SizedFluidIngredient inputFluid, int processingTime, Optional<ItemStackTemplate> output, Optional<FluidStackTemplate> outputFluid) {
+        DissolutionChamberRecipe recipe = new DissolutionChamberRecipe();
+        recipe.input = input;
+        recipe.inputFluid = inputFluid;
+        recipe.processingTime = processingTime;
+        recipe.output = output;
+        recipe.outputFluid = outputFluid;
+        return recipe;
+    }
+
+    /** A new stack of the item output, if any. */
+    public Optional<ItemStack> getOutput() {
+        return output.map(ItemStackTemplate::create);
+    }
+
+    /** A new stack of the fluid output, if any. */
+    public Optional<FluidStack> getOutputFluid() {
+        return outputFluid.map(FluidStackTemplate::create);
+    }
+
     public static void createRecipe(RecipeOutput recipeOutput, String name, DissolutionChamberRecipe recipe) {
         var rl = generateRL(name);
         List<ICondition> conditions = new ArrayList<>();
         if (recipe.output.isPresent())
-            conditions.add(NeoForgeConditions.itemRegistered(BuiltInRegistries.ITEM.getKey(recipe.output.get().getItem())));
+            conditions.add(NeoForgeConditions.itemRegistered(BuiltInRegistries.ITEM.getKey(recipe.output.get().item().value())));
         IndustrialRecipe.save(recipeOutput, rl, recipe, conditions.toArray(new ICondition[conditions.size()]));
     }
 
@@ -127,7 +151,7 @@ public class DissolutionChamberRecipe implements IndustrialRecipe {
     }
 
     public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return this.output.orElse(ItemStack.EMPTY).copy();
+        return getOutput().orElse(ItemStack.EMPTY);
     }
 
     public ItemStack getToastSymbol() {

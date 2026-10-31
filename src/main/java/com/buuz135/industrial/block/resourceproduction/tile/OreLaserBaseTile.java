@@ -32,6 +32,7 @@ import com.buuz135.industrial.recipe.LaserDrillRarity;
 import com.buuz135.industrial.recipe.data.EntityData;
 import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.utils.ItemStackWeightedItem;
+import com.buuz135.industrial.proxy.client.IFClientScreenAddons;
 import com.hrznstudio.titanium.Titanium;
 import com.hrznstudio.titanium._impl.TagConfig;
 import com.hrznstudio.titanium.annotation.Save;
@@ -40,7 +41,6 @@ import com.hrznstudio.titanium.api.augment.AugmentTypes;
 import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.client.screen.addon.ProgressBarScreenAddon;
 import com.hrznstudio.titanium.client.screen.addon.TextScreenAddon;
-import com.hrznstudio.titanium.client.screen.addon.WidgetScreenAddon;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
@@ -50,8 +50,6 @@ import com.hrznstudio.titanium.network.locator.instance.TileEntityLocatorInstanc
 import com.hrznstudio.titanium.network.messages.ButtonClickNetworkMessage;
 import com.hrznstudio.titanium.util.RecipeUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -143,33 +141,18 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 return ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.depth").getString();
             }
         });
-        this.addGuiAddonFactory(() -> {
-            var edit = new EditBox(Minecraft.getInstance().font, 80, 26, 40, 12, Component.literal(this.miningDepth + "")) {
-                @Override
-                public String getValue() {
-                    return miningDepth + "";
+        // Number field built in a client class (see IFClientScreenAddons); EditBox#setFilter is gone on 26.3.
+        this.addGuiAddonFactory(() -> IFClientScreenAddons.numberField(102, 85, () -> this.miningDepth, c -> Character.isDigit(c) || c == '-', string -> {
+            if (!string.isEmpty() && !string.equals("-")) {
+                CompoundTag compoundTag = new CompoundTag();
+                try {
+                    compoundTag.putInt("MiningLevel", Integer.decode(string));
+                } catch (NumberFormatException e) {
+                    return;
                 }
-
-                // EditBox#setFilter is gone on 26.3: only accept digits and the sign
-                @Override
-                public void insertText(String input) {
-                    if (input.chars().allMatch(c -> Character.isDigit(c) || c == '-')) super.insertText(input);
-                }
-            };
-            edit.setValue(miningDepth + "");
-            edit.setResponder(string -> {
-                if (!string.isEmpty() && !string.equals("-")) {
-                    CompoundTag compoundTag = new CompoundTag();
-                    try {
-                        compoundTag.putInt("MiningLevel", Integer.decode(string));
-                    } catch (NumberFormatException e) {
-                        return;
-                    }
-                    Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(new TileEntityLocatorInstance(this.getBlockPos()), 5487, compoundTag));
-                }
-            });
-            return new WidgetScreenAddon(102, 85, edit);
-        });
+                Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(new TileEntityLocatorInstance(this.getBlockPos()), 5487, compoundTag));
+            }
+        }));
     }
 
     @Override

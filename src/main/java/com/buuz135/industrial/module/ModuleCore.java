@@ -32,6 +32,7 @@ import com.buuz135.industrial.block.core.PinkSlimeBlock;
 import com.buuz135.industrial.block.core.tile.FluidExtractorTile;
 import com.buuz135.industrial.fluid.OreFluidInstance;
 import com.buuz135.industrial.fluid.OreTitaniumFluidType;
+import com.buuz135.industrial.proxy.client.IFFluidRenderProperties;
 import com.buuz135.industrial.item.*;
 import com.buuz135.industrial.item.addon.EfficiencyAddonItem;
 import com.buuz135.industrial.item.addon.ProcessingAddonItem;
@@ -43,7 +44,6 @@ import com.buuz135.industrial.utils.CustomRarity;
 import com.buuz135.industrial.utils.Reference;
 import com.buuz135.industrial.utils.apihandlers.straw.*;
 import com.hrznstudio.titanium.event.handler.EventManager;
-import com.hrznstudio.titanium.fluid.ClientFluidTypeExtensions;
 import com.hrznstudio.titanium.fluid.TitaniumFluidInstance;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
@@ -158,16 +158,16 @@ public class ModuleCore implements IModule {
         PROCESSING_ADDON_2 = helper.registerGeneric(Registries.ITEM, "processing_addon_tier_2", () -> new ProcessingAddonItem(2, TAB_CORE));
         MACHINE_SETTINGS_COPIER = helper.registerGeneric(Registries.ITEM, "machine_settings_copier", () -> new MachineSettingCopier(TAB_CORE));
 
-        LATEX = new TitaniumFluidInstance(helper, "latex", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/latex_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/latex_flow")), TAB_CORE);
-        MEAT = new TitaniumFluidInstance(helper, "meat", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/meat_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/meat_flow")), TAB_CORE);
-        SEWAGE = new TitaniumFluidInstance(helper, "sewage", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/sewage_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/sewage_flow")), TAB_CORE);
-        ESSENCE = new TitaniumFluidInstance(helper, "essence", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/essence_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/essence_flow")), TAB_CORE);
-        SLUDGE = new TitaniumFluidInstance(helper, "sludge", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/sludge_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/sludge_flow")), TAB_CORE);
-        PINK_SLIME = new TitaniumFluidInstance(helper, "pink_slime", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/pink_slime_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/pink_slime_flow")), TAB_CORE);
-        BIOFUEL = new TitaniumFluidInstance(helper, "biofuel", FluidType.Properties.create().density(1000), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/biofuel_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/biofuel_flow")), TAB_CORE);
-        ETHER = new TitaniumFluidInstance(helper, "ether_gas", FluidType.Properties.create().density(0), new ClientFluidTypeExtensions(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/ether_gas_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/ether_gas_flow")), TAB_CORE);
-        RAW_ORE_MEAT = new OreFluidInstance(helper, "raw_ore_meat", FluidType.Properties.create().density(1000), new OreTitaniumFluidType.Client(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/raw_ore_meat_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/raw_ore_meat_flow")), TAB_CORE);
-        FERMENTED_ORE_MEAT = new OreFluidInstance(helper, "fermented_ore_meat", FluidType.Properties.create().density(1000), new OreTitaniumFluidType.Client(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/ether_gas_still"), Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/fluids/ether_gas_flow")), TAB_CORE);
+        LATEX = new TitaniumFluidInstance(helper, "latex", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/latex_still", "block/fluids/latex_flow"), TAB_CORE);
+        MEAT = new TitaniumFluidInstance(helper, "meat", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/meat_still", "block/fluids/meat_flow"), TAB_CORE);
+        SEWAGE = new TitaniumFluidInstance(helper, "sewage", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/sewage_still", "block/fluids/sewage_flow"), TAB_CORE);
+        ESSENCE = new TitaniumFluidInstance(helper, "essence", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/essence_still", "block/fluids/essence_flow"), TAB_CORE);
+        SLUDGE = new TitaniumFluidInstance(helper, "sludge", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/sludge_still", "block/fluids/sludge_flow"), TAB_CORE);
+        PINK_SLIME = new TitaniumFluidInstance(helper, "pink_slime", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/pink_slime_still", "block/fluids/pink_slime_flow"), TAB_CORE);
+        BIOFUEL = new TitaniumFluidInstance(helper, "biofuel", FluidType.Properties.create().density(1000), IFFluidRenderProperties.of("block/fluids/biofuel_still", "block/fluids/biofuel_flow"), TAB_CORE);
+        ETHER = new TitaniumFluidInstance(helper, "ether_gas", FluidType.Properties.create().density(0), IFFluidRenderProperties.of("block/fluids/ether_gas_still", "block/fluids/ether_gas_flow"), TAB_CORE);
+        RAW_ORE_MEAT = new OreFluidInstance(helper, "raw_ore_meat", FluidType.Properties.create().density(1000), IFFluidRenderProperties.ore("block/fluids/raw_ore_meat_still", "block/fluids/raw_ore_meat_flow"), TAB_CORE);
+        FERMENTED_ORE_MEAT = new OreFluidInstance(helper, "fermented_ore_meat", FluidType.Properties.create().density(1000), IFFluidRenderProperties.ore("block/fluids/ether_gas_still", "block/fluids/ether_gas_flow"), TAB_CORE);
 
         IRON_GEAR = helper.registerGeneric(Registries.ITEM, "iron_gear", () -> new RecipelessCustomItem("iron_gear", TAB_CORE));
         GOLD_GEAR = helper.registerGeneric(Registries.ITEM, "gold_gear", () -> new RecipelessCustomItem("gold_gear", TAB_CORE));
@@ -207,7 +207,7 @@ public class ModuleCore implements IModule {
         CRUSHER_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "crusher", () -> CodecRecipeSerializer.create(CrusherRecipe.class, CRUSHER_TYPE, CrusherRecipe.CODEC));
         CRUSHER_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "crusher", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "crusher")));
 
-        PINK_SLIME_BLOCK = helper.registerBlockWithItem("pink_slime_block", () -> new PinkSlimeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.GRASS).friction(0.8F).sound(SoundType.SLIME_BLOCK).noOcclusion()), (block) -> () -> new BlockItem(block.get(), new Item.Properties()), ModuleCore.TAB_CORE);
+        PINK_SLIME_BLOCK = helper.registerBlockWithItem("pink_slime_block", () -> new PinkSlimeBlock(DeferredRegistryHelper.applyBlockRegistrationId(BlockBehaviour.Properties.of()).mapColor(MapColor.GRASS).friction(0.8F).sound(SoundType.SLIME_BLOCK).noOcclusion()), (block) -> () -> new BlockItem(block.get(), DeferredRegistryHelper.applyItemRegistrationId(new Item.Properties().useBlockDescriptionPrefix())), ModuleCore.TAB_CORE);
     }
 
 }

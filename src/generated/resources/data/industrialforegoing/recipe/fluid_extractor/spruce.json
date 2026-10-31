@@ -8,8 +8,8 @@
     "id": "industrialforegoing:latex"
   },
   "result": {
-    "Name": "minecraft:stripped_spruce_log",
-    "Properties": {
+    "id": "minecraft:stripped_spruce_log",
+    "properties": {
       "axis": "y"
     }
   }

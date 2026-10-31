@@ -8,8 +8,8 @@
     "id": "industrialforegoing:latex"
   },
   "result": {
-    "Name": "minecraft:stripped_cherry_log",
-    "Properties": {
+    "id": "minecraft:stripped_cherry_log",
+    "properties": {
       "axis": "y"
     }
   }

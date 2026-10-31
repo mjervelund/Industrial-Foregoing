@@ -80,9 +80,9 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
 
                 FluidExtractionProgress extractionProgress = EXTRACTION.computeIfAbsent(this.level.dimensionType(), dimensionType -> new HashMap<>()).computeIfAbsent(this.level.getChunkAt(pos).getPos(), chunkPos -> new HashMap<>()).computeIfAbsent(pos, pos1 -> new FluidExtractionProgress(this.level));
                 if (currentRecipe.outputsLatex()) {
-                    TankUtils.fillForced(tank, new FluidStack(currentRecipe.output.getFluid(), currentRecipe.output.getAmount() * (powered ? 3 : 1)), false);
+                    TankUtils.fillForced(tank, currentRecipe.output.withAmount(currentRecipe.output.amount() * (powered ? 3 : 1)).create(), false);
                 } else {
-                    TankUtils.fillForced(tank, currentRecipe.output.copy(), false);
+                    TankUtils.fillForced(tank, currentRecipe.getOutput(), false);
                 }
                 if (this.level.getRandom().nextDouble() <= currentRecipe.breakChance) {
                     extractionProgress.setProgress(extractionProgress.getProgress() + 1);
@@ -91,7 +91,7 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
                     extractionProgress.setProgress(0);
                     this.level.setBlockAndUpdate(pos, currentRecipe.result);
                     if (currentRecipe.outputsLatex()) {
-                        TankUtils.fillForced(tank, new FluidStack(currentRecipe.output.getFluid(), currentRecipe.output.getAmount() * (powered ? 200 : 1)), false);
+                        TankUtils.fillForced(tank, currentRecipe.output.withAmount(currentRecipe.output.amount() * (powered ? 200 : 1)).create(), false);
                     }
                 }
                 if (powered)

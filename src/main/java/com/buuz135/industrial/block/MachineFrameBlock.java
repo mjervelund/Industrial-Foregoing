@@ -57,7 +57,7 @@ public class MachineFrameBlock extends BasicBlock {
         private TitaniumTab group;
 
         public MachineFrameItem(Block blockIn, Rarity rarity, TitaniumTab group) {
-            super(blockIn, new Item.Properties().rarity(rarity));
+            super(blockIn, com.hrznstudio.titanium.module.DeferredRegistryHelper.applyItemRegistrationId(new Item.Properties().useBlockDescriptionPrefix().rarity(rarity)));
             this.group = group;
         }
 

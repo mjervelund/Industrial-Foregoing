@@ -28,10 +28,10 @@ import com.buuz135.industrial.gui.component.TextureScreenAddon;
 import com.buuz135.industrial.module.ModuleMisc;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.buuz135.industrial.utils.Reference;
+import com.buuz135.industrial.proxy.client.IFClientScreenAddons;
 import com.hrznstudio.titanium.Titanium;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.client.screen.addon.TextScreenAddon;
-import com.hrznstudio.titanium.client.screen.addon.WidgetScreenAddon;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
@@ -39,8 +39,6 @@ import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.network.locator.instance.TileEntityLocatorInstance;
 import com.hrznstudio.titanium.network.messages.ButtonClickNetworkMessage;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -110,29 +108,14 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
                 return super.getText() + ChatFormatting.DARK_GREEN + new DecimalFormat().format(EnchantmentApplicatorTile.getEssenceConsumed(selectedLevel)) + ChatFormatting.DARK_GRAY + "mb";
             }
         });
-        this.addGuiAddonFactory(() -> {
-            var edit = new EditBox(Minecraft.getInstance().font, 80, 26, 40, 12, Component.literal(this.selectedLevel + "")) {
-                @Override
-                public String getValue() {
-                    return selectedLevel + "";
-                }
-
-                // EditBox#setFilter is gone on 26.3: only accept digits
-                @Override
-                public void insertText(String input) {
-                    if (input.chars().allMatch(Character::isDigit)) super.insertText(input);
-                }
-            };
-            edit.setValue(selectedLevel + "");
-            edit.setResponder(string -> {
-                if (!string.isEmpty()) {
-                    CompoundTag compoundTag = new CompoundTag();
-                    compoundTag.putInt("EnchantmentLevel", Integer.decode(string));
-                    Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(new TileEntityLocatorInstance(this.getBlockPos()), 5487, compoundTag));
-                }
-            });
-            return new WidgetScreenAddon(120, 22, edit);
-        });
+        // Number field built in a client class (see IFClientScreenAddons); EditBox#setFilter is gone on 26.3.
+        this.addGuiAddonFactory(() -> IFClientScreenAddons.numberField(120, 22, () -> this.selectedLevel, Character::isDigit, string -> {
+            if (!string.isEmpty()) {
+                CompoundTag compoundTag = new CompoundTag();
+                compoundTag.putInt("EnchantmentLevel", Integer.decode(string));
+                Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(new TileEntityLocatorInstance(this.getBlockPos()), 5487, compoundTag));
+            }
+        }));
         Identifier res = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/machines.png");
         this.addGuiAddonFactory(() -> new TextureScreenAddon(158, 4, 14, 14, res, 96, 233) {
 

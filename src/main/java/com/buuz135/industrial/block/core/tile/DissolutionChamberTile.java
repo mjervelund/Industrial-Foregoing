@@ -45,6 +45,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -120,7 +121,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
 
     @Override
     public boolean canIncrease() {
-        return currentRecipe != null && ItemUtil.insertItemReturnRemaining(output, currentRecipe.output.orElse(ItemStack.EMPTY).copy(), true, null).isEmpty() && (currentRecipe.outputFluid.isEmpty() || TankUtils.fillForced(outputFluid, currentRecipe.outputFluid.orElse(FluidStack.EMPTY).copy(), true) == currentRecipe.outputFluid.orElse(FluidStack.EMPTY).getAmount());
+        return currentRecipe != null && ItemUtil.insertItemReturnRemaining(output, currentRecipe.getOutput().orElse(ItemStack.EMPTY), true, null).isEmpty() && (currentRecipe.outputFluid.isEmpty() || TankUtils.fillForced(outputFluid, currentRecipe.getOutputFluid().orElse(FluidStack.EMPTY), true) == currentRecipe.outputFluid.map(FluidStackTemplate::amount).orElse(0));
     }
 
     @Override
@@ -135,9 +136,9 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
                     for (int i = 0; i < input.getInventory().getSlots(); i++) {
                         ItemStackUtils.shrink(input.getInventory(), i, 1);
                     }
-                    if (dissolutionChamberRecipe.outputFluid.isPresent() && !dissolutionChamberRecipe.outputFluid.get().isEmpty())
-                        TankUtils.fillForced(outputFluid, dissolutionChamberRecipe.outputFluid.get().copy(), false);
-                    ItemStack outputStack = dissolutionChamberRecipe.output.get().copy();
+                    if (dissolutionChamberRecipe.outputFluid.isPresent() && dissolutionChamberRecipe.outputFluid.get().amount() > 0)
+                        TankUtils.fillForced(outputFluid, dissolutionChamberRecipe.outputFluid.get().create(), false);
+                    ItemStack outputStack = dissolutionChamberRecipe.getOutput().orElse(ItemStack.EMPTY);
                     outputStack.onCraftedBySystem(this.level);
                     ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
                     checkForRecipe();
