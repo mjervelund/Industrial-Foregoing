@@ -22,10 +22,13 @@
 package com.buuz135.industrial.fluid;
 
 import com.buuz135.industrial.utils.IFAttachments;
-import com.buuz135.industrial.utils.ItemStackUtils;
+import com.buuz135.industrial.utils.ColorUtils;
 import com.hrznstudio.titanium.fluid.ClientFluidTypeExtensions;
 import com.hrznstudio.titanium.util.TagUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -111,10 +114,20 @@ public class OreTitaniumFluidType extends FluidType {
                 String tag = stack.get(IFAttachments.ORE_FLUID_TAG);
                 List<Item> items = TagUtil.getAllEntries(BuiltInRegistries.ITEM, TagUtil.getItemTag(Identifier.parse(tag.replace("c:raw_materials/", "c:dusts/")))).stream().toList();
                 if (items.size() > 0) {
-                    return ItemStackUtils.getColor(new ItemStack(items.get(0)));
+                    return getColor(new ItemStack(items.get(0)));
                 }
             }
             return 0xFFFFFFFF;
+        }
+
+        // Lives here (client-only nested class) so ItemStackUtils stays loadable on a dedicated server
+        // (its verifier loaded net.minecraft.client.multiplayer.ClientLevel and crashed the laser drill).
+        private static int getColor(ItemStack stack) {
+            Minecraft minecraft = Minecraft.getInstance();
+            ItemStackRenderState renderState = new ItemStackRenderState();
+            minecraft.getItemModelResolver().updateForTopItem(renderState, stack, ItemDisplayContext.GUI, minecraft.level, minecraft.player, 0);
+            Material.Baked particle = renderState.pickParticleMaterial(minecraft.level == null ? net.minecraft.util.RandomSource.create() : minecraft.level.getRandom());
+            return ColorUtils.getColorFrom(particle == null ? null : particle.sprite());
         }
 
     }

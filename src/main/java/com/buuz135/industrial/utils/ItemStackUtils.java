@@ -23,18 +23,12 @@
 package com.buuz135.industrial.utils;
 
 import com.hrznstudio.titanium.component.inventory.InventoryComponent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 
@@ -69,16 +63,6 @@ public class ItemStackUtils {
 
     public static boolean acceptsFluidItem(ItemStack stack) {
         return !stack.isEmpty() && ItemAccess.forStack(stack).oneByOne().getCapability(Capabilities.Fluid.ITEM) != null;// && !stack.getItem().equals(ForgeModContainer.getInstance().universalBucket);
-    }
-
-
-    @OnlyIn(Dist.CLIENT)
-    public static int getColor(ItemStack stack) {
-        Minecraft minecraft = Minecraft.getInstance();
-        ItemStackRenderState renderState = new ItemStackRenderState();
-        minecraft.getItemModelResolver().updateForTopItem(renderState, stack, ItemDisplayContext.GUI, minecraft.level, minecraft.player, 0);
-        Material.Baked particle = renderState.pickParticleMaterial(minecraft.level == null ? net.minecraft.util.RandomSource.create() : minecraft.level.getRandom());
-        return ColorUtils.getColorFrom(particle == null ? null : particle.sprite());
     }
 
 }
