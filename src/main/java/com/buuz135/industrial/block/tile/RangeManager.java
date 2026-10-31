@@ -65,11 +65,11 @@ public class RangeManager {
     }
 
     public enum RangeType {
-        FRONT((direction, axisAlignedBB) -> axisAlignedBB.move(direction.getNormal().getX(), direction.getNormal().getY(), direction.getNormal().getZ()),
-                (rangeManager, integer) -> rangeManager.getBox().move(rangeManager.getDirection().getNormal().getX() * integer, rangeManager.getDirection().getNormal().getY() * integer, rangeManager.getDirection().getNormal().getZ() * integer).
+        FRONT((direction, axisAlignedBB) -> axisAlignedBB.move(direction.getUnitVec3i().getX(), direction.getUnitVec3i().getY(), direction.getUnitVec3i().getZ()),
+                (rangeManager, integer) -> rangeManager.getBox().move(rangeManager.getDirection().getUnitVec3i().getX() * integer, rangeManager.getDirection().getUnitVec3i().getY() * integer, rangeManager.getDirection().getUnitVec3i().getZ() * integer).
                         inflate(integer, 0, integer)),
-        BEHIND((direction, axisAlignedBB) -> axisAlignedBB.move(direction.getOpposite().getNormal().getX(), direction.getOpposite().getNormal().getY(), direction.getOpposite().getNormal().getZ()),
-                (rangeManager, integer) -> rangeManager.getBox().move(rangeManager.getDirection().getOpposite().getNormal().getX() * integer, rangeManager.getDirection().getOpposite().getNormal().getY() * integer, rangeManager.getDirection().getOpposite().getNormal().getZ() * integer).
+        BEHIND((direction, axisAlignedBB) -> axisAlignedBB.move(direction.getOpposite().getUnitVec3i().getX(), direction.getOpposite().getUnitVec3i().getY(), direction.getOpposite().getUnitVec3i().getZ()),
+                (rangeManager, integer) -> rangeManager.getBox().move(rangeManager.getDirection().getOpposite().getUnitVec3i().getX() * integer, rangeManager.getDirection().getOpposite().getUnitVec3i().getY() * integer, rangeManager.getDirection().getOpposite().getUnitVec3i().getZ() * integer).
                         inflate(integer, 0, integer)),
         TOP((direction, axisAlignedBB) -> axisAlignedBB.move(0, 1, 0), (rangeManager, integer) -> rangeManager.getBox().inflate(integer, 0, integer)),
         TOP_UP((direction, axisAlignedBB) -> axisAlignedBB.move(0, 2, 0), (rangeManager, integer) -> rangeManager.getBox().inflate(integer, 0, integer)),

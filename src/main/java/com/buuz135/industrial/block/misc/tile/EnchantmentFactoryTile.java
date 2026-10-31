@@ -48,7 +48,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -56,7 +55,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import com.buuz135.industrial.utils.TankUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -117,17 +116,14 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
                 public String getValue() {
                     return selectedLevel + "";
                 }
+
+                // EditBox#setFilter is gone on 26.3: only accept digits
+                @Override
+                public void insertText(String input) {
+                    if (input.chars().allMatch(Character::isDigit)) super.insertText(input);
+                }
             };
             edit.setValue(selectedLevel + "");
-            edit.setFilter(string -> {
-                if (string.isEmpty()) return true;
-                try {
-                    Integer.decode(string);
-                    return true;
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-            });
             edit.setResponder(string -> {
                 if (!string.isEmpty()) {
                     CompoundTag compoundTag = new CompoundTag();
@@ -161,7 +157,7 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
     @Override
     public boolean canIncrease() {
         long amount = this.tank.getFluidAmount();
-        var capability = this.level.getCapability(Capabilities.FluidHandler.BLOCK, this.worldPosition.above(), Direction.DOWN);
+        var capability = this.level.getCapability(Capabilities.Fluid.BLOCK, this.worldPosition.above(), Direction.DOWN);
         if (capability != null) {
             amount += EnchantmentApplicatorTile.getMatchingAmount(capability);
         }
@@ -175,11 +171,11 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
             this.inputFirst.setStackInSlot(0, ItemStack.EMPTY);
             this.output.setStackInSlot(0, output);
             var amount = EnchantmentApplicatorTile.getEssenceConsumed(this.selectedLevel);
-            var capability = this.level.getCapability(Capabilities.FluidHandler.BLOCK, this.worldPosition.above(), Direction.DOWN);
+            var capability = this.level.getCapability(Capabilities.Fluid.BLOCK, this.worldPosition.above(), Direction.DOWN);
             if (capability != null) {
                 amount = EnchantmentApplicatorTile.drainAmount(amount, capability);
             }
-            if (amount > 0) this.tank.drainForced(amount, IFluidHandler.FluidAction.EXECUTE);
+            if (amount > 0) TankUtils.drainForced(this.tank, amount, false);
         };
     }
 
@@ -194,7 +190,7 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
     }
 
     private boolean isEnchanted(ItemStack stack) {
-        return stack.isEnchanted() || stack.getItem() instanceof EnchantedBookItem;
+        return stack.isEnchanted() || stack.is(Items.ENCHANTED_BOOK);
     }
 
     @Override

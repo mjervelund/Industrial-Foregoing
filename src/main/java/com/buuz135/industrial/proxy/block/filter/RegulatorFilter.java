@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.proxy.block.filter;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -156,7 +157,7 @@ public abstract class RegulatorFilter<TYPE, CAP> {
         for (int i = 0; i < this.getFilterSlots().length; i++) {
             if (!this.getFilterSlots()[i].getStack().isEmpty()) {
                 CompoundTag slot = new CompoundTag();
-                slot.put("Stack", this.getFilterSlots()[i].getStack().saveOptional(provider));
+                slot.put("Stack", ItemStackSerialization.save(provider, this.getFilterSlots()[i].getStack()));
                 slot.putInt("Amount", this.getFilterSlots()[i].getAmount());
                 compound.put(String.valueOf(i), slot);
             }
@@ -170,7 +171,7 @@ public abstract class RegulatorFilter<TYPE, CAP> {
         for (int i = 0; i < this.getFilterSlots().length; i++) {
             if (nbt.contains(String.valueOf(i))) {
                 CompoundTag slot = nbt.getCompoundOrEmpty(String.valueOf(i));
-                this.getFilterSlots()[i].setStack(ItemStack.parseOptional(provider, slot.getCompoundOrEmpty("Stack")));
+                this.getFilterSlots()[i].setStack(ItemStackSerialization.load(provider, slot.getCompoundOrEmpty("Stack")));
                 this.getFilterSlots()[i].setAmount(slot.getIntOr("Amount", 0));
             } else {
                 this.getFilterSlots()[i].setStack(ItemStack.EMPTY);

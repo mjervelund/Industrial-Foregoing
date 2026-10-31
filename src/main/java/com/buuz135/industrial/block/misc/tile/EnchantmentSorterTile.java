@@ -30,10 +30,10 @@ import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 public class EnchantmentSorterTile extends IndustrialProcessingTile<EnchantmentSorterTile> {
 
@@ -70,14 +70,14 @@ public class EnchantmentSorterTile extends IndustrialProcessingTile<EnchantmentS
 
     @Override
     public boolean canIncrease() {
-        return !input.getStackInSlot(0).isEmpty() && ((isEnchanted(input.getStackInSlot(0)) && ItemHandlerHelper.insertItem(enchantedItems, input.getStackInSlot(0).copy(), true).isEmpty()) || (!isEnchanted(input.getStackInSlot(0)) && ItemHandlerHelper.insertItem(noEnchanted, input.getStackInSlot(0).copy(), true).isEmpty()));
+        return !input.getStackInSlot(0).isEmpty() && ((isEnchanted(input.getStackInSlot(0)) && ItemUtil.insertItemReturnRemaining(enchantedItems, input.getStackInSlot(0).copy(), true, null).isEmpty()) || (!isEnchanted(input.getStackInSlot(0)) && ItemUtil.insertItemReturnRemaining(noEnchanted, input.getStackInSlot(0).copy(), true, null).isEmpty()));
     }
 
     @Override
     public Runnable onFinish() {
         return () -> {
             ItemStack stack = input.getStackInSlot(0).copy();
-            ItemHandlerHelper.insertItem(isEnchanted(stack) ? enchantedItems : noEnchanted, stack, false);
+            ItemUtil.insertItemReturnRemaining(isEnchanted(stack) ? enchantedItems : noEnchanted, stack, false, null);
             input.setStackInSlot(0, ItemStack.EMPTY);
         };
     }
@@ -98,6 +98,6 @@ public class EnchantmentSorterTile extends IndustrialProcessingTile<EnchantmentS
     }
 
     private boolean isEnchanted(ItemStack stack) {
-        return stack.isEnchanted() || stack.getItem() instanceof EnchantedBookItem;
+        return stack.isEnchanted() || stack.is(Items.ENCHANTED_BOOK);
     }
 }

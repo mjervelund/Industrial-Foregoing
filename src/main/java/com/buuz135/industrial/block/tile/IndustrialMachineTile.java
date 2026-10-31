@@ -61,7 +61,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import java.util.Optional;
 
@@ -179,7 +179,7 @@ public abstract class IndustrialMachineTile<T extends IndustrialMachineTile<T>> 
                     for (ItemStack stackPlayer : player.inventoryMenu.getItems()) {
                         if (ItemStack.isSameItem(stack, stackPlayer)) {
                             var copiedStack = stackPlayer.copyWithCount(1);
-                            if (ItemHandlerHelper.insertItem(this.getAugmentInventory(), copiedStack, false).isEmpty()) {
+                            if (ItemUtil.insertItemReturnRemaining(this.getAugmentInventory(), copiedStack, false, null).isEmpty()) {
                                 stackPlayer.shrink(1);
                             }
                             break;

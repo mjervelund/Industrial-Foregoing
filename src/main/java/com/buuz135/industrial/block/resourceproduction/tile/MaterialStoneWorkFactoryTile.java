@@ -148,7 +148,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                         getRecipe().ifPresent(recipe -> {
                             AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                             //RenderSystem.setupGui3DDiffuseLighting();
-                            guiGraphics.renderItem(recipe.output, guiX + getPosX() + 1, guiY + getPosY() + 1);
+                            guiGraphics.item(recipe.output, guiX + getPosX() + 1, guiY + getPosY() + 1);
 //                            Lighting.turnOff();
 //                            RenderSystem.enableAlphaTest();
                         });
@@ -211,7 +211,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                     public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
-                        guiGraphics.renderItem(ACTION_RECIPES[firstRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
+                        guiGraphics.item(ACTION_RECIPES[firstRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
 //                        Lighting.turnOff();
 //                        RenderSystem.enableAlphaTest();
                     }
@@ -237,7 +237,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                     public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
-                        guiGraphics.renderItem(ACTION_RECIPES[secondRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
+                        guiGraphics.item(ACTION_RECIPES[secondRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
 //                        Lighting.turnOff();
 //                        RenderSystem.enableAlphaTest();
                     }
@@ -263,7 +263,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                     public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
-                        guiGraphics.renderItem(ACTION_RECIPES[thirdRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
+                        guiGraphics.item(ACTION_RECIPES[thirdRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
 //                        Lighting.turnOff();
 //                        RenderSystem.enableAlphaTest();
                     }
@@ -289,7 +289,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
                     public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
-                        guiGraphics.renderItem(ACTION_RECIPES[fourthRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
+                        guiGraphics.item(ACTION_RECIPES[fourthRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
 //                        Lighting.turnOff();
 //                        RenderSystem.enableAlphaTest();
                     }

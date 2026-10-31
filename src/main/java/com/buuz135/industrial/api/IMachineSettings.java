@@ -1,6 +1,7 @@
 package com.buuz135.industrial.api;
 
 import com.hrznstudio.titanium.component.inventory.InventoryComponent;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +17,7 @@ public interface IMachineSettings {
         for (int i = 0; i < component.getSlots(); i++) {
             var stack = component.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                tag.put(i + "", stack.save(registryAccess));
+                tag.put(i + "", ItemStackSerialization.save(registryAccess, stack));
             }
         }
         return tag;
@@ -25,7 +26,7 @@ public interface IMachineSettings {
     public static List<ItemStack> readInventory(RegistryAccess registryAccess, CompoundTag tag) {
         List<ItemStack> stacks = new ArrayList<>();
         for (String allKey : tag.keySet()) {
-            stacks.add(ItemStack.parseOptional(registryAccess, tag.getCompoundOrEmpty(allKey)));
+            stacks.add(ItemStackSerialization.load(registryAccess, tag.getCompoundOrEmpty(allKey)));
         }
         return stacks;
     }

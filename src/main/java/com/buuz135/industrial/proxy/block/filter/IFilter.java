@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.proxy.block.filter;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.gui.component.custom.ICanSendNetworkMessage;
 import com.buuz135.industrial.gui.conveyor.GuiConveyor;
 import com.buuz135.industrial.gui.transporter.GuiTransporter;
@@ -103,7 +104,7 @@ public interface IFilter<T extends Entity> {
         }
 
         public Rect2i getArea() {
-            Screen screen = Minecraft.getInstance().screen;
+            Screen screen = Minecraft.getInstance().gui.screen();
             if (screen instanceof GuiConveyor) {
                 GuiConveyor gui = (GuiConveyor) screen;
                 return new Rect2i(x + gui.getX(), y + gui.getY(), 18, 18);
@@ -116,8 +117,8 @@ public interface IFilter<T extends Entity> {
         }
 
         public void accept(ItemStack ingredient) {
-            if (Minecraft.getInstance().screen instanceof ICanSendNetworkMessage) {
-                ((ICanSendNetworkMessage) Minecraft.getInstance().screen).sendMessage(id, (CompoundTag) ingredient.saveOptional(Minecraft.getInstance().level.registryAccess()));
+            if (Minecraft.getInstance().gui.screen() instanceof ICanSendNetworkMessage) {
+                ((ICanSendNetworkMessage) Minecraft.getInstance().gui.screen()).sendMessage(id, ItemStackSerialization.save(Minecraft.getInstance().level.registryAccess(), ingredient));
             }
         }
     }

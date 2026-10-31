@@ -64,7 +64,7 @@ public class MachineSettingCopier extends IFCustomItem {
                 if (!context.getLevel().isClientSide())
                     machineSettings.loadSettings(player, stack.get(IFAttachments.SETTINGS_COPIER));
                 player.playSound(SoundEvents.ANVIL_USE, 0.1F, 1.0F);
-                player.displayClientMessage(Component.translatable("text.industrialforegoing.machine_settings_copier.settings_stored"), true);
+                player.sendOverlayMessage(Component.translatable("text.industrialforegoing.machine_settings_copier.settings_stored"));
                 return InteractionResult.SUCCESS;
             } else {
                 if (!context.getLevel().isClientSide()) {
@@ -73,7 +73,7 @@ public class MachineSettingCopier extends IFCustomItem {
                     stack.set(IFAttachments.SETTINGS_COPIER, tag);
                 }
                 player.playSound(SoundEvents.ARROW_HIT_PLAYER, 0.5F, 1.0F);
-                player.displayClientMessage(Component.translatable("text.industrialforegoing.machine_settings_copier.settings_copied"), true);
+                player.sendOverlayMessage(Component.translatable("text.industrialforegoing.machine_settings_copier.settings_copied"));
                 return InteractionResult.SUCCESS;
             }
         }

@@ -35,6 +35,7 @@ import com.hrznstudio.titanium.item.AugmentWrapper;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.util.ARGB;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -121,7 +122,7 @@ public abstract class IndustrialAreaWorkingTile<T extends IndustrialAreaWorkingT
     public void increasePointer() {
         BlockPos pointed = getPointedBlockPos();
         if (this.level instanceof ServerLevel && this.spawnParticles) {
-            ((ServerLevel) this.level).sendParticles(new DustParticleOptions(new Vector3f(Math.abs(this.worldPosition.getX() % 255) / 256f, Math.abs(this.worldPosition.getY() % 255) / 256f, Math.abs(this.worldPosition.getZ() % 255) / 256f), 1f), pointed.getX() + 0.5, pointed.getY() + 1, pointed.getZ() + 0.5, 1, 0, 0, 0, 0);
+            ((ServerLevel) this.level).sendParticles(new DustParticleOptions(ARGB.colorFromVector3f(new Vector3f(Math.abs(this.worldPosition.getX() % 255) / 256f, Math.abs(this.worldPosition.getY() % 255) / 256f, Math.abs(this.worldPosition.getZ() % 255) / 256f)), 1f), pointed.getX() + 0.5, pointed.getY() + 1, pointed.getZ() + 0.5, 1, 0, 0, 0, 0);
         }
         ++pointer;
     }

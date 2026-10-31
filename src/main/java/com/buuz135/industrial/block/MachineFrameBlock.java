@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block;
 
+import net.minecraft.core.HolderLookup;
 import com.hrznstudio.titanium.block.BasicBlock;
 import com.hrznstudio.titanium.datagenerator.loot.block.BasicBlockLootTables;
 import com.hrznstudio.titanium.tab.TitaniumTab;
@@ -62,8 +63,8 @@ public class MachineFrameBlock extends BasicBlock {
 
         @Nullable
         @Override
-        public String getCreatorModId(ItemStack itemStack) {
-            return Component.translatable("itemGroup.industrialforegoing_" + this.group.getResourceLocation().getPath()).getString();
+        public String getCreatorModId(HolderLookup.Provider registries, ItemStack itemStack) {
+            return Component.translatable("itemGroup.industrialforegoing_" + this.group.getIdentifier().getPath()).getString();
         }
 
     }

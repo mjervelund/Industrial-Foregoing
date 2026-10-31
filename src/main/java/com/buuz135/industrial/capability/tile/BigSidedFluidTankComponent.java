@@ -27,6 +27,8 @@ import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.container.addon.IContainerAddon;
 
 import java.util.Collections;
+import net.neoforged.neoforge.fluids.FluidStack;
+
 import java.util.List;
 
 public abstract class BigSidedFluidTankComponent<T extends IComponentHarness> extends SidedFluidTankComponent<T> {
@@ -42,7 +44,7 @@ public abstract class BigSidedFluidTankComponent<T extends IComponentHarness> ex
     }
 
     @Override
-    protected void onContentsChanged() {
+    protected void onContentsChanged(int index, FluidStack previousContents) {
         sync();
     }
 

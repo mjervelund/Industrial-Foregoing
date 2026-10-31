@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.proxy.block.filter;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.item.MobImprisonmentToolItem;
 import com.buuz135.industrial.module.ModuleTool;
 import net.minecraft.core.HolderLookup;
@@ -32,7 +33,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
 public class ItemStackFilter extends AbstractFilter<Entity> {
 
@@ -84,8 +85,8 @@ public class ItemStackFilter extends AbstractFilter<Entity> {
         }
         if (isEmpty) return false;
         for (GhostSlot stack : this.getFilter()) {
-            FluidStack original = FluidUtil.getFluidContained(stack.getStack()).orElse(null);
-            if (original != null && FluidStack.isSameFluidSameComponents(original, fluidStack)) return true;
+            FluidStack original = FluidUtil.getFirstStackContained(stack.getStack());
+            if (!original.isEmpty() && FluidStack.isSameFluidSameComponents(original, fluidStack)) return true;
         }
         return false;
     }
@@ -100,7 +101,7 @@ public class ItemStackFilter extends AbstractFilter<Entity> {
         CompoundTag compound = new CompoundTag();
         for (int i = 0; i < this.getFilter().length; i++) {
             if (!this.getFilter()[i].getStack().isEmpty())
-                compound.put(String.valueOf(i), this.getFilter()[i].getStack().saveOptional(provider));
+                compound.put(String.valueOf(i), ItemStackSerialization.save(provider, this.getFilter()[i].getStack()));
         }
         return compound;
     }
@@ -109,7 +110,7 @@ public class ItemStackFilter extends AbstractFilter<Entity> {
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         for (int i = 0; i < this.getFilter().length; i++) {
             if (nbt.contains(String.valueOf(i))) {
-                this.getFilter()[i].setStack(ItemStack.parseOptional(provider, nbt.getCompoundOrEmpty(String.valueOf(i))));
+                this.getFilter()[i].setStack(ItemStackSerialization.load(provider, nbt.getCompoundOrEmpty(String.valueOf(i))));
             } else this.getFilter()[i].setStack(ItemStack.EMPTY);
         }
     }

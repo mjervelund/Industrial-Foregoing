@@ -59,8 +59,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import com.buuz135.industrial.utils.ItemStackUtils;
+import com.buuz135.industrial.utils.TankUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -152,14 +153,14 @@ public class EnchantmentExtractorTile extends IndustrialProcessingTile<Enchantme
                     EnchantmentHelper.setEnchantments(book, bookEnchantments.toImmutable());
                     if (map.keySet().stream().allMatch(enchantmentHolder -> enchantmentHolder.is(EnchantmentTags.CURSE))) {
                         ItemStack output = input.copy();
-                        input.shrink(1);
-                        ItemHandlerHelper.insertItem(this.outputNoEnchantedItem, output, false);
+                        ItemStackUtils.shrink(this.inputEnchantedItem, 0, 1);
+                        ItemUtil.insertItemReturnRemaining(this.outputNoEnchantedItem, output, false, null);
                     } else if (map.keySet().size() == 1) {
                         ItemStack output = removeEnchantments(input, input.getDamageValue(), input.getCount());
-                        input.shrink(1);
-                        ItemHandlerHelper.insertItem(this.outputNoEnchantedItem, output, false);
-                        ItemHandlerHelper.insertItem(this.outputEnchantedBook, book, false);
-                        this.inputBook.getStackInSlot(0).shrink(1);
+                        ItemStackUtils.shrink(this.inputEnchantedItem, 0, 1);
+                        ItemUtil.insertItemReturnRemaining(this.outputNoEnchantedItem, output, false, null);
+                        ItemUtil.insertItemReturnRemaining(this.outputEnchantedBook, book, false, null);
+                        ItemStackUtils.shrink(this.inputBook, 0, 1);
                     } else {
                         ItemEnchantments.Mutable cleanMap = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(input));
                         cleanMap.removeIf(enchantmentHolder -> enchantmentHolder.equals(selected));
@@ -168,16 +169,17 @@ public class EnchantmentExtractorTile extends IndustrialProcessingTile<Enchantme
                             input.remove(DataComponents.STORED_ENCHANTMENTS);
                         }
                         EnchantmentHelper.setEnchantments(input, cleanMap.toImmutable());
-                        ItemHandlerHelper.insertItem(this.outputEnchantedBook, book, false);
-                        this.inputBook.getStackInSlot(0).shrink(1);
+                        this.inputEnchantedItem.setStackInSlot(0, input); // getStackInSlot returns a copy
+                        ItemUtil.insertItemReturnRemaining(this.outputEnchantedBook, book, false, null);
+                        ItemStackUtils.shrink(this.inputBook, 0, 1);
                     }
                 }
             } else {
                 int essence = getEnchantmentXp(input) * 20;
                 ItemStack output = removeEnchantments(input, input.getDamageValue(), input.getCount());
-                input.shrink(1);
-                ItemHandlerHelper.insertItem(this.outputNoEnchantedItem, output, false);
-                this.tank.fillForced(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), essence), IFluidHandler.FluidAction.EXECUTE);
+                ItemStackUtils.shrink(this.inputEnchantedItem, 0, 1);
+                ItemUtil.insertItemReturnRemaining(this.outputNoEnchantedItem, output, false, null);
+                TankUtils.fillForced(this.tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), essence), false);
             }
         };
     }

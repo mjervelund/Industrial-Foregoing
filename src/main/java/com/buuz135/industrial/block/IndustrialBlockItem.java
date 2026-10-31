@@ -1,5 +1,6 @@
 package com.buuz135.industrial.block;
 
+import net.minecraft.core.HolderLookup;
 import com.hrznstudio.titanium.tab.TitaniumTab;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -20,7 +21,7 @@ public class IndustrialBlockItem extends BlockItem{
 
     @Nullable
     @Override
-    public String getCreatorModId(ItemStack itemStack) {
-        return Component.translatable("itemGroup.industrialforegoing_" + this.group.getResourceLocation().getPath()).getString();
+    public String getCreatorModId(HolderLookup.Provider registries, ItemStack itemStack) {
+        return Component.translatable("itemGroup.industrialforegoing_" + this.group.getIdentifier().getPath()).getString();
     }
 }

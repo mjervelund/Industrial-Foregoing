@@ -51,7 +51,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import com.buuz135.industrial.utils.ItemStackUtils;
+import com.buuz135.industrial.utils.TankUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -96,20 +100,25 @@ public class EnchantmentApplicatorTile extends IndustrialProcessingTile<Enchantm
         );
     }
 
-    public static int getMatchingAmount(IFluidHandler capability) {
+    public static int getMatchingAmount(ResourceHandler<FluidResource> capability) {
         int amount = 0;
-        for (int i = 0; i < capability.getTanks(); i++) {
-            if (capability.getFluidInTank(i).is(IndustrialTags.Fluids.EXPERIENCE)) {
-                amount += capability.getFluidInTank(i).getAmount();
+        for (int i = 0; i < capability.size(); i++) {
+            FluidResource resource = capability.getResource(i);
+            if (!resource.isEmpty() && resource.typeHolder().is(IndustrialTags.Fluids.EXPERIENCE)) {
+                amount += capability.getAmountAsInt(i);
             }
         }
         return amount;
     }
 
-    public static int drainAmount(int amount, IFluidHandler capability) {
-        for (int i = 0; i < capability.getTanks(); i++) {
-            if (capability.getFluidInTank(i).is(IndustrialTags.Fluids.EXPERIENCE)) {
-                amount -= capability.drain(amount, IFluidHandler.FluidAction.EXECUTE).getAmount();
+    public static int drainAmount(int amount, ResourceHandler<FluidResource> capability) {
+        for (int i = 0; i < capability.size() && amount > 0; i++) {
+            FluidResource resource = capability.getResource(i);
+            if (!resource.isEmpty() && resource.typeHolder().is(IndustrialTags.Fluids.EXPERIENCE)) {
+                try (var transaction = Transaction.open(null)) {
+                    amount -= capability.extract(i, resource, amount, transaction);
+                    transaction.commit();
+                }
             }
         }
         return amount;
@@ -146,7 +155,7 @@ public class EnchantmentApplicatorTile extends IndustrialProcessingTile<Enchantm
     public boolean canIncrease() {
         Pair<ItemStack, Integer> output = updateRepairOutput();
         long amount = this.tank.getFluidAmount();
-        var capability = this.level.getCapability(Capabilities.FluidHandler.BLOCK, this.worldPosition.above(), Direction.DOWN);
+        var capability = this.level.getCapability(Capabilities.Fluid.BLOCK, this.worldPosition.above(), Direction.DOWN);
         if (capability != null) {
             amount += getMatchingAmount(capability);
         }
@@ -158,14 +167,14 @@ public class EnchantmentApplicatorTile extends IndustrialProcessingTile<Enchantm
         return () -> {
             Pair<ItemStack, Integer> output = updateRepairOutput();
             this.inputFirst.setStackInSlot(0, ItemStack.EMPTY);
-            this.inputSecond.getStackInSlot(0).shrink(1);
+            ItemStackUtils.shrink(this.inputSecond, 0, 1);
             this.output.setStackInSlot(0, output.getLeft());
             var amount = getEssenceConsumed(output.getRight());
-            var capability = this.level.getCapability(Capabilities.FluidHandler.BLOCK, this.worldPosition.above(), Direction.DOWN);
+            var capability = this.level.getCapability(Capabilities.Fluid.BLOCK, this.worldPosition.above(), Direction.DOWN);
             if (capability != null) {
                 amount = drainAmount(amount, capability);
             }
-            if (amount > 0) this.tank.drainForced(amount, IFluidHandler.FluidAction.EXECUTE);
+            if (amount > 0) TankUtils.drainForced(this.tank, amount, false);
         };
     }
 
@@ -206,7 +215,7 @@ public class EnchantmentApplicatorTile extends IndustrialProcessingTile<Enchantm
             boolean addEnchantment = false;
             if (!inputSecond.isEmpty()) {
                 addEnchantment = inputSecond.has(DataComponents.STORED_ENCHANTMENTS);
-                if (inputFirstCopy.isDamageableItem() && inputFirstCopy.getItem().isValidRepairItem(inputFirst, inputSecond)) { //Combine
+                if (inputFirstCopy.isDamageableItem() && inputFirst.isValidRepairItem(inputSecond)) { //Combine
                     int l2 = Math.min(inputFirstCopy.getDamageValue(), inputFirstCopy.getMaxDamage() / 4);
                     if (l2 <= 0) { //No Output
                         return Pair.of(ItemStack.EMPTY, 0);
@@ -276,7 +285,6 @@ public class EnchantmentApplicatorTile extends IndustrialProcessingTile<Enchantm
                     }
                 }
             }
-            if (addEnchantment && !inputFirstCopy.isBookEnchantable(inputSecond)) inputFirstCopy = ItemStack.EMPTY;
             maximumCost = j + i;
             if (i <= 0) {
                 inputFirstCopy = ItemStack.EMPTY;
