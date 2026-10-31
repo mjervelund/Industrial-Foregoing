@@ -173,7 +173,7 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
     public void handleButtonMessage(int id, Player playerEntity, CompoundTag compound) {
         super.handleButtonMessage(id, playerEntity, compound);
         if (id == 5487) {
-            this.miningDepth = compound.getInt("MiningLevel");
+            this.miningDepth = compound.getIntOr("MiningLevel", 0);
             syncObject(this.miningDepth);
         }
     }
@@ -277,7 +277,7 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("OL_miningDepth")) {
-            this.miningDepth = tag.getInt("OL_miningDepth");
+            this.miningDepth = tag.getIntOr("OL_miningDepth", 0);
         }
         super.loadSettings(player, tag);
     }

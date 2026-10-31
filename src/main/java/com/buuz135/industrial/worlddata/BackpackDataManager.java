@@ -66,10 +66,10 @@ public class BackpackDataManager extends SavedData {
     public static BackpackDataManager load(HolderLookup.Provider provider, CompoundTag nbt) {
         BackpackDataManager manager = new BackpackDataManager();
         manager.itemHandlers = new HashMap<>();
-        CompoundTag backpacks = nbt.getCompound("Backpacks");
-        for (String s : backpacks.getAllKeys()) {
+        CompoundTag backpacks = nbt.getCompoundOrEmpty("Backpacks");
+        for (String s : backpacks.keySet()) {
             BackpackItemHandler hander = new BackpackItemHandler(manager);
-            hander.deserializeNBT(provider, backpacks.getCompound(s));
+            hander.deserializeNBT(provider, backpacks.getCompoundOrEmpty(s));
             manager.itemHandlers.put(s, hander);
         }
 
@@ -124,11 +124,11 @@ public class BackpackDataManager extends SavedData {
 
         @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-            CompoundTag slots = nbt.getCompound("Slots");
-            for (String s : slots.getAllKeys()) {
-                definitionList.get(Integer.parseInt(s)).deserializeNBT(provider, slots.getCompound(s));
+            CompoundTag slots = nbt.getCompoundOrEmpty("Slots");
+            for (String s : slots.keySet()) {
+                definitionList.get(Integer.parseInt(s)).deserializeNBT(provider, slots.getCompoundOrEmpty(s));
             }
-            this.maxAmount = nbt.getInt("MaxAmount");
+            this.maxAmount = nbt.getIntOr("MaxAmount", 0);
         }
 
         @Override
@@ -255,10 +255,10 @@ public class BackpackDataManager extends SavedData {
 
         @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-            this.stack = ItemStack.parseOptional(provider, nbt.getCompound("Stack"));
-            this.amount = nbt.getInt("Amount");
-            this.voidItems = nbt.getBoolean("Void");
-            this.refillItems = nbt.getBoolean("Refill");
+            this.stack = ItemStack.parseOptional(provider, nbt.getCompoundOrEmpty("Stack"));
+            this.amount = nbt.getIntOr("Amount", 0);
+            this.voidItems = nbt.getBooleanOr("Void", false);
+            this.refillItems = nbt.getBooleanOr("Refill", false);
         }
 
         public boolean isVoidItems() {

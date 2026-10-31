@@ -24,8 +24,8 @@ public interface IMachineSettings {
 
     public static List<ItemStack> readInventory(RegistryAccess registryAccess, CompoundTag tag) {
         List<ItemStack> stacks = new ArrayList<>();
-        for (String allKey : tag.getAllKeys()) {
-            stacks.add(ItemStack.parseOptional(registryAccess, tag.getCompound(allKey)));
+        for (String allKey : tag.keySet()) {
+            stacks.add(ItemStack.parseOptional(registryAccess, tag.getCompoundOrEmpty(allKey)));
         }
         return stacks;
     }

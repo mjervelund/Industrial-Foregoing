@@ -151,9 +151,9 @@ public class ConveyorInsertionUpgrade extends ConveyorUpgrade {
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         super.deserializeNBT(provider, nbt);
-        if (nbt.contains("Filter")) filter.deserializeNBT(provider, nbt.getCompound("Filter"));
-        whitelist = nbt.getBoolean("Whitelist");
-        fullArea = nbt.getBoolean("FullArea");
+        if (nbt.contains("Filter")) filter.deserializeNBT(provider, nbt.getCompoundOrEmpty("Filter"));
+        whitelist = nbt.getBooleanOr("Whitelist", false);
+        fullArea = nbt.getBooleanOr("FullArea", false);
     }
 
     @Override

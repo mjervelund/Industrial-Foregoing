@@ -236,11 +236,11 @@ public class InfinityTridentEntity extends AbstractArrow {
 
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("Trident", 10)) {
-            this.thrownStack = ItemStack.parseOptional(this.level().registryAccess(), compound.getCompound("Trident"));
+        if (compound.contains("Trident")) {
+            this.thrownStack = ItemStack.parseOptional(this.level().registryAccess(), compound.getCompoundOrEmpty("Trident"));
         }
 
-        this.dealtDamage = compound.getBoolean("DealtDamage");
+        this.dealtDamage = compound.getBooleanOr("DealtDamage", false);
         this.entityData.set(LOYALTY_LEVEL, ((ItemInfinityTrident) ModuleTool.INFINITY_TRIDENT.get()).getCurrentLoyalty(thrownStack));
         this.entityData.set(CHANNELING, ((ItemInfinityTrident) ModuleTool.INFINITY_TRIDENT.get()).getCurrentChanneling(thrownStack));
         this.entityData.set(TIER, ItemInfinity.getSelectedTier(thrownStack).getRadius());

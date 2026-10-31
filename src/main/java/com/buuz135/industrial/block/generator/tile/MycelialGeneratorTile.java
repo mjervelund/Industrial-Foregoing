@@ -159,7 +159,7 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     @Override
     public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
         for (int i = 0; i < this.inputs.length; i++) {
-            this.inputs[i].deserializeNBT(provider, compound.getCompound("input_" + i));
+            this.inputs[i].deserializeNBT(provider, compound.getCompoundOrEmpty("input_" + i));
         }
         super.loadAdditional(compound, provider);
     }

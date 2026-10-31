@@ -107,13 +107,13 @@ public class HydroponicSimulationProcessorItem extends IFCustomItem {
         }
 
         public Simulation(CompoundTag nbt) {
-            this.crop = ItemStack.parseOptional(IFAttachments.registryAccess(), nbt.getCompound("Crop"));
-            this.executions = nbt.getLong("Executions");
+            this.crop = ItemStack.parseOptional(IFAttachments.registryAccess(), nbt.getCompoundOrEmpty("Crop"));
+            this.executions = nbt.getLongOr("Executions", 0L);
             this.stats = new ArrayList<>();
-            var statsCompound = nbt.getCompound("Stats");
-            for (String allKey : statsCompound.getAllKeys()) {
-                var stat = statsCompound.getCompound(allKey);
-                this.stats.add(new CountedStack(ItemStack.parseOptional(IFAttachments.registryAccess(), stat.getCompound("Stack")), stat.getLong("Count")));
+            var statsCompound = nbt.getCompoundOrEmpty("Stats");
+            for (String allKey : statsCompound.keySet()) {
+                var stat = statsCompound.getCompoundOrEmpty(allKey);
+                this.stats.add(new CountedStack(ItemStack.parseOptional(IFAttachments.registryAccess(), stat.getCompoundOrEmpty("Stack")), stat.getLongOr("Count", 0L)));
             }
         }
 

@@ -222,20 +222,20 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
     @Override //read
     public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
-        this.facing = Direction.byName(compound.getString("Facing"));
-        this.type = ConveyorBlock.EnumType.getFromName(compound.getString("Type"));
-        this.color = compound.getInt("Color");
-        this.sticky = compound.getBoolean("Sticky");
+        this.facing = Direction.byName(compound.getStringOr("Facing", ""));
+        this.type = ConveyorBlock.EnumType.getFromName(compound.getStringOr("Type", ""));
+        this.color = compound.getIntOr("Color", 0);
+        this.sticky = compound.getBooleanOr("Sticky", false);
         if (compound.contains("Upgrades")) {
-            CompoundTag upgradesTag = compound.getCompound("Upgrades");
+            CompoundTag upgradesTag = compound.getCompoundOrEmpty("Upgrades");
             //upgradeMap.clear();
             for (Direction facing : Direction.values()) {
                 if (!upgradesTag.contains(facing.getSerializedName()))
                     continue;
-                CompoundTag upgradeTag = upgradesTag.getCompound(facing.getSerializedName());
+                CompoundTag upgradeTag = upgradesTag.getCompoundOrEmpty(facing.getSerializedName());
                 ConveyorUpgradeFactory factory = null;
                 for (ConveyorUpgradeFactory conveyorUpgradeFactory : ConveyorUpgradeFactory.FACTORIES) {
-                    if (BuiltInRegistries.ITEM.getKey(conveyorUpgradeFactory.getUpgradeItem()).equals(Identifier.parse(upgradeTag.getString("factory")))) {
+                    if (BuiltInRegistries.ITEM.getKey(conveyorUpgradeFactory.getUpgradeItem()).equals(Identifier.parse(upgradeTag.getStringOr("factory", "")))) {
                         factory = conveyorUpgradeFactory;
                         break;
                     }
@@ -243,15 +243,15 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
                 if (factory != null) {
                     ConveyorUpgrade upgrade = upgradeMap.getOrDefault(facing, factory.create(this, facing));
                     if (upgradeTag.contains("customNBT")) {
-                        upgrade.deserializeNBT(provider, upgradeTag.getCompound("customNBT"));
-                        //upgradeMap.get(facing).deserializeNBT(upgradeTag.getCompound("customNBT"));
+                        upgrade.deserializeNBT(provider, upgradeTag.getCompoundOrEmpty("customNBT"));
+                        //upgradeMap.get(facing).deserializeNBT(upgradeTag.getCompoundOrEmpty("customNBT"));
                     }
                     upgradeMap.put(facing, upgrade);
                 }
             }
         }
         if (compound.contains("Tank")) {
-            this.tank = this.tank.readFromNBT(provider, compound.getCompound("Tank"));
+            this.tank = this.tank.readFromNBT(provider, compound.getCompoundOrEmpty("Tank"));
         }
     }
 

@@ -191,11 +191,11 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("DC_locked")) {
-            input.setLocked(tag.getBoolean("DC_locked"));
+            input.setLocked(tag.getBooleanOr("DC_locked", false));
         }
         if (tag.contains("DC_filter")) {
-            for (String psFilter : tag.getCompound("DC_filter").getAllKeys()) {
-                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompound("DC_filter").getCompound(psFilter));
+            for (String psFilter : tag.getCompoundOrEmpty("DC_filter").keySet()) {
+                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("DC_filter").getCompoundOrEmpty(psFilter));
             }
         }
         super.loadSettings(player, tag);

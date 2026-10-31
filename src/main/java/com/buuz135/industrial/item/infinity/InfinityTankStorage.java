@@ -35,7 +35,7 @@ public class InfinityTankStorage implements IFluidHandlerItem, IScreenAddonProvi
         for (TankDefinition tankDefinition : this.tanks) {
             var tank = new FluidTank(tankDefinition.capacity(), tankDefinition.filter());
             if (component.contains(tankDefinition.name())) {
-                tank = tank.readFromNBT(IFAttachments.registryAccess(), component.getCompound(tankDefinition.name()));
+                tank = tank.readFromNBT(IFAttachments.registryAccess(), component.getCompoundOrEmpty(tankDefinition.name()));
             }
             tankMap.put(tankDefinition.name(), tank);
         }
@@ -118,7 +118,7 @@ public class InfinityTankStorage implements IFluidHandlerItem, IScreenAddonProvi
         var component = new CompoundTag();
         for (TankDefinition tankDefinition : this.tanks) {
             var tank = tankMap.get(tankDefinition.name());
-            component.put(tankDefinition.name(), tank.writeToNBT(IFAttachments.registryAccess(), component.getCompound(tankDefinition.name())));
+            component.put(tankDefinition.name(), tank.writeToNBT(IFAttachments.registryAccess(), component.getCompoundOrEmpty(tankDefinition.name())));
         }
         this.stack.set(IFAttachments.INFINITY_TANKS, component);
     }

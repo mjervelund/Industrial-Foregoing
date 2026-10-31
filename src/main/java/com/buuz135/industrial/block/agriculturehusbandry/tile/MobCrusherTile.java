@@ -235,7 +235,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("MC_drops")) {
-            this.dropXP = tag.getBoolean("MC_drops");
+            this.dropXP = tag.getBooleanOr("MC_drops", false);
         }
         super.loadSettings(player, tag);
     }

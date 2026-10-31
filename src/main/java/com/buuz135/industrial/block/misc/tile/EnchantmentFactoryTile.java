@@ -153,7 +153,7 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
     public void handleButtonMessage(int id, Player playerEntity, CompoundTag compound) {
         super.handleButtonMessage(id, playerEntity, compound);
         if (id == 5487) {
-            this.selectedLevel = compound.getInt("EnchantmentLevel");
+            this.selectedLevel = compound.getIntOr("EnchantmentLevel", 0);
             syncObject(this.selectedLevel);
         }
     }
@@ -210,7 +210,7 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         super.loadSettings(player, tag);
-        this.selectedLevel = tag.getInt("SelectedLevel");
+        this.selectedLevel = tag.getIntOr("SelectedLevel", 0);
     }
 
     @Override

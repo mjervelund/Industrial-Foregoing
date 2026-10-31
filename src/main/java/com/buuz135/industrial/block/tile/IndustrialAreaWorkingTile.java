@@ -148,8 +148,8 @@ public abstract class IndustrialAreaWorkingTile<T extends IndustrialAreaWorkingT
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         super.loadSettings(player, tag);
-        this.spawnParticles = tag.getBoolean("WA_spawnParticles");
-        this.showingArea = tag.getBoolean("WA_showingArea");
+        this.spawnParticles = tag.getBooleanOr("WA_spawnParticles", false);
+        this.showingArea = tag.getBooleanOr("WA_showingArea", false);
     }
 
     @Override

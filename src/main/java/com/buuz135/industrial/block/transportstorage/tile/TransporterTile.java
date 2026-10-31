@@ -224,15 +224,15 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
     public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
         if (compound.contains("Transporters")) {
-            CompoundTag upgradesTag = compound.getCompound("Transporters");
+            CompoundTag upgradesTag = compound.getCompoundOrEmpty("Transporters");
             //upgradeMap.clear();
             for (Direction facing : Direction.values()) {
                 if (!upgradesTag.contains(facing.getSerializedName()))
                     continue;
-                CompoundTag upgradeTag = upgradesTag.getCompound(facing.getSerializedName());
+                CompoundTag upgradeTag = upgradesTag.getCompoundOrEmpty(facing.getSerializedName());
                 TransporterTypeFactory factory = null;
                 for (TransporterTypeFactory transporterTypeFactory : TransporterTypeFactory.FACTORIES) {
-                    if (BuiltInRegistries.ITEM.getKey(transporterTypeFactory.getUpgradeItem()).equals(Identifier.parse(upgradeTag.getString("factory")))) {
+                    if (BuiltInRegistries.ITEM.getKey(transporterTypeFactory.getUpgradeItem()).equals(Identifier.parse(upgradeTag.getStringOr("factory", "")))) {
                         factory = transporterTypeFactory;
                         break;
                     }
@@ -240,8 +240,8 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
                 if (factory != null) {
                     TransporterType upgrade = transporterTypeMap.getOrDefault(facing, factory.create(this, facing, TransporterTypeFactory.TransporterAction.EXTRACT));
                     if (upgradeTag.contains("customNBT")) {
-                        upgrade.deserializeNBT(provider, upgradeTag.getCompound("customNBT"));
-                        //upgradeMap.get(facing).deserializeNBT(upgradeTag.getCompound("customNBT"));
+                        upgrade.deserializeNBT(provider, upgradeTag.getCompoundOrEmpty("customNBT"));
+                        //upgradeMap.get(facing).deserializeNBT(upgradeTag.getCompoundOrEmpty("customNBT"));
                     }
                     transporterTypeMap.put(facing, upgrade);
                 }

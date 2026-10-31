@@ -53,7 +53,7 @@ public abstract class FilteredTransporterType<TYPE, CAP> extends TransporterType
     public void handleButtonInteraction(int buttonId, CompoundTag compound) {
         if (buttonId >= 0 && buttonId < filter.getFilterSlots().length) {
             if (compound.contains("Amount")) {
-                this.filter.getFilterSlots()[buttonId].increaseAmount(compound.getInt("Amount"));
+                this.filter.getFilterSlots()[buttonId].increaseAmount(compound.getIntOr("Amount", 0));
             } else {
                 this.filter.setFilter(buttonId, ItemStack.parseOptional(IFAttachments.registryAccess(), compound));
             }
@@ -111,7 +111,7 @@ public abstract class FilteredTransporterType<TYPE, CAP> extends TransporterType
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         super.deserializeNBT(provider, nbt);
-        if (nbt.contains("Filter")) filter.deserializeNBT(provider, nbt.getCompound("Filter"));
+        if (nbt.contains("Filter")) filter.deserializeNBT(provider, nbt.getCompoundOrEmpty("Filter"));
     }
 
     public RegulatorFilter<TYPE, CAP> getFilter() {

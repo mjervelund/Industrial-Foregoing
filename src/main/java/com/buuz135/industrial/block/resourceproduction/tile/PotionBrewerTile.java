@@ -241,14 +241,14 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("BR_locked")) {
-            brewingItems.setLocked(tag.getBoolean("BR_locked"));
+            brewingItems.setLocked(tag.getBooleanOr("BR_locked", false));
         }
         if (tag.contains("BR_filter")) {
-            for (String psFilter : tag.getCompound("BR_filter").getAllKeys()) {
-                brewingItems.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompound("BR_filter").getCompound(psFilter));
+            for (String psFilter : tag.getCompoundOrEmpty("BR_filter").keySet()) {
+                brewingItems.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("BR_filter").getCompoundOrEmpty(psFilter));
             }
         }
-        this.filter.deserializeNBT(this.level.registryAccess(), tag.getCompound("PB_OutputFilter"));
+        this.filter.deserializeNBT(this.level.registryAccess(), tag.getCompoundOrEmpty("PB_OutputFilter"));
         super.loadSettings(player, tag);
     }
 

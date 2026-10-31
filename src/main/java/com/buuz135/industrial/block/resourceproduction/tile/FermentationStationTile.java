@@ -225,10 +225,10 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("FS_production")) {
-            this.production = tag.getInt("FS_production");
+            this.production = tag.getIntOr("FS_production", 0);
         }
         if (tag.contains("FS_seal")) {
-            this.seal = tag.getInt("FS_seal");
+            this.seal = tag.getIntOr("FS_seal", 0);
         }
         super.loadSettings(player, tag);
     }

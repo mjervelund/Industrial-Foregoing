@@ -129,7 +129,7 @@ public class AnimalBabySeparatorTile extends IndustrialAreaWorkingTile<AnimalBab
 
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
-        if (tag.contains("ABS_movingAdults")) this.movingAdults = tag.getBoolean("ABS_movingAdults");
+        if (tag.contains("ABS_movingAdults")) this.movingAdults = tag.getBooleanOr("ABS_movingAdults", false);
         super.loadSettings(player, tag);
     }
 }

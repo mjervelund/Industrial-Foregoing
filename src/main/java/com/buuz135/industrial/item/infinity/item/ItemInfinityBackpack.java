@@ -354,12 +354,12 @@ public class ItemInfinityBackpack extends ItemInfinity {
 
     public void handleButtonMessage(int id, Player playerEntity, CompoundTag compound, ItemStack stack) {
         if (id == 4 && playerEntity instanceof ServerPlayer) {
-            String backpackId = compound.getString("Id");
+            String backpackId = compound.getStringOr("Id", "");
             ItemStack cursor = playerEntity.containerMenu.getCarried();
-            boolean shift = compound.getBoolean("Shift");
-            boolean ctrl = compound.getBoolean("Ctrl");
-            int button = compound.getInt("Button");
-            int slot = compound.getInt("Slot");
+            boolean shift = compound.getBooleanOr("Shift", false);
+            boolean ctrl = compound.getBooleanOr("Ctrl", false);
+            int button = compound.getIntOr("Button", 0);
+            int slot = compound.getIntOr("Slot", 0);
             BackpackDataManager dataManager = BackpackDataManager.getData(playerEntity.level());
             BackpackDataManager.BackpackItemHandler handler = dataManager.getBackpack(backpackId);
             ItemStack result = ItemStack.EMPTY;

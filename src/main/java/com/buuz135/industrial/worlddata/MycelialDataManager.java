@@ -98,14 +98,14 @@ public class MycelialDataManager extends SavedData {
 
     public static MycelialDataManager load(HolderLookup.Provider provider, CompoundTag nbt) {
         MycelialDataManager mycelialDataManager = new MycelialDataManager();
-        for (String uuid : nbt.getCompound("values").getAllKeys()) {
-            CompoundTag uuidNbt = nbt.getCompound("values").getCompound(uuid);
+        for (String uuid : nbt.getCompoundOrEmpty("values").keySet()) {
+            CompoundTag uuidNbt = nbt.getCompoundOrEmpty("values").getCompoundOrEmpty(uuid);
             HashMap<String, List<GeneratorInfo>> generators = new HashMap<>();
-            for (String genName : uuidNbt.getAllKeys()) {
-                CompoundTag genNbt = uuidNbt.getCompound(genName);
-                for (String s : genNbt.getAllKeys()) {
+            for (String genName : uuidNbt.keySet()) {
+                CompoundTag genNbt = uuidNbt.getCompoundOrEmpty(genName);
+                for (String s : genNbt.keySet()) {
                     GeneratorInfo generatorInfo = new GeneratorInfo();
-                    generatorInfo.deserializeNBT(provider, genNbt.getCompound(s));
+                    generatorInfo.deserializeNBT(provider, genNbt.getCompoundOrEmpty(s));
                     generators.computeIfAbsent(genName, s1 -> new ArrayList<>()).add(generatorInfo);
                 }
             }
@@ -173,10 +173,10 @@ public class MycelialDataManager extends SavedData {
 
         @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-            lastRun = nbt.getLong("Run");
-            lastTracked = nbt.getLong("Track");
-            pos = BlockPos.of(nbt.getLong("Pos"));
-            this.world = ResourceKey.create(Registries.DIMENSION, Identifier.parse(nbt.getString("RKValue")));
+            lastRun = nbt.getLongOr("Run", 0L);
+            lastTracked = nbt.getLongOr("Track", 0L);
+            pos = BlockPos.of(nbt.getLongOr("Pos", 0L));
+            this.world = ResourceKey.create(Registries.DIMENSION, Identifier.parse(nbt.getStringOr("RKValue", "")));
         }
     }
 }

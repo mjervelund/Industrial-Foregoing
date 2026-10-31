@@ -115,7 +115,7 @@ public class InfinityEnergyStorage<T extends IComponentHarness> extends EnergySt
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, Tag nbt) {
         if (nbt instanceof CompoundTag compoundTag) {
-            this.energy = compoundTag.getLong("energy");
+            this.energy = compoundTag.getLongOr("energy", 0L);
         }
     }
 

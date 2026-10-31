@@ -111,9 +111,9 @@ public class ConveyorExtractionUpgrade extends ConveyorUpgrade {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        fast = nbt.getBoolean("fast");
-        if (nbt.contains("Filter")) filter.deserializeNBT(provider, nbt.getCompound("Filter"));
-        whitelist = nbt.getBoolean("Whitelist");
+        fast = nbt.getBooleanOr("fast", false);
+        if (nbt.contains("Filter")) filter.deserializeNBT(provider, nbt.getCompoundOrEmpty("Filter"));
+        whitelist = nbt.getBooleanOr("Whitelist", false);
     }
 
     @Override

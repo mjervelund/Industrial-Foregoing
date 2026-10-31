@@ -52,7 +52,7 @@ public class MobEssenceToolItem extends IFCustomItem {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity target, InteractionHand hand) {
-        /*if (stack.hasTag() && stack.getTag().getInt("Kills") == 0) {
+        /*if (stack.hasTag() && stack.getTag().getIntOr("Kills", 0) == 0) {
             CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.putString("Entity", ForgeRegistries.ENTITY_TYPES.getKey(target.getType()).toString());
             compoundNBT.putInt("Kills", 1);

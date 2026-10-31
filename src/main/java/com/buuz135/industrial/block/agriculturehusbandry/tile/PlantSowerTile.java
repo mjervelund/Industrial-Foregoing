@@ -159,11 +159,11 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("PS_locked")) {
-            input.setLocked(tag.getBoolean("PS_locked"));
+            input.setLocked(tag.getBooleanOr("PS_locked", false));
         }
         if (tag.contains("PS_filter")) {
-            for (String psFilter : tag.getCompound("PS_filter").getAllKeys()) {
-                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompound("PS_filter").getCompound(psFilter));
+            for (String psFilter : tag.getCompoundOrEmpty("PS_filter").keySet()) {
+                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("PS_filter").getCompoundOrEmpty(psFilter));
             }
         }
         super.loadSettings(player, tag);

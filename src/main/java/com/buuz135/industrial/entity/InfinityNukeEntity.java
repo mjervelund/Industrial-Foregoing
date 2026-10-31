@@ -154,11 +154,11 @@ public class InfinityNukeEntity extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        this.setArmed(compound.getBoolean("Armed"));
-        this.setExploding(compound.getBoolean("Exploding"));
-        this.setOriginal(ItemStack.parseOptional(IFAttachments.registryAccess(), compound.getCompound("Original")));
-        this.setTicksExploding(compound.getInt("TicksExploding"));
-        this.setRadius(compound.getInt("Radius"));
+        this.setArmed(compound.getBooleanOr("Armed", false));
+        this.setExploding(compound.getBooleanOr("Exploding", false));
+        this.setOriginal(ItemStack.parseOptional(IFAttachments.registryAccess(), compound.getCompoundOrEmpty("Original")));
+        this.setTicksExploding(compound.getIntOr("TicksExploding", 0));
+        this.setRadius(compound.getIntOr("Radius", 0));
     }
 
 

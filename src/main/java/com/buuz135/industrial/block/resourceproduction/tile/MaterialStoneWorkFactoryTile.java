@@ -170,7 +170,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         }.setPredicate((playerEntity, compoundNBT) -> {
             int button = 0;
             if (compoundNBT.contains("Button")) {
-                button = compoundNBT.getInt("Button");
+                button = compoundNBT.getIntOr("Button", 0);
             }
             getNextRecipe(button == 0);
             markForUpdate();
@@ -424,19 +424,19 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("MSWF_generatorRecipe")) {
-            this.generatorRecipe = tag.getString("MSWF_generatorRecipe");
+            this.generatorRecipe = tag.getStringOr("MSWF_generatorRecipe", "");
         }
         if (tag.contains("MSWF_firstRecipeId")) {
-            this.firstRecipeId = tag.getInt("MSWF_firstRecipeId");
+            this.firstRecipeId = tag.getIntOr("MSWF_firstRecipeId", 0);
         }
         if (tag.contains("MSWF_secondRecipeId")) {
-            this.secondRecipeId = tag.getInt("MSWF_secondRecipeId");
+            this.secondRecipeId = tag.getIntOr("MSWF_secondRecipeId", 0);
         }
         if (tag.contains("MSWF_thirdRecipeId")) {
-            this.thirdRecipeId = tag.getInt("MSWF_thirdRecipeId");
+            this.thirdRecipeId = tag.getIntOr("MSWF_thirdRecipeId", 0);
         }
         if (tag.contains("MSWF_fourthRecipeId")) {
-            this.fourthRecipeId = tag.getInt("MSWF_fourthRecipeId");
+            this.fourthRecipeId = tag.getIntOr("MSWF_fourthRecipeId", 0);
         }
         super.loadSettings(player, tag);
     }

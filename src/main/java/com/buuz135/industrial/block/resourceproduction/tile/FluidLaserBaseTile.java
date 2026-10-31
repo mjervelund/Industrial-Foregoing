@@ -169,7 +169,7 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
     public void handleButtonMessage(int id, Player playerEntity, CompoundTag compound) {
         super.handleButtonMessage(id, playerEntity, compound);
         if (id == 5487) {
-            this.miningDepth = compound.getInt("MiningLevel");
+            this.miningDepth = compound.getIntOr("MiningLevel", 0);
             syncObject(this.miningDepth);
         }
     }
@@ -256,7 +256,7 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
     @Override
     public void loadSettings(Player player, CompoundTag tag) {
         if (tag.contains("FL_miningDepth")) {
-            this.miningDepth = tag.getInt("FL_miningDepth");
+            this.miningDepth = tag.getIntOr("FL_miningDepth", 0);
         }
         super.loadSettings(player, tag);
     }

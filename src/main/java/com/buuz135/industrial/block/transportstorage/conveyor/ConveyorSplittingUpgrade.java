@@ -171,9 +171,9 @@ public class ConveyorSplittingUpgrade extends ConveyorUpgrade {
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         super.deserializeNBT(provider, nbt);
-        nextFacing = Direction.byName(nbt.getString("NextFacing"));
-        ratio = nbt.getInt("Ratio");
-        currentRatio = nbt.getInt("CurrentRatio");
+        nextFacing = Direction.byName(nbt.getStringOr("NextFacing", ""));
+        ratio = nbt.getIntOr("Ratio", 0);
+        currentRatio = nbt.getIntOr("CurrentRatio", 0);
     }
 
     public Direction getNextFacing() {

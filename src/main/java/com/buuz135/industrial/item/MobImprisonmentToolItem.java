@@ -155,8 +155,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
         if (containsEntity(stack)) {
             var nbt = stack.get(IFAttachments.MOB_IMPRISONMENT_TOOL);
             tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.display.mob").getString() + getID(stack)).withStyle(ChatFormatting.GRAY));//new TranslationTextComponent(EntityList.getTranslationName(Identifier.fromNamespaceAndPath(getID(stack)))).getUnformattedComponentText());
-            tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.display.health").getString() + nbt.getDouble("Health")).withStyle(ChatFormatting.GRAY));
-            //if (BlockRegistry.mobDuplicatorBlock.blacklistedEntities.contains(stack.getTag().getString("entity")))
+            tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.display.health").getString() + nbt.getDoubleOr("Health", 0.0D)).withStyle(ChatFormatting.GRAY));
+            //if (BlockRegistry.mobDuplicatorBlock.blacklistedEntities.contains(stack.getTag().getStringOr("entity", "")))
             //    tooltip.add(Component.literalString(TextFormatting.RED + "Entity blacklisted in the Mob Duplicator"));
         }
     }
@@ -165,7 +165,7 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     public Entity getEntityFromStack(ItemStack stack, Level world, boolean withInfo, boolean applyDuplicatorFilter) {
         if (stack.has(IFAttachments.MOB_IMPRISONMENT_TOOL)) {
             var nbt = stack.get(IFAttachments.MOB_IMPRISONMENT_TOOL);
-            EntityType type = EntityType.byString(nbt.getString("entity")).orElse(null);
+            EntityType type = EntityType.byString(nbt.getStringOr("entity", "")).orElse(null);
             if (type != null && !(applyDuplicatorFilter && TagUtil.hasTag(BuiltInRegistries.ENTITY_TYPE, type, IndustrialTags.EntityTypes.MOB_DUPLICATOR_BLACKLIST))) {
                 Entity entity = type.create(world);
                 if (withInfo) {
@@ -181,7 +181,7 @@ public class MobImprisonmentToolItem extends IFCustomItem {
 
     public String getID(ItemStack stack) {
         var nbt = stack.get(IFAttachments.MOB_IMPRISONMENT_TOOL);
-        return nbt.getString("entity");
+        return nbt.getStringOr("entity", "");
     }
 
     @Override
