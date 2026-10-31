@@ -6,7 +6,7 @@
   "itemGroup.industrialforegoing_ag_hus": "Industrial Foregoing: 農業と畜産",
   "itemGroup.industrialforegoing_resource_production": "Industrial Foregoing: 資源生産",
   "itemGroup.industrialforegoing_misc": "Industrial Foregoing: その他",
-  "key.industrialforegoing.category": "Industrial Foregoing",
+  "key.category.industrialforegoing.industrialforegoing": "Industrial Foregoing",
   "key.industrialforegoing.backpack.desc": "無限バックパックを開く",
   "text.industrialforegoing.display.burning": "燃焼時間:",
   "text.industrialforegoing.display.producing": "製作中:",

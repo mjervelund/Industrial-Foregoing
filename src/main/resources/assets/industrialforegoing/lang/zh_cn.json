@@ -6,7 +6,7 @@
   "itemGroup.industrialforegoing_ag_hus": "工业先锋：农业与畜牧业设备",
   "itemGroup.industrialforegoing_resource_production": "工业先锋：资源生产设备",
   "itemGroup.industrialforegoing_misc": "工业先锋：杂项",
-  "key.industrialforegoing.category": "工业先锋",
+  "key.category.industrialforegoing.industrialforegoing": "工业先锋",
   "key.industrialforegoing.backpack.desc": "打开无限背包",
   "text.industrialforegoing.display.burning": "燃烧时间：",
   "text.industrialforegoing.display.producing": "燃料产能：",

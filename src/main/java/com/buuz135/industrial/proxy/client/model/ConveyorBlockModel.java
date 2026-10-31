@@ -25,67 +25,39 @@ package com.buuz135.industrial.proxy.client.model;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.block.transportstorage.ConveyorBlock;
 import com.buuz135.industrial.module.ModuleTransportStorage;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.BakedModelWrapper;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.neoforge.client.model.DelegateBlockStateModel;
+import net.neoforged.neoforge.model.data.ModelData;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ConveyorBlockModel extends BakedModelWrapper<BakedModel> {
+/**
+ * Adds the standalone models of the installed conveyor upgrades (see ModuleTransportStorage) to the block model.
+ */
+public class ConveyorBlockModel extends DelegateBlockStateModel {
 
-    public static Cache<Pair<Pair<String, Pair<Direction, Direction>>, Direction>, List<BakedQuad>> CACHE = CacheBuilder.newBuilder().build();
-
-    private Map<Direction, List<BakedQuad>> prevQuads = new HashMap<>();
-
-    public ConveyorBlockModel(BakedModel previousConveyor) {
+    public ConveyorBlockModel(BlockStateModel previousConveyor) {
         super(previousConveyor);
     }
 
-    @Nonnull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, RenderType renderType) {
-        if (state == null) {
-            if (!prevQuads.containsKey(side))
-                prevQuads.put(side, originalModel.getQuads(state, side, rand));
-            return prevQuads.get(side);
-        }
-        if (!prevQuads.containsKey(side))
-            prevQuads.put(side, originalModel.getQuads(state, side, rand));
-        List<BakedQuad> quads = new ArrayList<>(prevQuads.get(side));
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
+        super.collectParts(level, pos, state, random, parts);
+        ModelData extraData = level.getModelData(pos);
         if (extraData.has(ConveyorModelData.UPGRADE_PROPERTY)) {
             for (ConveyorUpgrade upgrade : extraData.get(ConveyorModelData.UPGRADE_PROPERTY).getUpgrades().values()) {
                 if (upgrade == null)
                     continue;
-                List<BakedQuad> upgradeQuads = CACHE.getIfPresent(Pair.of(Pair.of(upgrade.getFactory().getName(), Pair.of(upgrade.getSide(), state.getValue(ConveyorBlock.FACING))), side));
-                if (upgradeQuads == null) {
-                    try {
-                        BakedModel model = ModuleTransportStorage.CONVEYOR_UPGRADES_CACHE.get(upgrade.getFactory().getModel(upgrade.getSide(), state.getValue(ConveyorBlock.FACING)));
-                        upgradeQuads = model.getQuads(state, side, rand, extraData, renderType);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                    CACHE.put(Pair.of(Pair.of(upgrade.getFactory().getName(), Pair.of(upgrade.getSide(), state.getValue(ConveyorBlock.FACING))), side), upgradeQuads);
-                }
-                if (!upgradeQuads.isEmpty()) {
-                    quads.addAll(upgradeQuads);
-                }
+                BlockStateModelPart part = Minecraft.getInstance().getModelManager().getStandaloneModel(ModuleTransportStorage.CONVEYOR_UPGRADES_CACHE.get(upgrade.getFactory().getModel(upgrade.getSide(), state.getValue(ConveyorBlock.FACING))));
+                if (part != null) parts.add(part);
             }
         }
-        return quads;
     }
 
 }

@@ -23,70 +23,40 @@
 package com.buuz135.industrial.proxy.client.model;
 
 import com.buuz135.industrial.api.transporter.TransporterType;
-import com.buuz135.industrial.api.transporter.TransporterTypeFactory;
 import com.buuz135.industrial.module.ModuleTransportStorage;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.BakedModelWrapper;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.neoforge.client.model.DelegateBlockStateModel;
+import net.neoforged.neoforge.model.data.ModelData;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class TransporterBlockModel extends BakedModelWrapper<BakedModel> {
+/**
+ * Adds the standalone models of the installed transporter upgrades (see ModuleTransportStorage) to the block model.
+ */
+public class TransporterBlockModel extends DelegateBlockStateModel {
 
-    public static Cache<Pair<Pair<String, Pair<Direction, TransporterTypeFactory.TransporterAction>>, Direction>, List<BakedQuad>> CACHE = CacheBuilder.newBuilder().build();
-
-    private Map<Direction, List<BakedQuad>> prevQuads = new HashMap<>();
-
-    public TransporterBlockModel(BakedModel previousConveyor) {
-        super(previousConveyor);
+    public TransporterBlockModel(BlockStateModel previousTransporter) {
+        super(previousTransporter);
     }
 
-    @Nonnull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, RenderType renderType) {
-        CACHE.invalidateAll();
-        if (state == null) {
-            if (!prevQuads.containsKey(side))
-                prevQuads.put(side, originalModel.getQuads(state, side, rand));
-            return prevQuads.get(side);
-        }
-        if (!prevQuads.containsKey(side))
-            prevQuads.put(side, originalModel.getQuads(state, side, rand));
-        List<BakedQuad> quads = new ArrayList<>(prevQuads.get(side));
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
+        super.collectParts(level, pos, state, random, parts);
+        ModelData extraData = level.getModelData(pos);
         if (extraData.has(TransporterModelData.UPGRADE_PROPERTY)) {
             for (TransporterType upgrade : extraData.get(TransporterModelData.UPGRADE_PROPERTY).getUpgrades().values()) {
                 if (upgrade == null)
                     continue;
-                List<BakedQuad> upgradeQuads = CACHE.getIfPresent(Pair.of(Pair.of(upgrade.getFactory().getName(), Pair.of(upgrade.getSide(), upgrade.getAction())), side));
-                if (upgradeQuads == null) {
-                    try {
-                        BakedModel model = ModuleTransportStorage.TRANSPORTER_CACHE.get(upgrade.getFactory().getModel(upgrade.getSide(), upgrade.getAction()));
-                        upgradeQuads = model.getQuads(state, side, rand, extraData, renderType);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                    CACHE.put(Pair.of(Pair.of(upgrade.getFactory().getName(), Pair.of(upgrade.getSide(), upgrade.getAction())), side), upgradeQuads);
-                }
-                if (!upgradeQuads.isEmpty()) {
-                    quads.addAll(upgradeQuads);
-                }
+                BlockStateModelPart part = Minecraft.getInstance().getModelManager().getStandaloneModel(ModuleTransportStorage.TRANSPORTER_CACHE.get(upgrade.getFactory().getModel(upgrade.getSide(), upgrade.getAction())));
+                if (part != null) parts.add(part);
             }
         }
-        return quads;
     }
 
 }

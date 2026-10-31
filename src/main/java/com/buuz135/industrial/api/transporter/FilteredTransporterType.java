@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.api.transporter;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.api.IBlockContainer;
 import com.buuz135.industrial.api.conveyor.gui.IGuiComponent;
 import com.buuz135.industrial.gui.component.StateButtonInfo;
@@ -55,7 +56,7 @@ public abstract class FilteredTransporterType<TYPE, CAP> extends TransporterType
             if (compound.contains("Amount")) {
                 this.filter.getFilterSlots()[buttonId].increaseAmount(compound.getIntOr("Amount", 0));
             } else {
-                this.filter.setFilter(buttonId, ItemStack.parseOptional(IFAttachments.registryAccess(), compound));
+                this.filter.setFilter(buttonId, ItemStackSerialization.load(IFAttachments.registryAccess(), compound));
             }
             this.getContainer().requestSync();
         }

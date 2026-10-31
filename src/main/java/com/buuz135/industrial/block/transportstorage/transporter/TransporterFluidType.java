@@ -36,10 +36,10 @@ import com.buuz135.industrial.utils.TransferUtils;
 import com.google.common.collect.Sets;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.util.ARGB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -56,7 +56,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -152,29 +151,16 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, Re
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, int combinedOverlayIn, MultiBufferSource buffer, float frame, Level level) {
-        super.renderTransfer(pos, direction, step, stack, combinedOverlayIn, buffer, frame, level);
+    public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera, float frame, Level level) {
+        super.renderTransfer(pos, direction, step, stack, collector, camera, frame, level);
         if (step < queue.computeIfAbsent(direction, v -> new ArrayList<>()).size()) {
             float scale = 0.10f;
             stack.scale(scale, scale, scale);
             FluidStack fluidStack = queue.get(direction).get(step);
-            stack.pushPose();
-            stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-            //stack.mulPose(Axis.ZP.rotationDegrees(90f));
-            stack.mulPose(Axis.XP.rotationDegrees(-90f));
-            VertexConsumer buffer1 = buffer.getBuffer(TransporterTESR.TYPE);
-            Matrix4f matrix = stack.last().pose();
-            float pX1 = 1;
-            float u = 1;
-            float pX2 = 0;
-            float u2 = 0;
-            float xOffset = -0.75f;
-            float yOffset = -0f;
-            float zOffset = -0.75f;
-            int alpha = 1;
             float red = 0;
             float green = 0;
             float blue = 0;
+            float particleScale;
             if (fluidStack.isEmpty()) {
                 Color CLOSE = Color.CYAN;
                 Color FAR = new Color(0x6800FF);
@@ -182,20 +168,15 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, Re
                 red = (int) Math.abs((ratio * FAR.getRed()) + ((1 - ratio) * CLOSE.getRed())) / 256F;
                 green = (int) Math.abs((ratio * FAR.getGreen()) + ((1 - ratio) * CLOSE.getGreen())) / 256F;
                 blue = (int) Math.abs((ratio * FAR.getBlue()) + ((1 - ratio) * CLOSE.getBlue())) / 256F;
-                stack.scale(0.25f, 0.25f, 0.25f);
+                particleScale = 0.25f;
             } else {
                 Color color = new Color(FluidUtils.getFluidColor(fluidStack));
                 red = color.getRed() / 256F;
                 green = color.getGreen() / 256F;
                 blue = color.getBlue() / 256F;
-                stack.scale(0.75f, 0.75f, 0.75f);
+                particleScale = 0.75f;
             }
-            buffer1.addVertex(matrix, pX2 + xOffset, yOffset, 0 + zOffset).setColor(red, green, blue, alpha).setUv(u2, 0);
-            buffer1.addVertex(matrix, pX1 + xOffset + 0.5f, yOffset, 0 + zOffset).setColor(red, green, blue, alpha).setUv(u, 0);
-            buffer1.addVertex(matrix, pX1 + xOffset + 0.5f, yOffset, 1.5f + zOffset).setColor(red, green, blue, alpha).setUv(u, 1);
-            buffer1.addVertex(matrix, pX2 + xOffset, yOffset, 1.5f + zOffset).setColor(red, green, blue, alpha).setUv(u2, 1);
-            stack.popPose();
-
+            TransporterTESR.submitParticle(stack, collector, camera, ARGB.colorFromFloat(1, red, green, blue), particleScale);
         }
     }
 

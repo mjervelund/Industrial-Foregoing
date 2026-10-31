@@ -6,7 +6,7 @@
   "itemGroup.industrialforegoing_ag_hus": "Industrial Foregoing: Сельское хозяйство и Животноводство",
   "itemGroup.industrialforegoing_resource_production": "Industrial Foregoing: Производство Ресурсов",
   "itemGroup.industrialforegoing_misc": "Industrial Foregoing: Прочее",
-  "key.industrialforegoing.category": "Industrial Foregoing",
+  "key.category.industrialforegoing.industrialforegoing": "Industrial Foregoing",
   "key.industrialforegoing.backpack.desc": "Открыть бесконечный рюкзак",
   "text.industrialforegoing.display.burning": "Время горения:",
   "text.industrialforegoing.display.producing": "Производство:",

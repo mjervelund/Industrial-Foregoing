@@ -49,7 +49,6 @@ import com.hrznstudio.titanium.network.locator.instance.HeldStackLocatorInstance
 import com.hrznstudio.titanium.tab.TitaniumTab;
 import com.hrznstudio.titanium.util.FacingUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -200,7 +199,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     @Override
     public int getBarWidth(ItemStack stack) {
         Supplier<Supplier<Boolean>> checker = () -> () -> false;
-        if (FMLEnvironment.dist.isClient()) checker = () -> Screen::hasShiftDown;
+        if (FMLEnvironment.getDist().isClient()) checker = () -> () -> net.minecraft.client.Minecraft.getInstance().hasShiftDown();
         if (!checker.get().get()) { //hasShiftDown
             int fuel = getFuelFromStack(stack);
             return (int) Math.round(fuel * 13D / 1_000_000D);
@@ -213,7 +212,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     @Override
     public int getBarColor(ItemStack p_150901_) {
         Supplier<Supplier<Boolean>> checker = () -> () -> false;
-        if (FMLEnvironment.dist.isClient()) checker = () -> Screen::hasShiftDown;
+        if (FMLEnvironment.getDist().isClient()) checker = () -> () -> net.minecraft.client.Minecraft.getInstance().hasShiftDown();
         return !checker.get().get() ? 0xcb00ff /*Purple*/ : 0x00d0ff /*Cyan*/;
     }
 

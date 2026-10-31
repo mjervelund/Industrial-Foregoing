@@ -25,67 +25,53 @@ package com.buuz135.industrial.proxy.client.event;
 import com.buuz135.industrial.item.infinity.InfinityTier;
 import com.buuz135.industrial.item.infinity.item.ItemInfinityDrill;
 import com.buuz135.industrial.module.ModuleTool;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Camera;
-import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IFClientEvents {
 
     @SubscribeEvent
-    public void blockOverlayEvent(RenderHighlightEvent.Block event) {
-        HitResult hit = event.getTarget();
-        if (hit.getType() == HitResult.Type.BLOCK && Minecraft.getInstance().player.getMainHandItem().getItem().equals(ModuleTool.INFINITY_DRILL.get())) {
-            BlockHitResult blockRayTraceResult = (BlockHitResult) hit;
-            event.setCanceled(true);
+    public void blockOverlayEvent(ExtractBlockOutlineRenderStateEvent event) {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getMainHandItem().getItem().equals(ModuleTool.INFINITY_DRILL.get())) {
+            BlockHitResult blockRayTraceResult = event.getHitResult();
             ItemStack hand = Minecraft.getInstance().player.getMainHandItem();
             InfinityTier tier = ((ItemInfinityDrill) ModuleTool.INFINITY_DRILL.get()).getSelectedTier(hand);
-            Level world = Minecraft.getInstance().player.getCommandSenderWorld();
+            Level world = event.getLevel();
             Pair<BlockPos, BlockPos> area = ((ItemInfinityDrill) ModuleTool.INFINITY_DRILL.get()).getArea(blockRayTraceResult.getBlockPos(), blockRayTraceResult.getDirection(), tier, false);
-            PoseStack stack = new PoseStack();
-            stack.pushPose();
-            Camera info = event.getCamera();
-            //stack.mulPose(Axis.XP.rotationDegrees(info.getXRot()));
-            //stack.mulPose(Axis.YP.rotationDegrees(info.getYRot() + 180));
-            double d0 = info.getPosition().x();
-            double d1 = info.getPosition().y();
-            double d2 = info.getPosition().z();
-            VertexConsumer builder = Minecraft.getInstance().renderBuffers().outlineBufferSource().getBuffer(RenderType.lines());
+            // Extract the outlines here, the renderer must not touch the level
+            List<Pair<BlockPos, VoxelShape>> shapes = new ArrayList<>();
             BlockPos.betweenClosed(area.getLeft(), area.getRight()).forEach(blockPos -> {
                 VoxelShape shape = world.getBlockState(blockPos).getShape(world, blockPos);
-                if (shape != null && !shape.isEmpty() && !world.isEmptyBlock(blockPos) && world.getBlockState(blockPos).getDestroySpeed(world, blockPos) >= 0 && !(world.getBlockState(blockPos).getBlock() instanceof LiquidBlock) && !(world.getBlockState(blockPos).getBlock() instanceof LiquidBlock)) {
-                    LevelRenderer.renderLineBox(stack, builder, shape.bounds().move(blockPos.getX() - d0, blockPos.getY() - d1, blockPos.getZ() - d2), 0, 0, 0, 0.35F);
+                if (shape != null && !shape.isEmpty() && !world.isEmptyBlock(blockPos) && world.getBlockState(blockPos).getDestroySpeed(world, blockPos) >= 0 && !(world.getBlockState(blockPos).getBlock() instanceof LiquidBlock)) {
+                    shapes.add(Pair.of(blockPos.immutable(), shape));
                 }
             });
-            stack.popPose();
+            event.addCustomRenderer((renderState, collector, stack, levelRenderState) -> {
+                Vec3 camera = levelRenderState.cameraRenderState.pos;
+                float width = Minecraft.getInstance().gameRenderer.gameRenderState().windowRenderState.appropriateLineWidth;
+                for (Pair<BlockPos, VoxelShape> pair : shapes) {
+                    BlockPos blockPos = pair.getLeft();
+                    stack.pushPose();
+                    stack.translate(blockPos.getX() - camera.x, blockPos.getY() - camera.y, blockPos.getZ() - camera.z);
+                    collector.submitShapeOutline(stack, pair.getRight(), RenderTypes.linesTranslucent(), ARGB.colorFromFloat(0.35F, 0, 0, 0), width, false);
+                    stack.popPose();
+                }
+                return true;
+            });
         }
-    }
-
-    @SubscribeEvent
-    public void onRenderPre(RenderPlayerEvent.Pre event) {
-        // todo: test if rewards are rendering.
-        //event.getRenderer().addLayer(new ContributorsCatEarsRender(event.getRenderer()));
-        if (Minecraft.getInstance().player == null) return;
-        if (event.getEntity().getUUID().equals(Minecraft.getInstance().player.getUUID()) && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON)
-            return;
-        if (event.getEntity().getItemInHand(InteractionHand.MAIN_HAND).getItem().equals(ModuleTool.INFINITY_DRILL))
-            event.getEntity().startUsingItem(InteractionHand.MAIN_HAND);
-        else if (event.getEntity().getItemInHand(InteractionHand.OFF_HAND).getItem().equals(ModuleTool.INFINITY_DRILL))
-            event.getEntity().startUsingItem(InteractionHand.OFF_HAND);
     }
 }

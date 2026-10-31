@@ -34,7 +34,8 @@ import com.buuz135.industrial.utils.TransferUtils;
 import com.google.common.collect.Sets;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -153,8 +154,8 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, Res
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, int combinedOverlayIn, MultiBufferSource buffer, float frame, Level level) {
-        super.renderTransfer(pos, direction, step, stack, combinedOverlayIn, buffer, frame, level);
+    public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera, float frame, Level level) {
+        super.renderTransfer(pos, direction, step, stack, collector, camera, frame, level);
     }
 
     public static class Factory extends TransporterTypeFactory {

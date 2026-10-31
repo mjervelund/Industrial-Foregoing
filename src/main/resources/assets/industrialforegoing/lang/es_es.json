@@ -7,7 +7,7 @@
   "itemGroup.industrialforegoing_resource_production": "Industrial Foregoing: Resource Production",
   "itemGroup.industrialforegoing_misc": "Industrial Foregoing: Misc",
   
-  "key.industrialforegoing.category": "Industrial Foregoing",
+  "key.category.industrialforegoing.industrialforegoing": "Industrial Foregoing",
   "key.industrialforegoing.backpack.desc": "Abrir Mochila del Infinito",
   
   "text.industrialforegoing.display.burning": "Tiempo de Combustión:",

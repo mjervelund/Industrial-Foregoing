@@ -24,118 +24,117 @@ package com.buuz135.industrial.proxy.client.render;
 
 import com.buuz135.industrial.block.transportstorage.ConveyorBlock;
 import com.buuz135.industrial.block.transportstorage.tile.ConveyorTile;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
+import org.jspecify.annotations.Nullable;
 
-import java.awt.*;
-
-public class FluidConveyorTESR implements BlockEntityRenderer<ConveyorTile> {
-
-    public static RenderType createRenderType(Identifier texture) {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader))
-                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
-                .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
-                    RenderSystem.enableBlend();
-                    RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-                    RenderSystem.disableCull();
-                }, () -> {
-                    RenderSystem.disableBlend();
-                })).createCompositeState(true);
-        return RenderType.create("conveyor_fluid", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32, false, true, state);
-    }
+public class FluidConveyorTESR implements BlockEntityRenderer<ConveyorTile, FluidConveyorTESR.State> {
 
     public FluidConveyorTESR(BlockEntityRendererProvider.Context p_173540_) {
     }
 
     @Override
-    public void render(ConveyorTile te, float p_225616_2_, PoseStack matrixStack, MultiBufferSource typeBuffer, int p_225616_5_, int p_225616_6_) {
-        if (te.getTank().getFluidAmount() > 0) {
-            int x = te.getBlockPos().getX();
-            int y = te.getBlockPos().getY();
-            int z = te.getBlockPos().getZ();
-            matrixStack.pushPose();
-            Direction facing = te.getFacing();
-            if (facing == Direction.NORTH) {
-                matrixStack.translate(1, 0, 1);
-                //RenderSystem.rotatef(180, 0, 1, 0);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(180));
-            }
-            if (facing == Direction.EAST) {
-                matrixStack.translate(0, 0, 1);
-                //RenderSystem.rotatef(90, 0, 1, 0);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(90));
-            }
-            if (facing == Direction.WEST) {
-                matrixStack.translate(1, 0, 0);
-                //RenderSystem.rotatef(-90, 0, 1, 0);
-                matrixStack.mulPose(Axis.YN.rotationDegrees(90));
-            }
-            AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS);
-            if (texture instanceof TextureAtlas) {
-                FluidStack fluid = te.getTank().getFluid();
-                IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
-                TextureAtlasSprite flow = ((TextureAtlas) texture).getSprite(renderProperties.getFlowingTexture(fluid));
-                TextureAtlasSprite still = ((TextureAtlas) texture).getSprite(renderProperties.getStillTexture(fluid));
-                float posY = 2 / 16f - 1 / 32f;
-                float right = 1 / 16f;
-                float left = 15 / 16f;
-                VertexConsumer buffer = typeBuffer.getBuffer(createRenderType(Identifier.fromNamespaceAndPath(flow.contents().name().getNamespace(), "textures/" + flow.contents().name().getPath() + ".png")));
-                //ConveyorBlock.EnumSides sides = te.getWorld().getBlockState(te.getPos()).getBlock().getExtendedState(te.getWorld().getBlockState(te.getPos()), te.getWorld(), te.getPos()).get(ConveyorBlock.SIDES);
-                ConveyorBlock.EnumSides sides = ConveyorBlock.EnumSides.NONE;
-                if (sides == ConveyorBlock.EnumSides.BOTH || sides == ConveyorBlock.EnumSides.RIGHT) right = 0;
-                if (sides == ConveyorBlock.EnumSides.BOTH || sides == ConveyorBlock.EnumSides.LEFT) left = 1;
-                Color color = new Color(renderProperties.getTintColor(te.getTank().getFluid()));
-                matrixStack.pushPose();
-                Matrix4f matrix = matrixStack.last().pose();
-                float animation = 16 * flow.uvShrinkRatio() * (te.getLevel().getGameTime() % flow.contents().getUniqueFrames().count());
+    public State createRenderState() {
+        return new State();
+    }
 
-                buffer.addVertex(matrix, left, posY, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 0 + animation);
-                buffer.addVertex(matrix, right, posY, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0.5f, 0 + animation);
-                buffer.addVertex(matrix, right, posY, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0.5f, 16f / (flow.contents().height() * flow.contents().getUniqueFrames().count()) + animation);
-                buffer.addVertex(matrix, left, posY, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 16f / (flow.contents().height() * flow.contents().getUniqueFrames().count()) + animation);
+    @Override
+    public void extractRenderState(ConveyorTile te, State state, float partialTicks, net.minecraft.world.phys.Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(te, state, partialTicks, cameraPosition, breakProgress);
+        state.still = null;
+        if (te.getTank().getFluidAmount() <= 0 || te.getLevel() == null) return;
+        FluidStack fluid = te.getTank().getFluid();
+        // Fluid sprites and tints live in the client fluid models on 26.3; the block atlas animates the sprites
+        FluidModel model = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState());
+        state.flow = model.flowingMaterial().sprite();
+        state.still = model.stillMaterial().sprite();
+        state.color = model.fluidTintSource() == null ? 0xFFFFFFFF : model.fluidTintSource().colorAsStack(fluid);
+        state.facing = te.getFacing();
+        state.renderPrev = !(te.getLevel().getBlockEntity(te.getBlockPos().relative(state.facing.getOpposite())) instanceof ConveyorTile prev) || prev.getTank().getFluidAmount() <= 0;
+        state.renderNext = !(te.getLevel().getBlockEntity(te.getBlockPos().relative(state.facing)) instanceof ConveyorTile next) || next.getTank().getFluidAmount() <= 0;
+    }
 
-                buffer = typeBuffer.getBuffer(createRenderType(Identifier.fromNamespaceAndPath(still.contents().name().getNamespace(), "textures/" + still.contents().name().getPath() + ".png")));
-                animation = still.uvShrinkRatio() * (te.getLevel().getGameTime() % (still.contents().getUniqueFrames().count() * 16));
-                boolean shouldRenderPrev = !(te.getLevel().getBlockEntity(te.getBlockPos().relative(facing.getOpposite())) instanceof ConveyorTile) || ((ConveyorTile) te.getLevel().getBlockEntity(te.getBlockPos().relative(facing.getOpposite()))).getTank().getFluidAmount() <= 0;
-                if (shouldRenderPrev) {
-                    buffer.addVertex(matrix, right, posY, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 1 - 1f / (still.contents().height() * still.contents().getUniqueFrames().count()) - animation);
-                    buffer.addVertex(matrix, left, posY, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(1f, 1 - 1f / (still.contents().height() * still.contents().getUniqueFrames().count()) - animation);
-                    buffer.addVertex(matrix, left, 1 / 16f, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(1f, 1 - animation);
-                    buffer.addVertex(matrix, right, 1 / 16f, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 1 - animation);
-                }
-                boolean shouldRenderNext = !(te.getLevel().getBlockEntity(te.getBlockPos().relative(facing)) instanceof ConveyorTile) || ((ConveyorTile) te.getLevel().getBlockEntity(te.getBlockPos().relative(facing))).getTank().getFluidAmount() <= 0;
-                if (shouldRenderNext) {
-
-                    buffer.addVertex(matrix, left, posY, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(1f, 1 - 1f / (still.contents().height() * still.contents().getUniqueFrames().count()) - animation);
-                    buffer.addVertex(matrix, right, posY, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 1 - 1f / (still.contents().height() * still.contents().getUniqueFrames().count()) - animation);
-                    buffer.addVertex(matrix, right, 1 / 16f, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(0, 1 - animation);
-                    buffer.addVertex(matrix, left, 1 / 16f, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).setUv(1f, 1 - animation);
-                }
-                matrixStack.popPose();
-            }
-            matrixStack.popPose();
+    @Override
+    public void submit(State state, PoseStack matrixStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.still == null) return;
+        matrixStack.pushPose();
+        Direction facing = state.facing;
+        if (facing == Direction.NORTH) {
+            matrixStack.translate(1, 0, 1);
+            matrixStack.rotate(Axis.YP.rotationDegrees(180));
         }
+        if (facing == Direction.EAST) {
+            matrixStack.translate(0, 0, 1);
+            matrixStack.rotate(Axis.YP.rotationDegrees(90));
+        }
+        if (facing == Direction.WEST) {
+            matrixStack.translate(1, 0, 0);
+            matrixStack.rotate(Axis.YN.rotationDegrees(90));
+        }
+        collector.submitCustomGeometry(matrixStack, RenderTypes.entityTranslucent(TextureAtlas.LOCATION_BLOCKS), (pose, buffer) -> renderFluid(pose.pose(), buffer, state));
+        matrixStack.popPose();
+    }
+
+    private static void renderFluid(Matrix4f matrix, VertexConsumer buffer, State state) {
+        float posY = 2 / 16f - 1 / 32f;
+        float right = 1 / 16f;
+        float left = 15 / 16f;
+        //ConveyorBlock.EnumSides sides = te.getWorld().getBlockState(te.getPos()).getBlock().getExtendedState(te.getWorld().getBlockState(te.getPos()), te.getWorld(), te.getPos()).get(ConveyorBlock.SIDES);
+        ConveyorBlock.EnumSides sides = ConveyorBlock.EnumSides.NONE;
+        if (sides == ConveyorBlock.EnumSides.BOTH || sides == ConveyorBlock.EnumSides.RIGHT) right = 0;
+        if (sides == ConveyorBlock.EnumSides.BOTH || sides == ConveyorBlock.EnumSides.LEFT) left = 1;
+        int color = state.color;
+        int light = state.lightCoords;
+        TextureAtlasSprite flow = state.flow;
+        TextureAtlasSprite still = state.still;
+
+        vertex(buffer, matrix, left, posY, 0, color, flow.getU(0), flow.getV(0), light);
+        vertex(buffer, matrix, right, posY, 0, color, flow.getU(0.5f), flow.getV(0), light);
+        vertex(buffer, matrix, right, posY, 1, color, flow.getU(0.5f), flow.getV(1), light);
+        vertex(buffer, matrix, left, posY, 1, color, flow.getU(0), flow.getV(1), light);
+
+        // One pixel row of the still texture as the fluid's front/back edge
+        float edge = 1 - 1f / still.contents().height();
+        if (state.renderPrev) {
+            vertex(buffer, matrix, right, posY, 0, color, still.getU(0), still.getV(edge), light);
+            vertex(buffer, matrix, left, posY, 0, color, still.getU(1), still.getV(edge), light);
+            vertex(buffer, matrix, left, 1 / 16f, 0, color, still.getU(1), still.getV(1), light);
+            vertex(buffer, matrix, right, 1 / 16f, 0, color, still.getU(0), still.getV(1), light);
+        }
+        if (state.renderNext) {
+            vertex(buffer, matrix, left, posY, 1, color, still.getU(1), still.getV(edge), light);
+            vertex(buffer, matrix, right, posY, 1, color, still.getU(0), still.getV(edge), light);
+            vertex(buffer, matrix, right, 1 / 16f, 1, color, still.getU(0), still.getV(1), light);
+            vertex(buffer, matrix, left, 1 / 16f, 1, color, still.getU(1), still.getV(1), light);
+        }
+    }
+
+    private static void vertex(VertexConsumer buffer, Matrix4f matrix, float x, float y, float z, int color, float u, float v, int light) {
+        buffer.addVertex(matrix, x, y, z).setColor(color).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0, 1, 0);
+    }
+
+    public static class State extends BlockEntityRenderState {
+        public @Nullable TextureAtlasSprite still;
+        public TextureAtlasSprite flow;
+        public int color;
+        public Direction facing = Direction.NORTH;
+        public boolean renderPrev;
+        public boolean renderNext;
     }
 }

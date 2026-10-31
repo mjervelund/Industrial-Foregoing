@@ -6,7 +6,7 @@
     "itemGroup.industrialforegoing_ag_hus": "인더스트리얼 포고잉: 농업 및 축산업",
     "itemGroup.industrialforegoing_resource_production": "인더스트리얼 포고잉: 자원 생산",
     "itemGroup.industrialforegoing_misc": "인더스트리얼 포고잉: 기타",
-    "key.industrialforegoing.category": "인더스트리얼 포고잉",
+    "key.category.industrialforegoing.industrialforegoing": "인더스트리얼 포고잉",
     "key.industrialforegoing.backpack.desc": "인피니티 백팩 열기",
     "text.industrialforegoing.display.burning": "불타는 시간:",
     "text.industrialforegoing.display.producing": "생산중:",

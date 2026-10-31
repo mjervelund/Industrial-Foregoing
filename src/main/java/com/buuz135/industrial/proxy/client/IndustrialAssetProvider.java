@@ -58,7 +58,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_LOCATION;
         }
     };
@@ -70,7 +70,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_LOCATION;
         }
     };
@@ -81,7 +81,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_LOCATION;
         }
     };
@@ -93,7 +93,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_LOCATION;
         }
     };
@@ -104,7 +104,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -115,7 +115,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -126,7 +126,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -137,7 +137,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -148,7 +148,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -159,7 +159,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };
@@ -170,7 +170,7 @@ public class IndustrialAssetProvider implements IAssetProvider {
         }
 
         @Override
-        public Identifier getResourceLocation() {
+        public Identifier getIdentifier() {
             return ASSET_EXTRA_LOCATION;
         }
     };

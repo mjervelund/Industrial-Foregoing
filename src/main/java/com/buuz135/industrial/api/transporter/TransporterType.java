@@ -30,7 +30,8 @@ import com.buuz135.industrial.proxy.network.TransporterSyncMessage;
 import com.hrznstudio.titanium.api.augment.AugmentTypes;
 import com.hrznstudio.titanium.item.AugmentWrapper;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -229,7 +230,7 @@ public class TransporterType {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, int combinedOverlayIn, MultiBufferSource buffer, float frame, Level level) {
+    public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera, float frame, Level level) {
 
     }
 }

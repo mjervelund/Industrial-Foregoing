@@ -43,16 +43,17 @@ import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.TitaniumTab;
-import com.mojang.math.Transformation;
-import net.minecraft.client.resources.model.*;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.model.SimpleModelState;
+import net.neoforged.neoforge.client.model.standalone.SimpleUnbakedStandaloneModel;
+import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 import java.util.HashMap;
@@ -70,14 +71,14 @@ public class ModuleTransportStorage implements IModule {
     public static ConveyorUpgradeFactory upgrade_splitting = new ConveyorSplittingUpgrade.Factory();
 
     public static BlockWithTile CONVEYOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("conveyor", () -> new ConveyorBlock(TAB_TRANSPORT), blockRegistryObject -> () -> new IndustrialBlockItem(blockRegistryObject.get(), TAB_TRANSPORT), TAB_TRANSPORT);
-    public static HashMap<Identifier, BakedModel> CONVEYOR_UPGRADES_CACHE = new HashMap<>();
+    public static HashMap<Identifier, StandaloneModelKey<BlockStateModelPart>> CONVEYOR_UPGRADES_CACHE = new HashMap<>();
 
     public static TransporterTypeFactory ITEM_TRANSPORTER = new TransporterItemType.Factory();
     public static TransporterTypeFactory FLUID_TRANSPORTER = new TransporterFluidType.Factory();
     public static TransporterTypeFactory WORLD_TRANSPORTER = new TransporterWorldType.Factory();
 
     public static BlockWithTile TRANSPORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem("transporter", () -> new TransporterBlock(), blockRegistryObject -> () -> new TransporterBlock.Item(blockRegistryObject.get(), TAB_TRANSPORT), TAB_TRANSPORT);
-    public static HashMap<Identifier, BakedModel> TRANSPORTER_CACHE = new HashMap<>();
+    public static HashMap<Identifier, StandaloneModelKey<BlockStateModelPart>> TRANSPORTER_CACHE = new HashMap<>();
 
     @Override
     public void generateFeatures(DeferredRegistryHelper registryHelper) {
@@ -85,44 +86,31 @@ public class ModuleTransportStorage implements IModule {
         ConveyorUpgradeFactory.FACTORIES.forEach(conveyorUpgradeFactory -> registryHelper.registerGeneric(Registries.ITEM, "conveyor_" + conveyorUpgradeFactory.getName() + "_upgrade", () -> new ItemConveyorUpgrade(conveyorUpgradeFactory, TAB_TRANSPORT)));
         ContainerTransporter.TYPE = registryHelper.registerGeneric(Registries.MENU, "transporter", () -> IMenuTypeExtension.create(ContainerTransporter::new));
         TransporterTypeFactory.FACTORIES.forEach(transporterTypeFactory -> registryHelper.registerGeneric(Registries.ITEM, transporterTypeFactory.getName() + "_transporter_type", () -> new ItemTransporterType(transporterTypeFactory, TAB_TRANSPORT)));
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             this.onClient();
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void bakingCompleted(ModelEvent.BakingCompleted event) {
-        var models = event.getModels();
-        var modelBakery = event.getModelBakery();
+    private void registerStandalone(ModelEvent.RegisterStandalone event) {
+        // Upgrade models are standalone models added to the conveyor/transporter block model per installed upgrade
         for (TransporterTypeFactory transporterTypeFactory : TransporterTypeFactory.FACTORIES) {
             for (Direction upgradeFacing : transporterTypeFactory.getValidFacings()) {
                 for (TransporterTypeFactory.TransporterAction actions : TransporterTypeFactory.TransporterAction.values()) {
-                    try {
-                        Identifier resourceLocation = transporterTypeFactory.getModel(upgradeFacing, actions);
-                        var modelResourceLocation = new ModelResourceLocation(resourceLocation, "standalone");
-                        UnbakedModel unbakedModel = event.getModelBakery().getModel(resourceLocation);
-                        ModelBaker baker = modelBakery.new ModelBakerImpl((modelLoc, material) -> material.sprite(), modelResourceLocation);
-                        BakedModel bakedModel = unbakedModel.bake(baker, Material::sprite, new SimpleModelState(Transformation.identity()));
-                        TRANSPORTER_CACHE.put(resourceLocation, bakedModel);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Identifier id = transporterTypeFactory.getModel(upgradeFacing, actions);
+                    StandaloneModelKey<BlockStateModelPart> key = new StandaloneModelKey<>(id::toString);
+                    TRANSPORTER_CACHE.put(id, key);
+                    event.register(key, SimpleUnbakedStandaloneModel.simpleModelWrapper(id));
                 }
             }
-
         }
         for (ConveyorUpgradeFactory conveyorUpgradeFactory : ConveyorUpgradeFactory.FACTORIES) {
             for (Direction upgradeFacing : conveyorUpgradeFactory.getValidFacings()) {
                 for (Direction conveyorFacing : ConveyorBlock.FACING.getPossibleValues()) {
-                    try {
-                        Identifier resourceLocation = conveyorUpgradeFactory.getModel(upgradeFacing, conveyorFacing);
-                        var modelResourceLocation = new ModelResourceLocation(resourceLocation, "standalone");
-                        UnbakedModel unbakedModel = event.getModelBakery().getModel(resourceLocation);
-                        ModelBaker baker = modelBakery.new ModelBakerImpl((modelLoc, material) -> material.sprite(), modelResourceLocation);
-                        CONVEYOR_UPGRADES_CACHE.put(resourceLocation, unbakedModel.bake(baker, Material::sprite, new SimpleModelState(Transformation.identity())));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Identifier id = conveyorUpgradeFactory.getModel(upgradeFacing, conveyorFacing);
+                    StandaloneModelKey<BlockStateModelPart> key = new StandaloneModelKey<>(id::toString);
+                    CONVEYOR_UPGRADES_CACHE.put(id, key);
+                    event.register(key, SimpleUnbakedStandaloneModel.simpleModelWrapper(id));
                 }
             }
         }
@@ -130,15 +118,12 @@ public class ModuleTransportStorage implements IModule {
 
     @OnlyIn(Dist.CLIENT)
     private void modifyBakingResult(ModelEvent.ModifyBakingResult event) {
-        for (ModelResourceLocation resourceLocation : event.getModels().keySet()) {
-            if (resourceLocation.id().getNamespace().equals(Reference.MOD_ID)) {
-                if (resourceLocation.id().getPath().contains("transporter") && !resourceLocation.id().getPath().contains("transporters/") && !resourceLocation.id().getPath().contains("type")) {
-                    event.getModels().put(resourceLocation, new TransporterBlockModel(event.getModels().get(resourceLocation)));
-                }
-                if (resourceLocation.id().getPath().contains("conveyor") && !resourceLocation.id().getPath().contains("upgrade")) {
-                    event.getModels().put(resourceLocation, new ConveyorBlockModel(event.getModels().get(resourceLocation)));
-                }
-            }
+        var models = event.getBakingResult().blockStateModels();
+        for (BlockState state : TRANSPORTER.getBlock().getStateDefinition().getPossibleStates()) {
+            models.computeIfPresent(state, (s, model) -> new TransporterBlockModel(model));
+        }
+        for (BlockState state : CONVEYOR.getBlock().getStateDefinition().getPossibleStates()) {
+            models.computeIfPresent(state, (s, model) -> new ConveyorBlockModel(model));
         }
     }
 
@@ -155,7 +140,7 @@ public class ModuleTransportStorage implements IModule {
     @OnlyIn(Dist.CLIENT)
     private void onClient() {
         //EventManager.mod(FMLClientSetupEvent.class).process(this::onClientSetupConveyor).subscribe();
-        EventManager.mod(ModelEvent.BakingCompleted.class).process(this::bakingCompleted).subscribe();
+        EventManager.mod(ModelEvent.RegisterStandalone.class).process(this::registerStandalone).subscribe();
         //EventManager.mod(TextureStitchEvent.Pre.class).process(this::textureStitch).subscribe();
         EventManager.mod(ModelEvent.ModifyBakingResult.class).process(this::modifyBakingResult).subscribe();
         //EventManager.mod(TextureStitchEvent.Pre.class).process(this::transporterTextureStitch).subscribe();

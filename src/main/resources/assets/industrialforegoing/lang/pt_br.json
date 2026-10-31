@@ -6,7 +6,7 @@
   "itemGroup.industrialforegoing_ag_hus": "Industrial Foregoing: Agriculture & Husbandry",
   "itemGroup.industrialforegoing_resource_production": "Industrial Foregoing: Resource Production",
   "itemGroup.industrialforegoing_misc": "Industrial Foregoing: Misc",
-  "key.industrialforegoing.category": "Industrial Foregoing",
+  "key.category.industrialforegoing.industrialforegoing": "Industrial Foregoing",
   "key.industrialforegoing.backpack.desc": "Abrir Mochila do Infinito",
   "text.industrialforegoing.display.burning": "Tempo de queima:",
   "text.industrialforegoing.display.producing": "Produzindo:",

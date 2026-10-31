@@ -25,26 +25,30 @@ import com.buuz135.industrial.api.transporter.TransporterType;
 import com.buuz135.industrial.api.transporter.TransporterTypeFactory;
 import com.buuz135.industrial.block.transportstorage.tile.TransporterTile;
 import com.buuz135.industrial.block.transportstorage.transporter.TransporterItemType;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.Map;
 
-public class TransporterTESR implements BlockEntityRenderer<TransporterTile> {
+public class TransporterTESR implements BlockEntityRenderer<TransporterTile, TransporterTESR.State> {
 
     public static Identifier TEXTURE = Identifier.fromNamespaceAndPath("industrialforegoing", "textures/block/transporters/particle.png");
 
@@ -54,17 +58,37 @@ public class TransporterTESR implements BlockEntityRenderer<TransporterTile> {
     }
 
     public static RenderType createRenderType() {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader))
-                .setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false))
-                .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
-                    RenderSystem.enableBlend();
-                    RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-                }, () -> {
-                    RenderSystem.disableBlend();
-                    RenderSystem.defaultBlendFunc();
-                })).createCompositeState(true);
-        return RenderType.create("transporter_render", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false, state);
+        // 1.21: position/tex/colour quads with ONE/ONE blending; energy swirl is the vanilla additive textured type
+        return RenderTypes.energySwirl(TEXTURE, 0, 0);
+    }
+
+    /**
+     * The camera-facing particle quad the transporters draw for an empty queue slot or a fluid packet.
+     */
+    public static void submitParticle(PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera, int color, float scale) {
+        stack.pushPose();
+        stack.rotate(camera.orientation);
+        stack.rotate(Axis.XP.rotationDegrees(-90f));
+        stack.scale(scale, scale, scale);
+        collector.submitCustomGeometry(stack, TYPE, (pose, buffer) -> {
+            Matrix4f matrix = pose.pose();
+            float pX1 = 1;
+            float u = 1;
+            float pX2 = 0;
+            float u2 = 0;
+            float xOffset = -0.75f;
+            float yOffset = -0f;
+            float zOffset = -0.75f;
+            particleVertex(buffer, matrix, pX2 + xOffset, yOffset, 0 + zOffset, u2, 0, color);
+            particleVertex(buffer, matrix, pX1 + xOffset + 0.5f, yOffset, 0 + zOffset, u, 0, color);
+            particleVertex(buffer, matrix, pX1 + xOffset + 0.5f, yOffset, 1.5f + zOffset, u, 1, color);
+            particleVertex(buffer, matrix, pX2 + xOffset, yOffset, 1.5f + zOffset, u2, 1, color);
+        });
+        stack.popPose();
+    }
+
+    private static void particleVertex(VertexConsumer buffer, Matrix4f matrix, float x, float y, float z, float u, float v, int color) {
+        buffer.addVertex(matrix, x, y, z).setColor(color).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightCoordsUtil.FULL_BRIGHT).setNormal(0, 1, 0);
     }
 
     public static Vector3f getPath(Direction from, Direction to, double step, float partialTicks) {
@@ -117,7 +141,23 @@ public class TransporterTESR implements BlockEntityRenderer<TransporterTile> {
     }
 
     @Override
-    public void render(TransporterTile tile, float partialTicks, PoseStack stack, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn) {
+    public State createRenderState() {
+        return new State();
+    }
+
+    @Override
+    public void extractRenderState(TransporterTile tile, State state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        // The transfer queues live in the client tile; submit runs in the same frame on the render thread
+        state.tile = tile;
+        state.partialTicks = partialTicks;
+    }
+
+    @Override
+    public void submit(State state, PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera) {
+        TransporterTile tile = state.tile;
+        if (tile == null) return;
+        float partialTicks = state.partialTicks;
         Map<Direction, TransporterType> transporters = tile.getTransporterTypeMap();
         for (Direction direction : transporters.keySet()) {
             if (transporters.get(direction).getAction() == TransporterTypeFactory.TransporterAction.EXTRACT) {
@@ -128,11 +168,16 @@ public class TransporterTESR implements BlockEntityRenderer<TransporterTile> {
                         stack.pushPose();
                         Vector3f pos = getPath(direction, other, i + partialTicks, partialTicks);
                         stack.translate(pos.x(), pos.y(), pos.z());
-                        transporters.get(other).renderTransfer(pos, direction, i + 1, stack, combinedOverlayIn, buffer, partialTicks, tile.getLevel());
+                        transporters.get(other).renderTransfer(pos, direction, i + 1, stack, collector, camera, partialTicks, tile.getLevel());
                         stack.popPose();
                     }
                 }
             }
         }
+    }
+
+    public static class State extends BlockEntityRenderState {
+        public @Nullable TransporterTile tile;
+        public float partialTicks;
     }
 }

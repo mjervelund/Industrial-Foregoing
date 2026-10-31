@@ -46,8 +46,7 @@ import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -68,7 +67,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForgeMod;
@@ -112,10 +110,6 @@ public class IndustrialForegoing extends ModuleController {
         proxy = new CommonProxy();
         if (dist.isClient()) {
             EventManager.mod(FMLClientSetupEvent.class).process(fmlClientSetupEvent -> fmlClientSetupEvent.enqueueWork(() -> new ClientProxy().run())).subscribe();
-            EventManager.mod(ModelEvent.RegisterAdditional.class).process(modelRegistryEvent -> {
-                modelRegistryEvent.register(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/catears"), "standalone"));
-                modelRegistryEvent.register(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "item/clean_hydroponic_simulation_processor"), "standalone"));
-            }).subscribe();
             this.initClient();
         }
 
@@ -160,7 +154,7 @@ public class IndustrialForegoing extends ModuleController {
 
     public static FakePlayer getFakePlayer(Level world, BlockPos pos, String uuid) {
         FakePlayer player = getFakePlayer(world, uuid);
-        if (player != null) player.absMoveTo(pos.getX(), pos.getY(), pos.getZ(), 90, 90);
+        if (player != null) player.snapTo(pos.getX(), pos.getY(), pos.getZ(), 90, 90);
         return player;
     }
 
@@ -231,17 +225,15 @@ public class IndustrialForegoing extends ModuleController {
             registerMenuScreensEvent.register((MenuType<? extends ContainerTransporter>) ContainerTransporter.TYPE.get(), GuiTransporter::new);
             registerMenuScreensEvent.register((MenuType<? extends ContainerConveyor>) ContainerConveyor.TYPE.get(), GuiConveyor::new);
         }).subscribe();
-        EventManager.mod(ModelEvent.BakingCompleted.class).process(event -> {
-            ClientProxy.ears_baked = event.getModels().get(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "block/catears"), "standalone"));
-            ClientProxy.HYDROPONIC_SIM_PROCESSOR = event.getModels().get(new ModelResourceLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "item/clean_hydroponic_simulation_processor"), "standalone"));
-        }).subscribe();
-        ClientProxy.OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", -1, "key.industrialforegoing.category");
+        KeyMapping.Category category = new KeyMapping.Category(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "industrialforegoing"));
+        ClientProxy.OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", -1, category);
         EventManager.mod(RegisterKeyMappingsEvent.class).process(event -> {
+            event.registerCategory(category);
             event.register(ClientProxy.OPEN_BACKPACK);
         }).subscribe();
         EventManager.forge(ClientTickEvent.Post.class).process(event -> {
             if (ClientProxy.OPEN_BACKPACK.consumeClick()) {
-                IndustrialForegoing.NETWORK.sendToServer(new BackpackOpenMessage(Screen.hasControlDown()));
+                IndustrialForegoing.NETWORK.sendToServer(new BackpackOpenMessage(Minecraft.getInstance().hasControlDown()));
             }
         }).subscribe();
     }
