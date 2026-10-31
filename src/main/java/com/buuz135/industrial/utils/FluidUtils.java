@@ -22,10 +22,12 @@
 
 package com.buuz135.industrial.utils;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,18 +39,24 @@ public class FluidUtils {
     public static ConcurrentHashMap<Identifier, Integer> colorCache = new ConcurrentHashMap<>();
 
     public static int getFluidColor(FluidStack stack) {
-        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(stack.getFluid());
-        Identifier location = renderProperties.getStillTexture(stack);
-        int tint = renderProperties.getTintColor(stack);
-        int textureColor = colorCache.computeIfAbsent(location, ColorUtils::getColorFrom);
-        return FastColor.ARGB32.multiply(textureColor, tint);
+        FluidModel model = getFluidModel(stack.getFluid());
+        int tint = model.fluidTintSource() == null ? -1 : model.fluidTintSource().colorAsStack(stack);
+        return ARGB.multiply(getTextureColor(model), tint);
     }
 
     public static int getFluidColor(Fluid fluid) {
-        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
-        Identifier location = renderProperties.getStillTexture();
-        int tint = renderProperties.getTintColor();
-        int textureColor = colorCache.computeIfAbsent(location, ColorUtils::getColorFrom);
-        return FastColor.ARGB32.multiply(textureColor, tint);
+        FluidModel model = getFluidModel(fluid);
+        int tint = model.fluidTintSource() == null ? -1 : model.fluidTintSource().color(fluid.defaultFluidState());
+        return ARGB.multiply(getTextureColor(model), tint);
+    }
+
+    // Fluid textures and tints live in the client fluid models on 26.3, not in IClientFluidTypeExtensions
+    private static FluidModel getFluidModel(Fluid fluid) {
+        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.defaultFluidState());
+    }
+
+    private static int getTextureColor(FluidModel model) {
+        TextureAtlasSprite sprite = model.stillMaterial().sprite();
+        return colorCache.computeIfAbsent(sprite.contents().name(), location -> ColorUtils.getColorFrom(sprite));
     }
 }

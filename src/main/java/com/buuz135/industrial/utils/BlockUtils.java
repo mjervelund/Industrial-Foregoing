@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +112,7 @@ public class BlockUtils {
     }
 
     public static boolean canBlockBeBroken(Level world, BlockPos pos, String uuid) {
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), IndustrialForegoing.getFakePlayer(world, pos, uuid));
+        BreakBlockEvent event = new BreakBlockEvent(world, pos, world.getBlockState(pos), IndustrialForegoing.getFakePlayer(world, pos, uuid));
         NeoForge.EVENT_BUS.post(event);
         return !event.isCanceled();
     }
