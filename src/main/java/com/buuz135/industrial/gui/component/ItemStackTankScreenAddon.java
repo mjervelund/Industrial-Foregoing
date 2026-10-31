@@ -27,35 +27,34 @@ import com.hrznstudio.titanium.client.screen.addon.BasicScreenAddon;
 import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.util.AssetUtil;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemStackTankScreenAddon extends BasicScreenAddon {
 
-    private IFluidHandler tank;
+    private ResourceHandler<FluidResource> tank;
     private ITankAsset asset;
     private FluidTankComponent.Type type;
     private int tankSlot;
     private final FluidStack definedFluidStack;
 
-    public ItemStackTankScreenAddon(int posX, int posY, IFluidHandler tank, int tankSlot, FluidTankComponent.Type type, FluidStack definedFluidStack) {
+    public ItemStackTankScreenAddon(int posX, int posY, ResourceHandler<FluidResource> tank, int tankSlot, FluidTankComponent.Type type, FluidStack definedFluidStack) {
         super(posX, posY);
         this.tank = tank;
         this.type = type;
@@ -64,46 +63,33 @@ public class ItemStackTankScreenAddon extends BasicScreenAddon {
     }
 
     @Override
-    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
         asset = IAssetProvider.getAsset(provider, type.getAssetType());
         Rectangle area = asset.getArea();
-        if (!tank.getFluidInTank(tankSlot).isEmpty()) {
-            FluidStack fluidStack = tank.getFluidInTank(tankSlot);
-            int stored = fluidStack.getAmount();
-            int capacity = tank.getTankCapacity(tankSlot);
+        FluidStack fluidStack = FluidUtil.getStack(tank, tankSlot);
+        if (!fluidStack.isEmpty()) {
+            long stored = fluidStack.getAmount();
+            long capacity = tank.getCapacityAsLong(tankSlot, tank.getResource(tankSlot));
             int topBottomPadding = asset.getFluidRenderPadding(Direction.UP) + asset.getFluidRenderPadding(Direction.DOWN);
-            int offset = (stored * (area.height - topBottomPadding) / capacity);
-            IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
-            Identifier flowing = renderProperties.getStillTexture(fluidStack);
-            if (flowing != null) {
-                AbstractTexture texture = screen.getMinecraft().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS); //getAtlasSprite
-                if (texture instanceof TextureAtlas) {
-                    TextureAtlasSprite sprite = ((TextureAtlas) texture).getSprite(flowing);
-                    if (sprite != null) {
-                        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-                        Color color = new Color(renderProperties.getTintColor());
-                        RenderSystem.setShaderColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-                        RenderSystem.enableBlend();
-                        guiGraphics.blit(
-                                this.getPosX() + guiX + asset.getFluidRenderPadding(Direction.WEST),
-                                this.getPosY() + guiY + asset.getFluidRenderPadding(Direction.UP) + (fluidStack.getFluid().is(Tags.Fluids.GASEOUS) ? 0 : (area.height - topBottomPadding) - offset),
-                                0,
-                                (int) (area.getWidth() - asset.getFluidRenderPadding(Direction.EAST) - asset.getFluidRenderPadding(Direction.WEST)),
-                                offset,
-                                sprite);
-                        RenderSystem.disableBlend();
-                        RenderSystem.setShaderColor(1, 1, 1, 1);
-                    }
-                }
-            }
+            int offset = (int) (stored * (area.height - topBottomPadding) / capacity);
+            FluidModel model = screen.getMinecraft().getModelManager().getFluidStateModelSet().get(fluidStack.getFluid().defaultFluidState());
+            TextureAtlasSprite sprite = model.stillMaterial().sprite();
+            int color = model.fluidTintSource() == null ? -1 : model.fluidTintSource().colorAsStack(fluidStack);
+            guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    sprite,
+                    this.getPosX() + guiX + asset.getFluidRenderPadding(Direction.WEST),
+                    this.getPosY() + guiY + asset.getFluidRenderPadding(Direction.UP) + (fluidStack.getFluid().is(Tags.Fluids.GASEOUS) ? 0 : (area.height - topBottomPadding) - offset),
+                    (int) (area.getWidth() - asset.getFluidRenderPadding(Direction.EAST) - asset.getFluidRenderPadding(Direction.WEST)),
+                    offset,
+                    color);
         }
-        RenderSystem.setShaderColor(1, 1, 1, 1);
         ITankAsset asset = IAssetProvider.getAsset(provider, type.getAssetType());
         AssetUtil.drawAsset(guiGraphics, screen, asset, guiX + getPosX(), guiY + getPosY());
     }
 
     @Override
-    public void drawForegroundLayer(GuiGraphics stack, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawForegroundLayer(GuiGraphicsExtractor stack, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
 
     }
 
@@ -111,7 +97,7 @@ public class ItemStackTankScreenAddon extends BasicScreenAddon {
     public List<Component> getTooltipLines() {
         List<Component> strings = new ArrayList<>();
         strings.add(Component.literal(ChatFormatting.GOLD + Component.translatable("tooltip.titanium.tank.fluid").getString()).append(definedFluidStack.getHoverName()).withStyle(ChatFormatting.WHITE));
-        strings.add(Component.translatable("tooltip.titanium.tank.amount").withStyle(ChatFormatting.GOLD).append(Component.literal(ChatFormatting.WHITE + new DecimalFormat().format(tank.getFluidInTank(tankSlot).getAmount()) + ChatFormatting.GOLD + "/" + ChatFormatting.WHITE + new DecimalFormat().format(tank.getTankCapacity(tankSlot)) + ChatFormatting.DARK_AQUA + "mb")));
+        strings.add(Component.translatable("tooltip.titanium.tank.amount").withStyle(ChatFormatting.GOLD).append(Component.literal(ChatFormatting.WHITE + new DecimalFormat().format(tank.getAmountAsLong(tankSlot)) + ChatFormatting.GOLD + "/" + ChatFormatting.WHITE + new DecimalFormat().format(tank.getCapacityAsLong(tankSlot, tank.getResource(tankSlot))) + ChatFormatting.DARK_AQUA + "mb")));
         /*
         if (!Minecraft.getInstance().player.inventory.getSelected().isEmpty() && Minecraft.getInstance().player.inventory.getSelected().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent()){
             Minecraft.getInstance().player.inventory.getSelected().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(iFluidHandlerItem -> {
@@ -159,7 +145,7 @@ public class ItemStackTankScreenAddon extends BasicScreenAddon {
         /*
         if (!Minecraft.getInstance().player.inventory.getSelected().isEmpty() && Minecraft.getInstance().player.inventory.getSelected().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent()){
             Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(SoundEvents.UI_BUTTON_CLICK, SoundSource.PLAYERS, 1f, 1f, Minecraft.getInstance().player.blockPosition())); //getPosition
-            Screen screen = Minecraft.getInstance().screen;
+            Screen screen = Minecraft.getInstance().gui.screen();
             if (screen instanceof AbstractContainerScreen && ((AbstractContainerScreen) screen).getMenu() instanceof ILocatable) {
                 ILocatable locatable = (ILocatable) ((AbstractContainerScreen) screen).getMenu();
                 CompoundTag compoundNBT = new CompoundTag();

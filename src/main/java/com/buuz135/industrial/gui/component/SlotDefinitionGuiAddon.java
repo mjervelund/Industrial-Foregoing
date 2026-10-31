@@ -35,7 +35,7 @@ import com.hrznstudio.titanium.network.messages.ButtonClickNetworkMessage;
 import com.hrznstudio.titanium.util.AssetUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
@@ -56,49 +56,47 @@ public abstract class SlotDefinitionGuiAddon extends BasicButtonAddon {
     }
 
     @Override
-    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
         if (!getItemStack().isEmpty() && getItemStack().has(IFAttachments.INFINITY_BACKPACK_ID)) {
             BackpackDataManager.BackpackItemHandler handler = BackpackDataManager.CLIENT_SIDE_BACKPACKS.getOrDefault(getItemStack().get(IFAttachments.INFINITY_BACKPACK_ID), null);
             AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.SLOT), guiX + getPosX() - 1, guiY + getPosY() - 1);
             if (handler != null) {
                 BackpackDataManager.SlotDefinition display = handler.getSlotDefinition(slotId);
                 if (!display.getStack().isEmpty()) {
-                    guiGraphics.renderItem(display.getStack(), guiX + getPosX(), guiY + getPosY());
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().translate(0, 0, 260);
-                    guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
+                    guiGraphics.item(display.getStack(), guiX + getPosX(), guiY + getPosY());
+                    guiGraphics.pose().pushMatrix();
+                    guiGraphics.pose().scale(0.5f, 0.5f);
                     String amount = NumberUtils.getFormatedBigNumber(display.getAmount());
-                    guiGraphics.drawString(Minecraft.getInstance().font, amount, (int) ((guiX + getPosX() + 17 - Minecraft.getInstance().font.width(amount) / 2f) * 2), (guiY + getPosY() + 13) * 2, 0xFFFFFF, true);
-                    guiGraphics.pose().popPose();
+                    guiGraphics.text(Minecraft.getInstance().font, amount, (int) ((guiX + getPosX() + 17 - Minecraft.getInstance().font.width(amount) / 2f) * 2), (guiY + getPosY() + 13) * 2, 0xFFFFFFFF);
+                    guiGraphics.pose().popMatrix();
                 }
             }
         }
     }
 
     @Override
-    public void drawForegroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
         if (isMouseOver(mouseX - guiX, mouseY - guiY)) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, 256);
+            guiGraphics.pose().pushMatrix();
             AssetUtil.drawSelectingOverlay(guiGraphics, getPosX(), getPosY(), getPosX() + getXSize() - 1, getPosY() + getYSize() - 1);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         //Minecraft.getInstance().getSoundHandler().play(new SimpleSound(SoundEvents.UI_BUTTON_CLICK, SoundCategory.PLAYERS, 1f, 1f, Minecraft.getInstance().player.getPosition())); //getPosition
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
         if (screen instanceof AbstractContainerScreen && ((AbstractContainerScreen) screen).getMenu() instanceof ILocatable) {
-            if (!isMouseOver(mouseX - ((AbstractContainerScreen<?>) screen).getGuiLeft(), mouseY - ((AbstractContainerScreen<?>) screen).getGuiTop()))
+            if (!isMouseOver(mouseX - ((AbstractContainerScreen<?>) screen).getLeftPos(), mouseY - ((AbstractContainerScreen<?>) screen).getTopPos()))
                 return false;
             ILocatable locatable = (ILocatable) ((AbstractContainerScreen) screen).getMenu();
             CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.putString("Id", getItemStack().get(IFAttachments.INFINITY_BACKPACK_ID));
             compoundNBT.putInt("Slot", slotId);
             compoundNBT.putInt("Button", button);
-            compoundNBT.putBoolean("Shift", Screen.hasShiftDown());
-            compoundNBT.putBoolean("Ctrl", Screen.hasControlDown());
+            compoundNBT.putBoolean("Shift", Minecraft.getInstance().hasShiftDown());
+            compoundNBT.putBoolean("Ctrl", Minecraft.getInstance().hasControlDown());
             Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(locatable.getLocatorInstance(), 4, compoundNBT));
             return true;
         }
@@ -114,7 +112,7 @@ public abstract class SlotDefinitionGuiAddon extends BasicButtonAddon {
         if (handler != null) {
             BackpackDataManager.SlotDefinition display = handler.getSlotDefinition(slotId);
             if (!display.getStack().isEmpty()) {
-                lines.addAll(Minecraft.getInstance().screen.getTooltipFromItem(Minecraft.getInstance(), display.getStack()));
+                lines.addAll(Screen.getTooltipFromItem(Minecraft.getInstance(), display.getStack()));
                 lines.add(Component.literal(ChatFormatting.GOLD + new DecimalFormat().format(display.getAmount())));
             }
             String changeVoid = ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.tooltip.ctrl_left").getString();

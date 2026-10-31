@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.gui.conveyor;
 
+import com.hrznstudio.titanium.util.AssetUtil;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.api.conveyor.gui.IGuiComponent;
@@ -30,11 +31,10 @@ import com.buuz135.industrial.gui.component.custom.ICanSendNetworkMessage;
 import com.buuz135.industrial.proxy.block.filter.IFilter;
 import com.buuz135.industrial.proxy.network.ConveyorButtonInteractMessage;
 import com.buuz135.industrial.utils.Reference;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -75,15 +75,14 @@ public class GuiConveyor extends AbstractContainerScreen<ContainerConveyor> impl
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) { //background
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) { //background
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         x = (width - imageWidth) / 2;
         y = (height - imageHeight) / 2;
-        guiGraphics.blit(BG_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        AssetUtil.blit(guiGraphics, BG_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
         if (upgrade != null) {
             String localized = Component.translatable(String.format("conveyor.upgrade.%s.%s", BuiltInRegistries.ITEM.getKey(upgrade.getFactory().getUpgradeItem()).getNamespace(), BuiltInRegistries.ITEM.getKey(upgrade.getFactory().getUpgradeItem()).getPath())).getString();
-            guiGraphics.drawString(Minecraft.getInstance().font, localized, x + imageWidth / 2 - getMinecraft().font.width(localized) / 2, y + 6, 0x404040, false);
+            guiGraphics.text(Minecraft.getInstance().font, localized, x + imageWidth / 2 - getMinecraft().font.width(localized) / 2, y + 6, 0xFF404040, false);
         }
         for (IGuiComponent iGuiComponent : componentList) {
             iGuiComponent.drawGuiBackgroundLayer(guiGraphics, x, y, mouseX, mouseY);
@@ -91,17 +90,16 @@ public class GuiConveyor extends AbstractContainerScreen<ContainerConveyor> impl
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) { //foreground
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) { //foreground
         x = (width - imageWidth) / 2;
         y = (height - imageHeight) / 2;
         for (IGuiComponent iGuiComponent : componentList) {
             iGuiComponent.drawGuiForegroundLayer(guiGraphics, x, y, mouseX, mouseY);
         }
-        renderTooltip(guiGraphics, mouseX - x, mouseY - y);
         for (IGuiComponent iGuiComponent : componentList) {
             if (iGuiComponent.isInside(mouseX - x, mouseY - y)) {
                 List<Component> tooltips = iGuiComponent.getTooltip(x, y, mouseX, mouseY);
-                if (tooltips != null) guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltips, mouseX - x, mouseY - y);
+                if (tooltips != null) guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, tooltips, mouseX, mouseY);
             }
         }
     }
@@ -111,8 +109,10 @@ public class GuiConveyor extends AbstractContainerScreen<ContainerConveyor> impl
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) { //mouseClicked
-        boolean click = super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) { //mouseClicked
+        boolean click = super.mouseClicked(event, doubleClick);
+        double mouseX = event.x();
+        double mouseY = event.y();
         for (IGuiComponent iGuiComponent : componentList) {
             if (iGuiComponent.isInside(mouseX - x, mouseY - y)) {
                 if (iGuiComponent.handleClick(this, x, y, mouseX, mouseY))

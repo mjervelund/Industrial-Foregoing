@@ -22,13 +22,15 @@
 
 package com.buuz135.industrial.gui.component.custom;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
+import net.minecraft.client.gui.screens.Screen;
 import com.buuz135.industrial.api.conveyor.gui.PositionedGuiComponent;
 import com.buuz135.industrial.proxy.block.filter.IFilter;
 import com.buuz135.industrial.utils.IFAttachments;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.util.AssetUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -54,7 +56,7 @@ public abstract class FilterGuiComponent extends PositionedGuiComponent {
                 int posY = guiY + getXPos() + i * 18;
                 if (mouseX > posX + 1 && mouseX < posX + 1 + 16 && mouseY > posY + 1 && mouseY < posY + 1 + 16) {
                     if (conveyor instanceof ICanSendNetworkMessage) {
-                        ((ICanSendNetworkMessage) conveyor).sendMessage(pos, (CompoundTag) Minecraft.getInstance().player.containerMenu.getCarried().saveOptional(IFAttachments.registryAccess()));
+                        ((ICanSendNetworkMessage) conveyor).sendMessage(pos, ItemStackSerialization.save(IFAttachments.registryAccess(), Minecraft.getInstance().player.containerMenu.getCarried()));
                     }
                     return true;
                 }
@@ -65,16 +67,16 @@ public abstract class FilterGuiComponent extends PositionedGuiComponent {
     }
 
     @Override
-    public void drawGuiBackgroundLayer(GuiGraphics guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
+    public void drawGuiBackgroundLayer(GuiGraphicsExtractor guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
         int pos = 0;
         for (int i = 0; i < getYSize(); i++) {
             for (int x = 0; x < getXSize(); x++) {
                 int posX = guiX + getXPos() + x * 18;
                 int posY = guiY + getXPos() + i * 18;
-                guiGraphics.blit(BG_TEXTURE, posX, posY, 176, 0, 18, 18); //blit
+                AssetUtil.blit(guiGraphics, BG_TEXTURE, posX, posY, 176, 0, 18, 18); //blit
                 if (!getFilter().getFilter()[pos].getStack().isEmpty()) {
                     //RenderSystem.setupGui3DDiffuseLighting();
-                    guiGraphics.renderItem(getFilter().getFilter()[pos].getStack(), posX + 1, posY + 1);
+                    guiGraphics.item(getFilter().getFilter()[pos].getStack(), posX + 1, posY + 1);
                 }
                 ++pos;
             }
@@ -82,7 +84,7 @@ public abstract class FilterGuiComponent extends PositionedGuiComponent {
     }
 
     @Override
-    public void drawGuiForegroundLayer(GuiGraphics guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
+    public void drawGuiForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
         for (int i = 0; i < getYSize(); i++) {
             for (int x = 0; x < getXSize(); x++) {
                 int posX = guiX + getXPos() + x * 18;
@@ -111,7 +113,7 @@ public abstract class FilterGuiComponent extends PositionedGuiComponent {
                 int posX = guiX + getXPos() + x * 18;
                 int posY = guiY + getXPos() + i * 18;
                 if (mouseX > posX + 1 && mouseX < posX + 1 + 16 && mouseY > posY + 1 && mouseY < posY + 1 + 16 && !getFilter().getFilter()[pos].getStack().isEmpty()) {
-                    return Minecraft.getInstance().screen.getTooltipFromItem(Minecraft.getInstance(), getFilter().getFilter()[pos].getStack());
+                    return Screen.getTooltipFromItem(Minecraft.getInstance(), getFilter().getFilter()[pos].getStack());
                 }
                 ++pos;
             }

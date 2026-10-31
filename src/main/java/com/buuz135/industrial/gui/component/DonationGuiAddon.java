@@ -1,5 +1,7 @@
 package com.buuz135.industrial.gui.component;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import com.hrznstudio.titanium.util.AssetUtil;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.client.screen.addon.BasicScreenAddon;
@@ -7,12 +9,13 @@ import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
 import com.hrznstudio.titanium.client.screen.container.BasicAddonScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,17 +39,17 @@ public class DonationGuiAddon extends BasicScreenAddon {
     }
 
     @Override
-    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider iAssetProvider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider iAssetProvider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
         var rl = Identifier.fromNamespaceAndPath("titanium", "textures/gui/background_alt.png");
-        guiGraphics.blit(rl, getPosX() + guiX, getPosY() + guiY, 0, 0, 22, 22);
-        guiGraphics.blit(rl, getPosX() + guiX, getPosY() + guiY + 22, 0, 81, 22, 3);
+        AssetUtil.blit(guiGraphics, rl, getPosX() + guiX, getPosY() + guiY, 0, 0, 22, 22);
+        AssetUtil.blit(guiGraphics, rl, getPosX() + guiX, getPosY() + guiY + 22, 0, 81, 22, 3);
 
         var rlDonate = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/donate.png");
-        guiGraphics.blit(rlDonate, getPosX() + guiX + 5, getPosY() + guiY + 5, 0, 0, 15, 15, 15, 15);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, rlDonate, getPosX() + guiX + 5, getPosY() + guiY + 5, 0, 0, 15, 15, 15, 15);
     }
 
     @Override
-    public void drawForegroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider iAssetProvider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider iAssetProvider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
 
     }
 
@@ -63,10 +66,10 @@ public class DonationGuiAddon extends BasicScreenAddon {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
         if (screen instanceof BasicAddonScreen basicAddonScreen) {
-            if (isMouseOver(mouseX - basicAddonScreen.getGuiLeft(), mouseY - basicAddonScreen.getGuiTop())) {
-                ConfirmLinkScreen.confirmLink(Minecraft.getInstance().screen, "https://github.com/sponsors/Buuz135").onPress(null);
+            if (isMouseOver(mouseX - basicAddonScreen.getLeftPos(), mouseY - basicAddonScreen.getTopPos())) {
+                ConfirmLinkScreen.confirmLinkNow(screen, URI.create("https://github.com/sponsors/Buuz135"));
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);

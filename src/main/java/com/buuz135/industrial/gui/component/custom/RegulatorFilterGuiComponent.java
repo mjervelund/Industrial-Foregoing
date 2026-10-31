@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.gui.component.custom;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.api.conveyor.gui.PositionedGuiComponent;
 import com.buuz135.industrial.proxy.block.filter.RegulatorFilter;
 import com.buuz135.industrial.utils.IFAttachments;
@@ -29,7 +30,7 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.util.AssetUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
@@ -56,7 +57,7 @@ public abstract class RegulatorFilterGuiComponent extends PositionedGuiComponent
                 int posY = guiY + getXPos() + i * 18;
                 if (mouseX > posX + 1 && mouseX < posX + 1 + 16 && mouseY > posY + 1 && mouseY < posY + 1 + 16) {
                     if (conveyor instanceof ICanSendNetworkMessage) {
-                        ((ICanSendNetworkMessage) conveyor).sendMessage(pos, (CompoundTag) Minecraft.getInstance().player.containerMenu.getCarried().saveOptional(IFAttachments.registryAccess()));
+                        ((ICanSendNetworkMessage) conveyor).sendMessage(pos, ItemStackSerialization.save(IFAttachments.registryAccess(), Minecraft.getInstance().player.containerMenu.getCarried()));
                     }
                     return true;
                 }
@@ -77,10 +78,10 @@ public abstract class RegulatorFilterGuiComponent extends PositionedGuiComponent
                     if (conveyor instanceof ICanSendNetworkMessage) {
                         CompoundTag compoundNBT = new CompoundTag();
                         int amount = (int) scrollY;
-                        if (Screen.hasShiftDown()) {
+                        if (Minecraft.getInstance().hasShiftDown()) {
                             amount *= getFilter().getSmallMultiplier();
                         }
-                        if (Screen.hasControlDown()) {
+                        if (Minecraft.getInstance().hasControlDown()) {
                             amount *= getFilter().getBigMultiplier();
                         }
                         compoundNBT.putInt("Amount", amount);
@@ -95,22 +96,21 @@ public abstract class RegulatorFilterGuiComponent extends PositionedGuiComponent
     }
 
     @Override
-    public void drawGuiBackgroundLayer(GuiGraphics guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
+    public void drawGuiBackgroundLayer(GuiGraphicsExtractor guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
         int pos = 0;
         for (int i = 0; i < getYSize(); i++) {
             for (int x = 0; x < getXSize(); x++) {
                 int posX = guiX + getXPos() + x * 18;
                 int posY = guiY + getXPos() + i * 18;
-                guiGraphics.blit(BG_TEXTURE, posX, posY, 176, 0, 18, 18); //blit
+                AssetUtil.blit(guiGraphics, BG_TEXTURE, posX, posY, 176, 0, 18, 18); //blit
                 if (!getFilter().getFilterSlots()[pos].getStack().isEmpty()) {
-                    guiGraphics.renderItem(getFilter().getFilterSlots()[pos].getStack(), posX + 1, posY + 1);
+                    guiGraphics.item(getFilter().getFilterSlots()[pos].getStack(), posX + 1, posY + 1);
                     if (isRegulator()) {
-                        guiGraphics.pose().pushPose();
-                        guiGraphics.pose().translate(0, 0, 260);
-                        guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
+                        guiGraphics.pose().pushMatrix();
+                        guiGraphics.pose().scale(0.5f, 0.5f);
                         String amount = getFilter().getFilterSlots()[pos].getAmount() + "";
-                        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.WHITE + amount, (int) ((posX + 17 - Minecraft.getInstance().font.width(amount) / 2f) * 2), (posY + 13) * 2, 0xFFFFFF);
-                        guiGraphics.pose().popPose();
+                        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.WHITE + amount, (int) ((posX + 17 - Minecraft.getInstance().font.width(amount) / 2f) * 2), (posY + 13) * 2, 0xFFFFFFFF);
+                        guiGraphics.pose().popMatrix();
                     }
                 }
                 ++pos;
@@ -119,7 +119,7 @@ public abstract class RegulatorFilterGuiComponent extends PositionedGuiComponent
     }
 
     @Override
-    public void drawGuiForegroundLayer(GuiGraphics guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
+    public void drawGuiForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
         for (int i = 0; i < getYSize(); i++) {
             for (int x = 0; x < getXSize(); x++) {
                 int posX = guiX + getXPos() + x * 18;
@@ -152,7 +152,7 @@ public abstract class RegulatorFilterGuiComponent extends PositionedGuiComponent
                 int posX = guiX + getXPos() + x * 18;
                 int posY = guiY + getXPos() + i * 18;
                 if (mouseX > posX + 1 && mouseX < posX + 1 + 16 && mouseY > posY + 1 && mouseY < posY + 1 + 16 && !getFilter().getFilterSlots()[pos].getStack().isEmpty()) {
-                    List<Component> strings = Minecraft.getInstance().screen.getTooltipFromItem(Minecraft.getInstance(), getFilter().getFilterSlots()[pos].getStack());
+                    List<Component> strings = Screen.getTooltipFromItem(Minecraft.getInstance(), getFilter().getFilterSlots()[pos].getStack());
                     if (isRegulator())
                         strings.add(Component.literal(ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.display.use_scroll").getString()));
                     return strings;

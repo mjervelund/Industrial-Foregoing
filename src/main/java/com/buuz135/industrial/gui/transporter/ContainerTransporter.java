@@ -31,7 +31,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import com.hrznstudio.titanium.container.addon.UpdatableSlotItemHandler;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ContainerTransporter extends AbstractContainerMenu {
@@ -42,7 +42,7 @@ public class ContainerTransporter extends AbstractContainerMenu {
     private Direction facing;
 
     public ContainerTransporter(int id, Inventory player, FriendlyByteBuf buffer) {
-        this(id, (TransporterTile) player.player.getCommandSenderWorld().getBlockEntity(buffer.readBlockPos()), buffer.readEnum(Direction.class), player);
+        this(id, (TransporterTile) player.player.level().getBlockEntity(buffer.readBlockPos()), buffer.readEnum(Direction.class), player);
     }
 
     public ContainerTransporter(int id, TransporterTile conveyor, Direction facing, Inventory player) {
@@ -66,7 +66,7 @@ public class ContainerTransporter extends AbstractContainerMenu {
         }
         var augment = transporterTile.getAugmentInventory();
         for (int i = 0; i < augment.getSlots(); i++) {
-            addSlot(new SlotItemHandler(augment, i, augment.getXPos() + augment.getSlotPosition().apply(i).getLeft(), augment.getYPos() + augment.getSlotPosition().apply(i).getRight()));
+            addSlot(new UpdatableSlotItemHandler(augment, i, augment.getXPos() + augment.getSlotPosition().apply(i).getLeft(), augment.getYPos() + augment.getSlotPosition().apply(i).getRight()));
         }
     }
 

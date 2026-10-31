@@ -26,9 +26,8 @@ import com.hrznstudio.titanium.api.client.AssetTypes;
 import com.hrznstudio.titanium.client.screen.addon.BasicScreenAddon;
 import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
 import com.hrznstudio.titanium.util.AssetUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -57,16 +56,16 @@ public abstract class ItemGuiAddon extends BasicScreenAddon {
 
 
     @Override
-    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
         //RenderSystem.setupGui3DDiffuseLighting();
-        guiGraphics.renderItem(getItemStack(), guiX + getPosX() + 1, guiY + getPosY() + 1);
+        guiGraphics.item(getItemStack(), guiX + getPosX() + 1, guiY + getPosY() + 1);
 //        Lighting.turnOff();
 //        RenderSystem.enableAlphaTest();
     }
 
     @Override
-    public void drawForegroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+    public void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
 
     }
 
@@ -77,7 +76,7 @@ public abstract class ItemGuiAddon extends BasicScreenAddon {
 
     @Override
     public List<Component> getTooltipLines() {
-        return this.tooltip ? Minecraft.getInstance().screen.getTooltipFromItem(Minecraft.getInstance(), getItemStack()) : new ArrayList<>();
+        return this.tooltip ? Screen.getTooltipFromItem(Minecraft.getInstance(), getItemStack()) : new ArrayList<>();
     }
 
     public abstract ItemStack getItemStack();

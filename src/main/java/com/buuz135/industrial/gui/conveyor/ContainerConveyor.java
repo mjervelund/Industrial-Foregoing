@@ -41,7 +41,7 @@ public class ContainerConveyor extends AbstractContainerMenu {
     private Direction facing;
 
     public ContainerConveyor(int id, Inventory player, FriendlyByteBuf buffer) {
-        this(id, (ConveyorTile) player.player.getCommandSenderWorld().getBlockEntity(buffer.readBlockPos()), buffer.readEnum(Direction.class), player);
+        this(id, (ConveyorTile) player.player.level().getBlockEntity(buffer.readBlockPos()), buffer.readEnum(Direction.class), player);
     }
 
     public ContainerConveyor(int id, ConveyorTile conveyor, Direction facing, Inventory player) {

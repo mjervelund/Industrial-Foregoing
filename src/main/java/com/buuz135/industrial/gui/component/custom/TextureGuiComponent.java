@@ -22,11 +22,10 @@
 
 package com.buuz135.industrial.gui.component.custom;
 
+import com.hrznstudio.titanium.util.AssetUtil;
 import com.buuz135.industrial.api.conveyor.gui.PositionedGuiComponent;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -61,12 +60,12 @@ public class TextureGuiComponent extends PositionedGuiComponent {
     }
 
     @Override
-    public void drawGuiBackgroundLayer(GuiGraphics guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
-        guiGraphics.blit(resourceLocation, guiX + getXPos(), guiY + getYPos(), textureX, textureY, getXSize(), getYSize());
+    public void drawGuiBackgroundLayer(GuiGraphicsExtractor guiGraphics, int guiX, int guiY, double mouseX, double mouseY) {
+        AssetUtil.blit(guiGraphics, resourceLocation, guiX + getXPos(), guiY + getYPos(), textureX, textureY, getXSize(), getYSize());
     }
 
     @Override
-    public void drawGuiForegroundLayer(GuiGraphics stack, int guiX, int guiY, double mouseX, double mouseY) {
+    public void drawGuiForegroundLayer(GuiGraphicsExtractor stack, int guiX, int guiY, double mouseX, double mouseY) {
 
     }
 
