@@ -45,6 +45,7 @@ import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;
 import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -226,7 +227,7 @@ public class IndustrialForegoing extends ModuleController {
             registerMenuScreensEvent.register((MenuType<? extends ContainerConveyor>) ContainerConveyor.TYPE.get(), GuiConveyor::new);
         }).subscribe();
         KeyMapping.Category category = new KeyMapping.Category(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "industrialforegoing"));
-        ClientProxy.OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", -1, category);
+        ClientProxy.OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", InputConstants.UNKNOWN.getValue(), category);
         EventManager.mod(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent.class).process(com.buuz135.industrial.proxy.client.OreFluidClientRegistrar::registerClientExtensions).subscribe();
         EventManager.mod(net.neoforged.neoforge.client.event.RegisterFluidModelsEvent.class).process(com.buuz135.industrial.proxy.client.OreFluidClientRegistrar::registerModels).subscribe();
         EventManager.mod(RegisterKeyMappingsEvent.class).process(event -> {
