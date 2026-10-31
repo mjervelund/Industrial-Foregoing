@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.generator.mycelial;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
@@ -78,7 +79,7 @@ public class PinkGeneratorType implements IMycelialGeneratorType {
     public Pair<Integer, Integer> getTimeAndPowerGeneration(INBTSerializable<CompoundTag>[] inputs) {
         if (inputs.length > 0 && inputs[0] instanceof SidedInventoryComponent && ((SidedInventoryComponent<?>) inputs[0]).getStackInSlot(0).getCount() > 0) {
             ItemStack stack = ((SidedInventoryComponent<?>) inputs[0]).getStackInSlot(0).copy();
-            ((SidedInventoryComponent<?>) inputs[0]).getStackInSlot(0).shrink(1);
+            ItemStackUtils.shrink((SidedInventoryComponent<?>) inputs[0], 0, 1);
             return calculate(stack);
         }
         return Pair.of(0, 80);

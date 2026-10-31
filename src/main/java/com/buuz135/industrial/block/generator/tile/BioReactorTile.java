@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.generator.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialWorkingTile;
 import com.buuz135.industrial.config.machine.generator.BioReactorConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -53,7 +55,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -128,10 +129,10 @@ public class BioReactorTile extends IndustrialWorkingTile<BioReactorTile> {
             if (efficiency <= 0) return new WorkAction(1, 0);
             int fluidAmount = ((efficiency - 1) * 40 + 93) * efficiency + 2;
             if (water.getFluidAmount() >= fluidAmount && biofuel.getCapacity() - biofuel.getFluidAmount() >= fluidAmount) {
-                water.drainForced(fluidAmount, IFluidHandler.FluidAction.EXECUTE);
-                biofuel.fillForced(new FluidStack(ModuleCore.BIOFUEL.getSourceFluid().get(), fluidAmount), IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.drainForced(water, fluidAmount, false);
+                TankUtils.fillForced(biofuel, new FluidStack(ModuleCore.BIOFUEL.getSourceFluid().get(), fluidAmount), false);
                 for (int i = 0; i < input.getInventory().getSlots(); i++) {
-                    input.getInventory().getStackInSlot(i).shrink(1);
+                    ItemStackUtils.shrink(input.getInventory(), i, 1);
                 }
                 return new WorkAction(1, getPowerPerOperation);
             }

@@ -22,6 +22,9 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.SporeRecreatorConfig;
 import com.buuz135.industrial.module.ModuleResourceProduction;
@@ -38,8 +41,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -82,16 +83,21 @@ public class SporesRecreatorTile extends IndustrialProcessingTile<SporesRecreato
     public boolean canIncrease() {
         return !ItemHandlerUtil.getFirstItem(input).isEmpty() && tank.getFluidAmount() >= 100
                 && (ItemHandlerUtil.getFirstItem(input).is(Tags.Items.MUSHROOMS) ? tank.getFluid().getFluid().isSame(Fluids.WATER) : tank.getFluid().getFluid().isSame(Fluids.LAVA))
-                && ItemHandlerHelper.insertItem(output, new ItemStack(ItemHandlerUtil.getFirstItem(input).getItem(), 2), true).isEmpty();
+                && ItemUtil.insertItemReturnRemaining(output, new ItemStack(ItemHandlerUtil.getFirstItem(input).getItem(), 2), true, null).isEmpty();
     }
 
     @Override
     public Runnable onFinish() {
         return () -> {
             ItemStack outputStack = new ItemStack(ItemHandlerUtil.getFirstItem(input).getItem(), 2);
-            tank.drainForced(100, IFluidHandler.FluidAction.EXECUTE);
-            ItemHandlerUtil.getFirstItem(input).shrink(1);
-            ItemHandlerHelper.insertItem(output, outputStack, false);
+            TankUtils.drainForced(tank, 100, false);
+            for (int i = 0; i < input.getSlots(); i++) {
+                if (!input.getStackInSlot(i).isEmpty()) {
+                    ItemStackUtils.shrink(input, i, 1);
+                    break;
+                }
+            }
+            ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
         };
     }
 

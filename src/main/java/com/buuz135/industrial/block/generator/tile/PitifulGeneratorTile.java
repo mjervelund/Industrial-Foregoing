@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.generator.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialGeneratorTile;
 import com.buuz135.industrial.config.machine.generator.PitifulGeneratorConfig;
 import com.buuz135.industrial.module.ModuleGenerator;
@@ -58,7 +59,7 @@ public class PitifulGeneratorTile extends IndustrialGeneratorTile<PitifulGenerat
         if (fuel.getStackInSlot(0).hasCraftingRemainingItem()) {
             fuel.setStackInSlot(0, fuel.getStackInSlot(0).getCraftingRemainingItem());
         } else {
-            fuel.getStackInSlot(0).shrink(1);
+            ItemStackUtils.shrink(fuel, 0, 1);
         }
 
         return time;

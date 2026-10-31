@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.generator.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialGeneratorTile;
 import com.buuz135.industrial.config.machine.generator.BiofuelGeneratorConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -33,7 +34,6 @@ import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
@@ -60,7 +60,7 @@ public class BiofuelGeneratorTile extends IndustrialGeneratorTile<BiofuelGenerat
     @Override
     public int consumeFuel() {
         if (biofuel.getFluidAmount() > 0) {
-            biofuel.drainForced(1, IFluidHandler.FluidAction.EXECUTE);
+            TankUtils.drainForced(biofuel, 1, false);
             return 4;
         }
         return 0;

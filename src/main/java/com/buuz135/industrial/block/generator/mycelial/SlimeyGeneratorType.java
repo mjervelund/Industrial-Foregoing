@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.generator.mycelial;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
@@ -40,7 +42,6 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -81,8 +82,8 @@ public class SlimeyGeneratorType implements IMycelialGeneratorType {
     public Pair<Integer, Integer> getTimeAndPowerGeneration(INBTSerializable<CompoundTag>[] inputs) {
         if (inputs.length >= 2 && inputs[0] instanceof SidedFluidTankComponent && inputs[1] instanceof SidedInventoryComponent) {
             if (((SidedFluidTankComponent<?>) inputs[0]).getFluidAmount() >= 250 && ((SidedInventoryComponent<?>) inputs[1]).getStackInSlot(0).getCount() > 0) {
-                ((SidedFluidTankComponent<?>) inputs[0]).drainForced(250, IFluidHandler.FluidAction.EXECUTE);
-                ((SidedInventoryComponent<?>) inputs[1]).getStackInSlot(0).shrink(1);
+                TankUtils.drainForced((SidedFluidTankComponent<?>) inputs[0], 250, false);
+                ItemStackUtils.shrink((SidedInventoryComponent<?>) inputs[1], 0, 1);
                 return Pair.of(20 * 20, 200);
             }
         }

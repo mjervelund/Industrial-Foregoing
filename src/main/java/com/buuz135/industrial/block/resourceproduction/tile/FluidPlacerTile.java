@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.resourceproduction.FluidPlacerConfig;
@@ -36,7 +37,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
@@ -66,12 +66,12 @@ public class FluidPlacerTile extends IndustrialAreaWorkingTile<FluidPlacerTile> 
             if (isLoaded(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed, this.getUuid()) && !level.getFluidState(pointed).isSource() && tank.getFluidAmount() >= FluidType.BUCKET_VOLUME) {
                 if (tank.getFluid().getFluid().isSame(Fluids.WATER) && level.getBlockState(pointed).hasProperty(BlockStateProperties.WATERLOGGED) && !level.getBlockState(pointed).getValue(BlockStateProperties.WATERLOGGED)) {
                     level.setBlockAndUpdate(pointed, level.getBlockState(pointed).setValue(BlockStateProperties.WATERLOGGED, true));
-                    tank.drainForced(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+                    TankUtils.drainForced(tank, FluidType.BUCKET_VOLUME, false);
                     increasePointer();
                     return new WorkAction(1, getPowerPerOperation);
                 } else if (level.isEmptyBlock(pointed) || (!level.getFluidState(pointed).isEmpty() && !level.getFluidState(pointed).isSource())) {
                     level.setBlockAndUpdate(pointed, tank.getFluid().getFluid().defaultFluidState().createLegacyBlock());
-                    tank.drainForced(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+                    TankUtils.drainForced(tank, FluidType.BUCKET_VOLUME, false);
                     increasePointer();
                     return new WorkAction(1, getPowerPerOperation);
                 }

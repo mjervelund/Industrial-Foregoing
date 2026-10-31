@@ -84,9 +84,7 @@ public class FurnaceGeneratorType implements IMycelialGeneratorType {
                 ((SidedInventoryComponent) inputs[0]).setStackInSlot(0, itemstack.getCraftingRemainingItem());
             else if (!itemstack.isEmpty()) {
                 itemstack.shrink(1);
-                if (itemstack.isEmpty()) {
-                    ((SidedInventoryComponent) inputs[0]).setStackInSlot(0, itemstack.getCraftingRemainingItem());
-                }
+                ((SidedInventoryComponent) inputs[0]).setStackInSlot(0, itemstack.isEmpty() ? itemstack.getCraftingRemainingItem() : itemstack);
             }
             return Pair.of(burnTime, 80);
         }

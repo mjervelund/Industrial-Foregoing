@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.DyeMixerConfig;
 import com.buuz135.industrial.gui.component.ItemGuiAddon;
@@ -47,7 +49,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.text.NumberFormat;
@@ -195,17 +196,17 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
 
     @Override
     public boolean canIncrease() {
-        increaseBar(inputRed.getStackInSlot(0), red);
-        increaseBar(inputGreen.getStackInSlot(0), green);
-        increaseBar(inputBlue.getStackInSlot(0), blue);
+        increaseBar(inputRed, red);
+        increaseBar(inputGreen, green);
+        increaseBar(inputBlue, blue);
         ColorUsage color = colorUsages[dye];
         ItemStack dye = new ItemStack(DyeItem.byColor(DyeColor.byId(this.dye)));
-        return red.getProgress() >= color.r && green.getProgress() >= color.g && blue.getProgress() >= color.b && ItemHandlerHelper.insertItem(output, dye, true).isEmpty();
+        return red.getProgress() >= color.r && green.getProgress() >= color.g && blue.getProgress() >= color.b && ItemUtil.insertItemReturnRemaining(output, dye, true, null).isEmpty();
     }
 
-    private void increaseBar(ItemStack stack, ProgressBarComponent bar) {
-        if (bar.getProgress() + 3 <= bar.getMaxProgress() && !stack.isEmpty()) {
-            stack.shrink(1);
+    private void increaseBar(SidedInventoryComponent<DyeMixerTile> input, ProgressBarComponent bar) {
+        if (bar.getProgress() + 3 <= bar.getMaxProgress() && !input.getStackInSlot(0).isEmpty()) {
+            ItemStackUtils.shrink(input, 0, 1);
             bar.setProgress(bar.getProgress() + 3);
             markForUpdate();
         }
@@ -215,12 +216,12 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
     public Runnable onFinish() {
         return () -> {
             ItemStack dye = new ItemStack(DyeItem.byColor(DyeColor.byId(this.dye)));
-            if (ItemHandlerHelper.insertItem(output, dye, true).isEmpty()) {
+            if (ItemUtil.insertItemReturnRemaining(output, dye, true, null).isEmpty()) {
                 ColorUsage color = colorUsages[this.dye];
                 red.setProgress(red.getProgress() - color.r);
                 green.setProgress(green.getProgress() - color.g);
                 blue.setProgress(blue.getProgress() - color.b);
-                ItemHandlerHelper.insertItem(output, dye, false);
+                ItemUtil.insertItemReturnRemaining(output, dye, false, null);
                 markForUpdate();
             }
         };

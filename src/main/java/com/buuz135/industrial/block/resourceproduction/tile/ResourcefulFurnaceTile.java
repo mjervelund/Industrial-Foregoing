@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.ResourcefulFurnaceConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -38,8 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -101,7 +101,7 @@ public class ResourcefulFurnaceTile extends IndustrialProcessingTile<Resourceful
     @Override
     public boolean canIncrease() {
         for (SmeltingRecipe recipe : this.recipes) {
-            if (recipe != null && ItemHandlerHelper.insertItem(output, recipe.getResultItem(this.level.registryAccess()).copy(), true).isEmpty())
+            if (recipe != null && ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), true, null).isEmpty())
                 return true;
         }
         return false;
@@ -112,11 +112,11 @@ public class ResourcefulFurnaceTile extends IndustrialProcessingTile<Resourceful
         return () -> {
             for (int i = 0; i < this.recipes.length; i++) {
                 SmeltingRecipe recipe = this.recipes[i];
-                if (recipe != null && ItemHandlerHelper.insertItem(output, recipe.getResultItem(this.level.registryAccess()).copy(), true).isEmpty()) {
-                    if (ItemHandlerHelper.insertItem(output, recipe.getResultItem(this.level.registryAccess()).copy(), true).isEmpty()) {
+                if (recipe != null && ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), true, null).isEmpty()) {
+                    if (ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), true, null).isEmpty()) {
                         input.setStackInSlot(i, ItemStack.EMPTY);
-                        ItemHandlerHelper.insertItem(output, recipe.getResultItem(this.level.registryAccess()).copy(), false);
-                        tank.fillForced(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), (int) (recipe.getExperience() * 20)), IFluidHandler.FluidAction.EXECUTE);
+                        ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), false, null);
+                        TankUtils.fillForced(tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), (int) (recipe.getExperience() * 20)), false);
                     }
                 }
             }

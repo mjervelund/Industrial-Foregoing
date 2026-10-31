@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.FermentationStationConfig;
 import com.buuz135.industrial.fluid.OreTitaniumFluidType;
@@ -48,7 +49,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
         super(ModuleResourceProduction.FERMENTATION_STATION, 90, 40, blockPos, blockState);
         addTank(this.input = (SidedFluidTankComponent<FermentationStationTile>) new SidedFluidTankComponent<FermentationStationTile>("input", 4000, 50, 20, 0) {
                     @Override
-                    protected void onContentsChanged() {
+                    protected void onContentsChanged(int index, FluidStack previousContents) {
                         syncObject(FermentationStationTile.this.input);
                     }
 
@@ -92,7 +92,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
         );
         addTank(this.output = (SidedFluidTankComponent<FermentationStationTile>) new SidedFluidTankComponent<FermentationStationTile>("output", 32000, 130, 20, 1) {
                     @Override
-                    protected void onContentsChanged() {
+                    protected void onContentsChanged(int index, FluidStack previousContents) {
                         syncObject(FermentationStationTile.this.output);
                     }
 
@@ -175,7 +175,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
     public boolean canIncrease() {
         ProductionType productionType = ProductionType.values()[this.production];
         int multipliedAmount = productionType.amount * this.input.getFluidAmount();
-        return isSealed && this.output.getFluidAmount() + multipliedAmount <= this.output.getCapacity() && (productionType.neededFluid.isEmpty() || (!this.catalyst.isEmpty() && productionType.neededFluid.getFluid().isSame(this.catalyst.getFluid().getFluid()) && this.catalyst.getFluidAmount() >= (productionType.neededFluid.getAmount() * this.input.getFluidAmount() / 100)));
+        return isSealed && this.output.getFluidAmount() + multipliedAmount <= this.output.getCapacity() && (productionType.neededFluid.isEmpty() || (!this.catalyst.getFluid().isEmpty() && productionType.neededFluid.getFluid().isSame(this.catalyst.getFluid().getFluid()) && this.catalyst.getFluidAmount() >= (productionType.neededFluid.getAmount() * this.input.getFluidAmount() / 100)));
     }
 
     @Override
@@ -186,9 +186,9 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
             if (toDrain > 0) {
                 int multipliedAmount = productionType.amount * toDrain;
                 FluidStack stack = OreTitaniumFluidType.getFluidWithTag(ModuleCore.FERMENTED_ORE_MEAT, multipliedAmount, Identifier.parse(OreTitaniumFluidType.getFluidTag(this.input.getFluid())));
-                this.output.fillForced(stack, IFluidHandler.FluidAction.EXECUTE);
-                this.catalyst.drainForced(productionType.neededFluid.getAmount() * toDrain / 100, IFluidHandler.FluidAction.EXECUTE);
-                this.input.drainForced(toDrain, IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.fillForced(this.output, stack, false);
+                TankUtils.drainForced(this.catalyst, productionType.neededFluid.getAmount() * toDrain / 100, false);
+                TankUtils.drainForced(this.input, toDrain, false);
             }
         };
     }

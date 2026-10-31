@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.block.tile.IndustrialMachineTile;
 import com.buuz135.industrial.config.machine.resourceproduction.OreLaserBaseConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -69,7 +70,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -194,7 +194,7 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 .toList();
             if (!items.isEmpty()) {
                 ItemStack stack = WeightedRandom.getRandomItem(this.level.getRandom(), items).get().getStack();
-                ItemHandlerHelper.insertItem(output, stack, false);
+                ItemUtil.insertItemReturnRemaining(output, stack, false, null);
             }
         }
     }

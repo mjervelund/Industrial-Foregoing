@@ -21,6 +21,10 @@
  */
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.FluidSievingMachineConfig;
 import com.buuz135.industrial.fluid.OreTitaniumFluidType;
@@ -40,8 +44,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -60,7 +62,7 @@ public class FluidSievingMachineTile extends IndustrialProcessingTile<FluidSievi
         super(ModuleResourceProduction.FLUID_SIEVING_MACHINE, 106, 40, blockPos, blockState);
         addTank(this.input = (SidedFluidTankComponent<FluidSievingMachineTile>) new SidedFluidTankComponent<FluidSievingMachineTile>("input", FluidSievingMachineConfig.maxTankSize, 35, 20, 0) {
                     @Override
-                    protected void onContentsChanged() {
+                    protected void onContentsChanged(int index, FluidStack previousContents) {
                         syncObject(FluidSievingMachineTile.this.input);
                     }
 
@@ -91,7 +93,7 @@ public class FluidSievingMachineTile extends IndustrialProcessingTile<FluidSievi
 
     @Override
     public boolean canIncrease() {
-        return this.input.getFluidAmount() >= 100 && !InventoryUtil.getStacks(this.sand).isEmpty() && ItemHandlerHelper.insertItem(this.output, OreTitaniumFluidType.getOutputDust(this.input.getFluid()), true).isEmpty();
+        return this.input.getFluidAmount() >= 100 && !InventoryUtil.getStacks(this.sand).isEmpty() && ItemUtil.insertItemReturnRemaining(this.output, OreTitaniumFluidType.getOutputDust(this.input.getFluid()), true, null).isEmpty();
     }
 
     @Override
@@ -99,13 +101,13 @@ public class FluidSievingMachineTile extends IndustrialProcessingTile<FluidSievi
         return () -> {
             for (int i = 0; i < this.sand.getSlots(); i++) {
                 if (!this.sand.getStackInSlot(i).isEmpty()) {
-                    this.sand.getStackInSlot(i).shrink(1);
+                    ItemStackUtils.shrink(this.sand, i, 1);
                     break;
                 }
             }
             ItemStack output = OreTitaniumFluidType.getOutputDust(this.input.getFluid());
-            ItemHandlerHelper.insertItem(this.output, output, false);
-            this.input.drainForced(100, IFluidHandler.FluidAction.EXECUTE);
+            ItemUtil.insertItemReturnRemaining(this.output, output, false, null);
+            TankUtils.drainForced(this.input, 100, false);
         };
     }
 

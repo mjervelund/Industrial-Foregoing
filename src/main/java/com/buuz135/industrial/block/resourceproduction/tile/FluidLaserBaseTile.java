@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialMachineTile;
 import com.buuz135.industrial.config.machine.resourceproduction.FluidLaserBaseConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -64,9 +65,9 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -214,11 +215,11 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
                     }
 
                     candidate.hurt(candidate.damageSources().generic(), 5);
-                    output.fillForced(recipe.output.getFluids()[0].copy(), IFluidHandler.FluidAction.EXECUTE);
+                    TankUtils.fillForced(output, new FluidStack(recipe.output.ingredient().fluids().getFirst(), recipe.output.amount()), false);
                     return;
                 }
             } else {
-                output.fillForced(recipe.output.getFluids()[0].copy(), IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.fillForced(output, new FluidStack(recipe.output.ingredient().fluids().getFirst(), recipe.output.amount()), false);
                 return;
             }
         }

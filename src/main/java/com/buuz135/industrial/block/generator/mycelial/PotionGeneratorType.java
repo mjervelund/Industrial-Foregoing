@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.generator.mycelial;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
@@ -81,7 +82,7 @@ public class PotionGeneratorType implements IMycelialGeneratorType {
             if (stack.getCount() == 1) {
                 ((SidedInventoryComponent<?>) inputs[0]).setStackInSlot(0, new ItemStack(Items.GLASS_BOTTLE));
             } else {
-                stack.shrink(1);
+                ItemStackUtils.shrink((SidedInventoryComponent<?>) inputs[0], 0, 1);
             }
             return calculate(calculate);
         }

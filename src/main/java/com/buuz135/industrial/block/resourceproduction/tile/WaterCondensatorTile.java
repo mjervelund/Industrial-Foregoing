@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialWorkingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.WaterCondensatorConfig;
 import com.buuz135.industrial.module.ModuleResourceProduction;
@@ -36,7 +37,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
@@ -64,10 +64,10 @@ public class WaterCondensatorTile extends IndustrialWorkingTile<WaterCondensator
         int water = getWaterSources();
         if (water >= 2) {
             if (hasEnergy(getPowerPerOperation)) {
-                this.water.fillForced(new FluidStack(Fluids.WATER, water * 100), IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.fillForced(this.water, new FluidStack(Fluids.WATER, water * 100), false);
                 return new WorkAction(0.1f, getPowerPerOperation);
             } else {
-                this.water.fillForced(new FluidStack(Fluids.WATER, water * 50), IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.fillForced(this.water, new FluidStack(Fluids.WATER, water * 50), false);
                 return new WorkAction(0.5f, 0);
             }
         }

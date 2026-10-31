@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.resourceproduction.FluidCollectorConfig;
@@ -39,7 +40,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
@@ -68,13 +68,13 @@ public class FluidCollectorTile extends IndustrialAreaWorkingTile<FluidCollector
             BlockPos pointed = getPointedBlockPos();
             if (isLoaded(pointed) && !level.isEmptyBlock(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed, this.getUuid()) && level.getFluidState(pointed).isSource()) {
                 Fluid fluid = level.getFluidState(pointed).getType();
-                if (tank.isEmpty() || (tank.getFluid().getFluid().isSame(fluid) && tank.getFluidAmount() + FluidType.BUCKET_VOLUME <= tank.getCapacity())) {
+                if (tank.getFluid().isEmpty() || (tank.getFluid().getFluid().isSame(fluid) && tank.getFluidAmount() + FluidType.BUCKET_VOLUME <= tank.getCapacity())) {
                     if (level.getBlockState(pointed).hasProperty(BlockStateProperties.WATERLOGGED)) { //has
                         level.setBlockAndUpdate(pointed, level.getBlockState(pointed).setValue(BlockStateProperties.WATERLOGGED, false));
                     } else {
                         level.setBlockAndUpdate(pointed, Blocks.AIR.defaultBlockState());
                     }
-                    tank.fillForced(new FluidStack(fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+                    TankUtils.fillForced(tank, new FluidStack(fluid, FluidType.BUCKET_VOLUME), false);
                     increasePointer();
                     return new WorkAction(1, getPowerPerOperation);
                 }

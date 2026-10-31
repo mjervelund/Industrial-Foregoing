@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.SludgeRefinerConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -39,8 +41,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -81,9 +81,9 @@ public class SludgeRefinerTile extends IndustrialProcessingTile<SludgeRefinerTil
         return () -> {
             Optional<Holder<Item>> optionalItem = BuiltInRegistries.ITEM.getRandomElementOf(IndustrialTags.Items.SLUDGE_OUTPUT, this.level.getRandom());
             optionalItem.ifPresent(item -> {
-                if (ItemHandlerHelper.insertItem(output, new ItemStack(item), true).isEmpty()) {
-                    sludge.drainForced(500, IFluidHandler.FluidAction.EXECUTE);
-                    ItemHandlerHelper.insertItem(output, new ItemStack(item), false);
+                if (ItemUtil.insertItemReturnRemaining(output, new ItemStack(item), true, null).isEmpty()) {
+                    TankUtils.drainForced(sludge, 500, false);
+                    ItemUtil.insertItemReturnRemaining(output, new ItemStack(item), false, null);
                 }
             });
         };

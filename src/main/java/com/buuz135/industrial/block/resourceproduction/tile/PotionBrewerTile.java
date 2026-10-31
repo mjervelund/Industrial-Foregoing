@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.ResourcefulFurnaceConfig;
 import com.buuz135.industrial.module.ModuleResourceProduction;
@@ -56,7 +58,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
     @Override
     public boolean canIncrease() {
         if (blaze.getProgress() + 20 <= blaze.getMaxProgress() && !this.blazeInput.getStackInSlot(0).isEmpty()) {
-            this.blazeInput.getStackInSlot(0).shrink(1);
+            ItemStackUtils.shrink(this.blazeInput, 0, 1);
             blaze.setProgress(blaze.getProgress() + 20);
         }
         if (ItemHandlerUtil.isEmpty(output)) {
@@ -170,8 +171,8 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
                 for (int i = 0; i < bottleAmount; i++) {
                     var stack = new ItemStack(Items.POTION);
                     stack.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY.withPotion(Potions.WATER));
-                    ItemHandlerHelper.insertItem(this.output, stack, false);
-                    this.bottleInput.getStackInSlot(0).shrink(1);
+                    ItemUtil.insertItemReturnRemaining(this.output, stack, false, null);
+                    ItemStackUtils.shrink(this.bottleInput, 0, 1);
                 }
                 ++this.state;
             } else {
@@ -231,7 +232,7 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
 
         input.replaceAll(potionItem -> this.level.potionBrewing().mix(ingredient, potionItem));
 
-        ingredient.shrink(1);
+        ItemStackUtils.shrink(this.brewingItems.getInventory(), slot, 1);
 
         EventHooks.onPotionBrewed(input);
 

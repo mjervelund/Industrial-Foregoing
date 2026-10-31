@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
@@ -39,7 +40,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -69,7 +69,7 @@ public class BlockBreakerTile extends IndustrialAreaWorkingTile<BlockBreakerTile
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.NETHERITE_PICKAXE));
                 if (this.level.getBlockState(pointed).getDestroySpeed(this.level, pointed) >= 0 && this.level.getBlockState(pointed).canHarvestBlock(this.level, pointed, fakePlayer)) {
                     for (ItemStack blockDrop : BlockUtils.getBlockDrops(this.level, pointed)) {
-                        ItemStack result = ItemHandlerHelper.insertItem(output, blockDrop, false);
+                        ItemStack result = ItemUtil.insertItemReturnRemaining(output, blockDrop, false, null);
                         if (!result.isEmpty()) {
                             BlockUtils.spawnItemStack(result, this.level, pointed);
                         }

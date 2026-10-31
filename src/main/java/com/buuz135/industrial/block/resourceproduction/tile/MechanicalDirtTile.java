@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialWorkingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.MechanicalDirtConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -46,7 +47,6 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -83,7 +83,7 @@ public class MechanicalDirtTile extends IndustrialWorkingTile<MechanicalDirtTile
             Mob entity = getMobToSpawn();
             if (entity != null) {
                 level.addFreshEntity(entity);
-                meat.drainForced(20, IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.drainForced(meat, 20, false);
                 if (hasEnergy(getPowerPerOperation)) return new WorkAction(0.5f, getPowerPerOperation);
             }
         }
@@ -124,7 +124,7 @@ public class MechanicalDirtTile extends IndustrialWorkingTile<MechanicalDirtTile
                         if (difference <= 25) difference = difference / 2;
                         else difference = 25;
                         if (meat.getFluidAmount() >= difference) {
-                            meat.drainForced(((MechanicalDirtTile) tile).getMeat().fill(new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), meat.drainForced(difference, IFluidHandler.FluidAction.SIMULATE).getAmount()), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                            TankUtils.drainForced(meat, TankUtils.fill(((MechanicalDirtTile) tile).getMeat(), new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), TankUtils.drainForced(meat, difference, true).getAmount()), false), false);
                         }
                     }
                     difference = getEnergyStorage().getEnergyStored() - ((MechanicalDirtTile) tile).getEnergyStorage().getEnergyStored();
