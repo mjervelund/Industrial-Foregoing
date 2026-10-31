@@ -82,7 +82,7 @@ public abstract class IndustrialProcessingTile<T extends IndustrialProcessingTil
                         }).
                         setCanIncrease(tileEntity -> this.shouldWork() && getEnergyStorage().getEnergyStored() >= getTickPower() && canIncrease()).
                         setOnTickWork(() -> {
-                            getEnergyStorage().extractEnergy(getTickPower(), false);
+                            consumeEnergy(getTickPower());
                             progressBar.setProgressIncrease(this.hasAugmentInstalled(AugmentTypes.SPEED) ? (int) AugmentWrapper.getType(this.getInstalledAugments(AugmentTypes.SPEED).get(0), AugmentTypes.SPEED) : 1);
                         }).
                         setOnFinishWork(() -> {

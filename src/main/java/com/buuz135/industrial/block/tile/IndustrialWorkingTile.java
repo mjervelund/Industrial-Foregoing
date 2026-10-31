@@ -83,11 +83,11 @@ public abstract class IndustrialWorkingTile<T extends IndustrialWorkingTile<T>> 
                 .setOnFinishWork(() -> {
                     if (isServer()) {
                         WorkAction work = work();
-                        this.getEnergyStorage().extractEnergy(work.getEnergyConsumed(), false);
+                        this.consumeEnergy(work.getEnergyConsumed());
                         int operations = (int) (this.hasAugmentInstalled(ProcessingAddonItem.PROCESSING) ? AugmentWrapper.getType(this.getInstalledAugments(ProcessingAddonItem.PROCESSING).get(0), ProcessingAddonItem.PROCESSING) - 1 : 0);
                         for (int i = 0; i < operations; i++) {
                             work = work();
-                            this.getEnergyStorage().extractEnergy(work.getEnergyConsumed(), false);
+                            this.consumeEnergy(work.getEnergyConsumed());
                         }
                         int maxProgress = (int) Math.floor(getMaxProgress() * (this.hasAugmentInstalled(AugmentTypes.EFFICIENCY) ? AugmentWrapper.getType(this.getInstalledAugments(AugmentTypes.EFFICIENCY).get(0), AugmentTypes.EFFICIENCY) : 1));
                         workingBar.setMaxProgress(maxProgress);

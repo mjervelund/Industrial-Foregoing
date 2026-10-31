@@ -51,29 +51,14 @@ public abstract class BigEnergyHandler<T extends IComponentHarness> extends Ener
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        int amount = super.receiveEnergy(maxReceive, simulate);
-        if (!simulate && amount > 0) {
-            this.sync();
-        }
-        return amount;
+    protected void onEnergyChanged(int previousAmount) {
+        super.onEnergyChanged(previousAmount);
+        this.sync();
     }
 
     @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        int amount = super.extractEnergy(maxExtract, simulate);
-        if (!simulate && amount > 0) {
-            this.sync();
-        }
-        return amount;
-    }
-
     public void setEnergyStored(int energy) {
-        if (energy > this.getMaxEnergyStored()) {
-            this.energy = this.getMaxEnergyStored();
-        } else {
-            this.energy = Math.max(energy, 0);
-        }
+        super.setEnergyStored(energy);
         this.sync();
     }
 

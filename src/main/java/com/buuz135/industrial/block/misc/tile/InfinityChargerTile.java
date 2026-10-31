@@ -32,6 +32,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 public class InfinityChargerTile extends IndustrialMachineTile<InfinityChargerTile> {
 
@@ -43,23 +45,27 @@ public class InfinityChargerTile extends IndustrialMachineTile<InfinityChargerTi
         addInventory(chargingSlot = (SidedInventoryComponent<InfinityChargerTile>) new SidedInventoryComponent<InfinityChargerTile>("charging", 80, 40, 1, 0)
                 .setColor(DyeColor.BLUE)
                 .setSlotLimit(1)
-                .setInputFilter((stack, integer) -> stack.getCapability(Capabilities.EnergyStorage.ITEM) != null)
+                .setInputFilter((stack, integer) -> !stack.isEmpty() && ItemAccess.forStack(stack).getCapability(Capabilities.Energy.ITEM) != null)
         );
     }
 
     @Override
     public void serverTick(Level level, BlockPos pos, BlockState state, InfinityChargerTile blockEntity) {
         if (!chargingSlot.getStackInSlot(0).isEmpty() && this.shouldWork()) {
-            var iEnergyStorage = chargingSlot.getStackInSlot(0).getCapability(Capabilities.EnergyStorage.ITEM);
-            if (iEnergyStorage != null && this.getEnergyStorage() instanceof InfinityEnergyStorage) {
-                if (iEnergyStorage instanceof InfinityEnergyStorage) {
-                    long added = Math.min(Long.MAX_VALUE - ((InfinityEnergyStorage) iEnergyStorage).getLongEnergyStored(), Math.min(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongCapacity(), ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored()));
-                    ((InfinityEnergyStorage) iEnergyStorage).setEnergyStored(((InfinityEnergyStorage) iEnergyStorage).getLongEnergyStored() + added);
-                    ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored() - added);
+            var itemEnergy = ItemAccess.forHandlerIndex(chargingSlot, 0).getCapability(Capabilities.Energy.ITEM);
+            if (itemEnergy != null && this.getEnergyStorage() instanceof InfinityEnergyStorage<?> storage) {
+                if (itemEnergy instanceof InfinityEnergyStorage<?> infinityStorage) {
+                    long added = Math.min(Long.MAX_VALUE - infinityStorage.getLongEnergyStored(), Math.min(storage.getLongCapacity(), storage.getLongEnergyStored()));
+                    infinityStorage.setEnergyStored(infinityStorage.getLongEnergyStored() + added);
+                    storage.setEnergyStored(storage.getLongEnergyStored() - added);
                     markForUpdate();
                 } else {
-                    int extracted = this.getEnergyStorage().getEnergyStored();
-                    ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored() - iEnergyStorage.receiveEnergy(extracted, false));
+                    int inserted;
+                    try (var transaction = Transaction.open(null)) {
+                        inserted = itemEnergy.insert(storage.getAmountAsInt(), transaction);
+                        transaction.commit();
+                    }
+                    storage.setEnergyStored(storage.getLongEnergyStored() - inserted);
                     markForUpdate();
                 }
             }

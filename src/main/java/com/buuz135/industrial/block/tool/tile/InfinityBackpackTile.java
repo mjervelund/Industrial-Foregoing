@@ -38,6 +38,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -153,7 +154,7 @@ public class InfinityBackpackTile extends BasicTile<InfinityBackpackTile> implem
     public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
         var backpackItem = (ItemInfinityBackpack) ModuleTool.INFINITY_BACKPACK.get();
         List<IFactory<? extends IScreenAddon>> addons = new ArrayList(backpackItem.getScreenAddons(this::getBackpack));
-        var energy = this.backpack.getCapability(Capabilities.EnergyStorage.ITEM);
+        var energy = this.backpack.isEmpty() ? null : ItemAccess.forStack(this.backpack).getCapability(Capabilities.Energy.ITEM);
         if (energy instanceof IScreenAddonProvider addonProvider) {
             addons.addAll(addonProvider.getScreenAddons());
         }

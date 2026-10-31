@@ -92,6 +92,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
@@ -332,23 +333,8 @@ public class ItemInfinityBackpack extends ItemInfinity {
     }
 
     @Override
-    public IFactory<InfinityEnergyStorage> getEnergyConstructor(ItemStack stack) {
-        return () -> new InfinityEnergyStorage(InfinityTier.ARTIFACT.getPowerNeeded(), -21, 24) {
-            @Override
-            public long getLongEnergyStored() {
-                return Math.min(stack.getOrDefault(IFAttachments.INFINITY_ITEM_POWER, 0L), InfinityTier.ARTIFACT.getPowerNeeded());
-            }
-
-            @Override
-            public void setEnergyStored(long energy) {
-                stack.set(IFAttachments.INFINITY_ITEM_POWER, Math.min(energy, InfinityTier.ARTIFACT.getPowerNeeded()));
-            }
-
-            @Override
-            public boolean canReceive() {
-                return ItemInfinity.canCharge(stack);
-            }
-        };
+    public IFactory<InfinityEnergyStorage> getEnergyConstructor(ItemAccess access) {
+        return () -> createEnergyStorage(access, -21, 24);
     }
 
     public void handleButtonMessage(int id, Player playerEntity, CompoundTag compound, ItemStack stack) {

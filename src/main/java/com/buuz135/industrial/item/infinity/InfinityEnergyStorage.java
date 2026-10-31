@@ -24,24 +24,32 @@ package com.buuz135.industrial.item.infinity;
 
 import com.buuz135.industrial.gui.component.InfinityEnergyScreenAddon;
 import com.hrznstudio.titanium.api.IFactory;
-import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.component.IComponentHarness;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.container.addon.IContainerAddon;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.transfer.TransferPreconditions;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Long-based energy storage, receive only. The int fields of {@link EnergyStorageComponent} are unused: every read goes
+ * through {@link #getLongEnergyStored()} and every write through {@link #setEnergyStored(long, TransactionContext)}, so
+ * item-backed subclasses can store the energy in a data component through their {@link net.neoforged.neoforge.transfer.access.ItemAccess}.
+ */
 public class InfinityEnergyStorage<T extends IComponentHarness> extends EnergyStorageComponent<T> {
 
     private final long capacity;
     private long energy;
+    private final EnergyJournal journal = new EnergyJournal();
 
     public InfinityEnergyStorage(long capacity, int xPos, int yPos) {
         super(Integer.MAX_VALUE, xPos, yPos);
@@ -50,43 +58,59 @@ public class InfinityEnergyStorage<T extends IComponentHarness> extends EnergySt
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        if (!canReceive()) return 0;
-        long stored = getLongEnergyStored();
-        int energyReceived = (int) Math.min(capacity - stored, Math.min(Long.MAX_VALUE, maxReceive));
-        if (!simulate)
-            setEnergyStored(stored + energyReceived);
-        return energyReceived;
+    public long getAmountAsLong() {
+        return getLongEnergyStored();
     }
 
     @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
+    public long getCapacityAsLong() {
+        return getLongCapacity();
+    }
+
+    @Override
+    public int insert(int amount, TransactionContext transaction) {
+        TransferPreconditions.checkNonNegative(amount);
+        if (!canReceive()) return 0;
+        long stored = getLongEnergyStored();
+        int energyReceived = (int) Math.max(0, Math.min(getLongCapacity() - stored, amount));
+        if (energyReceived > 0 && setEnergyStored(stored + energyReceived, transaction))
+            return energyReceived;
         return 0;
     }
 
     @Override
-    public int getEnergyStored() {
-        return this.energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.energy;
+    public int extract(int amount, TransactionContext transaction) {
+        return 0;
     }
 
-    public void setEnergyStored(long power) {
+    /**
+     * Writes the stored energy as part of a transaction, returns false if it could not be written.
+     */
+    protected boolean setEnergyStored(long power, TransactionContext transaction) {
+        journal.updateSnapshots(transaction);
         this.energy = power;
-        if (this.componentHarness != null) {
-            this.componentHarness.markComponentForUpdate(false);
+        return true;
+    }
+
+    /**
+     * Writes the stored energy immediately, outside of any transaction.
+     */
+    public void setEnergyStored(long power) {
+        try (var transaction = Transaction.open(null)) {
+            setEnergyStored(power, transaction);
+            transaction.commit();
         }
     }
 
     @Override
-    public int getMaxEnergyStored() {
-        return (int) capacity;
+    public void setEnergyStored(int energy) {
+        setEnergyStored((long) energy);
     }
 
-    @Override
     public boolean canExtract() {
         return false;
     }
 
-    @Override
     public boolean canReceive() {
         return true;
     }
@@ -106,23 +130,38 @@ public class InfinityEnergyStorage<T extends IComponentHarness> extends EnergySt
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putLong("energy", this.energy);
-        return nbt;
+    public void serialize(ValueOutput output) {
+        output.putLong("energy", this.energy);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, Tag nbt) {
-        if (nbt instanceof CompoundTag compoundTag) {
-            this.energy = compoundTag.getLongOr("energy", 0L);
-        }
+    public void deserialize(ValueInput input) {
+        this.energy = input.getLongOr("energy", 0L);
     }
 
     @Nonnull
     @Override
     @OnlyIn(Dist.CLIENT)
-    public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
+    public List<IFactory<?>> getScreenAddons() {
         return Collections.singletonList(() -> new InfinityEnergyScreenAddon(getX(), getY(), this));
+    }
+
+    private class EnergyJournal extends SnapshotJournal<Long> {
+        @Override
+        protected Long createSnapshot() {
+            return energy;
+        }
+
+        @Override
+        protected void revertToSnapshot(Long snapshot) {
+            energy = snapshot;
+        }
+
+        @Override
+        protected void onRootCommit(Long originalState) {
+            if (energy != originalState && componentHarness != null) {
+                componentHarness.markComponentForUpdate(false);
+            }
+        }
     }
 }

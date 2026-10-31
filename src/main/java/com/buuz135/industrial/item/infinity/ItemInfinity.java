@@ -80,6 +80,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -423,21 +426,30 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
         return () -> new InfinityTankStorage(stack, new InfinityTankStorage.TankDefinition("biofuel", 1_000_000, 30, 20, fluidStack -> fluidStack.getFluid().isSame(ModuleCore.BIOFUEL.getSourceFluid().get()), true, true, FluidTankComponent.Type.NORMAL, new FluidStack(ModuleCore.BIOFUEL.getSourceFluid().get(), 1000)));
     }
 
-    public IFactory<InfinityEnergyStorage> getEnergyConstructor(ItemStack stack) {
-        return () -> new InfinityEnergyStorage(InfinityTier.ARTIFACT.getPowerNeeded(), 10, 20) {
+    public IFactory<InfinityEnergyStorage> getEnergyConstructor(ItemAccess access) {
+        return () -> createEnergyStorage(access, 10, 20);
+    }
+
+    protected InfinityEnergyStorage createEnergyStorage(ItemAccess access, int xPos, int yPos) {
+        long capacity = InfinityTier.ARTIFACT.getPowerNeeded();
+        return new InfinityEnergyStorage(capacity, xPos, yPos) {
             @Override
             public long getLongEnergyStored() {
-                return Math.min(stack.getOrDefault(IFAttachments.INFINITY_ITEM_POWER, 0L), InfinityTier.ARTIFACT.getPowerNeeded());
+                ItemResource resource = access.getResource();
+                return resource.is(ItemInfinity.this) ? Math.min(resource.getOrDefault(IFAttachments.INFINITY_ITEM_POWER.get(), 0L), capacity) : 0;
             }
 
             @Override
-            public void setEnergyStored(long energy) {
-                stack.set(IFAttachments.INFINITY_ITEM_POWER, Math.min(energy, InfinityTier.ARTIFACT.getPowerNeeded()));
+            protected boolean setEnergyStored(long energy, TransactionContext transaction) {
+                ItemResource resource = access.getResource();
+                int count = access.getAmount();
+                if (!resource.is(ItemInfinity.this) || count == 0) return false;
+                return access.exchange(resource.with(IFAttachments.INFINITY_ITEM_POWER.get(), Math.min(energy, capacity)), count, transaction) == count;
             }
 
             @Override
             public boolean canReceive() {
-                return ItemInfinity.canCharge(stack);
+                return access.getResource().getOrDefault(IFAttachments.INFINITY_ITEM_CAN_CHARGE.get(), false);
             }
         };
     }

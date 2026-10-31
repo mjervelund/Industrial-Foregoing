@@ -60,6 +60,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.util.Optional;
@@ -271,4 +272,12 @@ public abstract class IndustrialMachineTile<T extends IndustrialMachineTile<T>> 
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
+    protected void consumeEnergy(int amount) {
+        try (var transaction = Transaction.open(null)) {
+            this.getEnergyStorage().extract(amount, transaction);
+            transaction.commit();
+        }
+    }
+
 }

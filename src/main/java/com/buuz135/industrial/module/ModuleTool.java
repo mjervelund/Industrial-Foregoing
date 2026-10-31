@@ -37,6 +37,8 @@ import com.buuz135.industrial.utils.BlockUtils;
 import com.buuz135.industrial.utils.IFAttachments;
 import com.buuz135.industrial.utils.Reference;
 import com.buuz135.industrial.worlddata.BackpackDataManager;
+import com.hrznstudio.titanium.api.IFactory;
+import com.hrznstudio.titanium.api.client.IScreenAddonProvider;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.capability.CapabilityItemStackHolder;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
@@ -55,6 +57,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -64,6 +67,10 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ModuleTool implements IModule {
@@ -119,21 +126,21 @@ public class ModuleTool implements IModule {
         NUKE_ARMING = registryHelper.registerGeneric(Registries.SOUND_EVENT, "nuke_arming", () -> SoundEvent.createFixedRangeEvent(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nuke_arming"), 16));
         NUKE_EXPLOSION = registryHelper.registerGeneric(Registries.SOUND_EVENT, "nuke_explosion", () -> SoundEvent.createFixedRangeEvent(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nuke_explosion"), 128));
 
-        ItemStackHarnessRegistry.register(INFINITY_SAW, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
-        ItemStackHarnessRegistry.register(INFINITY_DRILL, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
-        ItemStackHarnessRegistry.register(INFINITY_HAMMER, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
-        ItemStackHarnessRegistry.register(INFINITY_TRIDENT, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
-        ItemStackHarnessRegistry.register(INFINITY_BACKPACK, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
-        ItemStackHarnessRegistry.register(INFINITY_LAUNCHER, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
-        ItemStackHarnessRegistry.register(INFINITY_NUKE, stack -> new ItemStackHarness(stack, null, (IButtonHandler) stack.getItem(), Capabilities.EnergyStorage.ITEM, Capabilities.FluidHandler.ITEM, CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY));
+        ItemStackHarnessRegistry.register(INFINITY_SAW, ModuleTool::createInfinityHarness);
+        ItemStackHarnessRegistry.register(INFINITY_DRILL, ModuleTool::createInfinityHarness);
+        ItemStackHarnessRegistry.register(INFINITY_HAMMER, ModuleTool::createInfinityHarness);
+        ItemStackHarnessRegistry.register(INFINITY_TRIDENT, ModuleTool::createInfinityHarness);
+        ItemStackHarnessRegistry.register(INFINITY_BACKPACK, ModuleTool::createInfinityHarness);
+        ItemStackHarnessRegistry.register(INFINITY_LAUNCHER, ModuleTool::createInfinityHarness);
+        ItemStackHarnessRegistry.register(INFINITY_NUKE, ModuleTool::createInfinityHarness);
         EventManager.forge(BlockEvent.BreakEvent.class).filter(breakEvent -> breakEvent.getPlayer().getMainHandItem().getItem() == INFINITY_SAW.get() && BlockUtils.isLog((Level) breakEvent.getLevel(), breakEvent.getPos())).process(breakEvent -> {
             breakEvent.setCanceled(true);
             breakEvent.getPlayer().getMainHandItem().mineBlock((Level) breakEvent.getLevel(), breakEvent.getState(), breakEvent.getPos(), breakEvent.getPlayer());
         }).subscribe();
         EventManager.mod(RegisterCapabilitiesEvent.class).process(event -> {
-            event.registerItem(Capabilities.EnergyStorage.ITEM, (o, unused) -> {
+            event.registerItem(Capabilities.Energy.ITEM, (o, access) -> {
                 if (o.getItem() instanceof ItemInfinity itemInfinity) {
-                    return itemInfinity.getEnergyConstructor(o).create();
+                    return itemInfinity.getEnergyConstructor(access).create();
                 }
                 return null;
             }, INFINITY_SAW.get(), INFINITY_DRILL.get(), INFINITY_HAMMER.get(), INFINITY_TRIDENT.get(), INFINITY_BACKPACK.get(), INFINITY_LAUNCHER.get(), INFINITY_NUKE.get());
@@ -176,13 +183,33 @@ public class ModuleTool implements IModule {
                     return null;
                 }
             });
-            event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, INFINITY_BACKPACK_BLOCK.type().get(), (object, context) -> {
-                if (object instanceof InfinityBackpackTile tile) {
-                    return tile.getBackpack().getCapability(Capabilities.EnergyStorage.ITEM);
+            event.registerBlockEntity(Capabilities.Energy.BLOCK, INFINITY_BACKPACK_BLOCK.type().get(), (object, context) -> {
+                if (object instanceof InfinityBackpackTile tile && !tile.getBackpack().isEmpty()) {
+                    return ItemAccess.forStack(tile.getBackpack()).getCapability(Capabilities.Energy.ITEM);
                 } else {
                     return null;
                 }
             });
         }).subscribe();
     }
+
+    /**
+     * Titanium's {@link ItemStackHarness} only queries capabilities without context, while the 26.3 energy and fluid
+     * item capabilities take an {@link ItemAccess}: their screen addons come from the default provider instead.
+     */
+    private static ItemStackHarness createInfinityHarness(ItemStack stack) {
+        IScreenAddonProvider transferAddons = () -> {
+            List<IFactory<?>> addons = new ArrayList<>();
+            if (!stack.isEmpty()) {
+                ItemAccess access = ItemAccess.forStack(stack);
+                if (access.getCapability(Capabilities.Energy.ITEM) instanceof IScreenAddonProvider provider)
+                    addons.addAll(provider.getScreenAddons());
+                if (access.getCapability(Capabilities.Fluid.ITEM) instanceof IScreenAddonProvider provider)
+                    addons.addAll(provider.getScreenAddons());
+            }
+            return addons;
+        };
+        return new ItemStackHarness(stack, transferAddons, (IButtonHandler) stack.getItem(), CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY);
+    }
+
 }
