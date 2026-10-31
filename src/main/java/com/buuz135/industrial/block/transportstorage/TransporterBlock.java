@@ -69,7 +69,7 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 public class TransporterBlock extends BasicTileBlock<TransporterTile> implements SimpleWaterloggedBlock {
 
     public TransporterBlock() {
-        super(Properties.ofFullCopy(Blocks.IRON_BLOCK).noCollission().strength(2.0f), TransporterTile.class);
+        super(Properties.ofFullCopy(Blocks.IRON_BLOCK).noCollision().strength(2.0f), TransporterTile.class);
         //this.setRegistryName(Reference.MOD_ID, "transporter");
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
     }
@@ -94,16 +94,14 @@ public class TransporterBlock extends BasicTileBlock<TransporterTile> implements
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData, Player player) {
         BlockEntity tileEntity = world.getBlockEntity(pos);
         if (tileEntity instanceof TransporterTile) {
-            if (target instanceof BlockHitResult) {
-                Pair<Direction, Boolean> upgradePair = getFacingUpgradeHit(state, player.level(), pos, player);
-                if (upgradePair != null) {
-                    TransporterType upgrade = ((TransporterTile) tileEntity).getTransporterTypeMap().get(upgradePair.getKey());
-                    if (upgrade != null) {
-                        return new ItemStack(upgrade.getFactory().getUpgradeItem(), 1);
-                    }
+            Pair<Direction, Boolean> upgradePair = getFacingUpgradeHit(state, player.level(), pos, player);
+            if (upgradePair != null) {
+                TransporterType upgrade = ((TransporterTile) tileEntity).getTransporterTypeMap().get(upgradePair.getKey());
+                if (upgrade != null) {
+                    return new ItemStack(upgrade.getFactory().getUpgradeItem(), 1);
                 }
             }
         }

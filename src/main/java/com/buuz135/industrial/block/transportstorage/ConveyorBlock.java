@@ -27,7 +27,6 @@ import com.buuz135.industrial.block.transportstorage.tile.ConveyorTile;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.api.IRecipeProvider;
-import com.hrznstudio.titanium.api.raytrace.DistanceRayTraceResult;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.tab.TitaniumTab;
@@ -56,12 +55,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -80,13 +82,13 @@ import java.util.function.Predicate;
 public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements SimpleWaterloggedBlock, IRecipeProvider {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<EnumType> TYPE = EnumProperty.create("type", EnumType.class);
     //public static final EnumProperty<EnumSides> SIDES = EnumProperty.create("sides", EnumSides.class);
     private ConveyorItem item;
 
     public ConveyorBlock(TitaniumTab group) {
-        super(Properties.ofFullCopy(Blocks.IRON_BLOCK).noCollission().strength(2.0f).isValidSpawn((blockState, blockGetter, blockPos, entityType) -> true), ConveyorTile.class);
+        super(Properties.ofFullCopy(Blocks.IRON_BLOCK).noCollision().strength(2.0f).isValidSpawn((blockState, blockGetter, blockPos, entityType) -> true), ConveyorTile.class);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
         //this.item = new ConveyorItem(this, group);
         this.setItemGroup(group);
@@ -113,18 +115,16 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
 
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData, Player player) {
         BlockEntity tileEntity = world.getBlockEntity(pos);
         if (tileEntity instanceof ConveyorTile) {
-            if (target instanceof DistanceRayTraceResult) {
-                ConveyorUpgrade upgrade = ((ConveyorTile) tileEntity).getUpgradeMap().get(getFacingUpgradeHit(state, player.getCommandSenderWorld(), pos, player));
-                if (upgrade != null) {
-                    return new ItemStack(upgrade.getFactory().getUpgradeItem(), 1);
-                }
+            ConveyorUpgrade upgrade = ((ConveyorTile) tileEntity).getUpgradeMap().get(getFacingUpgradeHit(state, player.level(), pos, player));
+            if (upgrade != null) {
+                return new ItemStack(upgrade.getFactory().getUpgradeItem(), 1);
             }
             return new ItemStack(this, 1);
         }
-        return super.getCloneItemStack(state, target, world, pos, player);
+        return super.getCloneItemStack(world, pos, state, includeData, player);
     }
 
     @Override
@@ -159,8 +159,8 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
     //}
 
     @Override
-    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean p_220069_6_) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, p_220069_6_);
+    protected void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, @Nullable Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, worldIn, pos, blockIn, orientation, movedByPiston);
         //        if (!worldIn.isRemote && !canPlaceBlockAt(worldIn, pos)) {
 //            worldIn.destroyBlock(pos, false);
 //        }
@@ -283,8 +283,8 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
                         handStack.shrink(1);
                         return InteractionResult.SUCCESS;
                     }
-                    if (handStack.getItem() instanceof DyeItem) {
-                        ((ConveyorTile) tileEntity).setColor(((DyeItem) handStack.getItem()).getDyeColor());
+                    if (handStack.has(DataComponents.DYE)) {
+                        ((ConveyorTile) tileEntity).setColor(handStack.get(DataComponents.DYE));
                         return InteractionResult.SUCCESS;
                     }
                 } else {
@@ -361,8 +361,8 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
     }
 
     @Override
-    public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
-        super.entityInside(state, worldIn, pos, entityIn);
+    protected void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        super.entityInside(state, worldIn, pos, entityIn, effectApplier, isPrecise);
         BlockEntity entity = worldIn.getBlockEntity(pos);
         if (entity instanceof ConveyorTile) {
             ((ConveyorTile) entity).handleEntityMovement(entityIn);
@@ -535,8 +535,8 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
 
         @Nullable
         @Override
-        public String getCreatorModId(ItemStack itemStack) {
-            return Component.translatable("itemGroup.industrialforegoing_" + this.group.getResourceLocation().getPath()).getString();
+        public String getCreatorModId(HolderLookup.Provider registries, ItemStack itemStack) {
+            return Component.translatable("itemGroup.industrialforegoing_" + this.group.getIdentifier().getPath()).getString();
         }
     }
 
