@@ -59,10 +59,10 @@ public class OneThreeFiveHandler {
     public static void onClientTick(ClientTickEvent.Post event) {
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.level() != null && !Minecraft.getInstance().isPaused() && Minecraft.getInstance().player.level().getGameTime() % 5 == 0) {
             BlockPos pos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), Minecraft.getInstance().player.blockPosition().getY(), Minecraft.getInstance().player.blockPosition().getZ());
-            Minecraft.getInstance().player.level().getEntitiesOfClass(LivingEntity.class, new AABB(pos.offset(32, 32, 32).getCenter(), pos.offset(-32, -32, -32).getCenter()),
+            Minecraft.getInstance().player.level().getEntitiesOfClass(LivingEntity.class, new AABB(Vec3.atCenterOf(pos.offset(32, 32, 32)), Vec3.atCenterOf(pos.offset(-32, -32, -32))),
                             input -> input.getUUID().toString().contains(SPECIAL)).
                     forEach(living -> Minecraft.getInstance().particleEngine.add(new ParticleVex(living)));
-            Minecraft.getInstance().player.level().getEntitiesOfClass(Player.class, new AABB(pos.offset(32, 32, 32).getCenter(), pos.offset(-32, -32, -32).getCenter()),
+            Minecraft.getInstance().player.level().getEntitiesOfClass(Player.class, new AABB(Vec3.atCenterOf(pos.offset(32, 32, 32)), Vec3.atCenterOf(pos.offset(-32, -32, -32))),
                             input -> SPECIAL_ENTITIES.containsKey(input.getUUID())).
                     forEach(living -> Minecraft.getInstance().particleEngine.add(new ParticleVex(living)));
         }

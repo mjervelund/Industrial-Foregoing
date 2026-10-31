@@ -95,7 +95,14 @@ sourceSets.main.java.exclude(
     'com/buuz135/industrial/plugin/patchouli/**',
     'com/buuz135/industrial/plugin/FTBChunksPlugin.java',
     'com/buuz135/industrial/plugin/emi/**',
-    'com/buuz135/industrial/plugin/jei/**',
+    // MycelialGeneratorRecipe is a plain data class the mycelial generators use; everything else in
+    // plugin/jei is real JEI compat
+    'com/buuz135/industrial/plugin/jei/*.java',
+    'com/buuz135/industrial/plugin/jei/category/**',
+    'com/buuz135/industrial/plugin/jei/generator/MycelialGeneratorCategory.java',
+    'com/buuz135/industrial/plugin/jei/ghost/**',
+    'com/buuz135/industrial/plugin/jei/machineproduce/**',
+    'com/buuz135/industrial/plugin/jei/subtype/**',
 )
 
 

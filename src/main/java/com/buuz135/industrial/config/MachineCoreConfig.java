@@ -25,6 +25,6 @@ package com.buuz135.industrial.config;
 import com.hrznstudio.titanium.annotation.config.ConfigFile;
 import net.neoforged.fml.config.ModConfig;
 
-@ConfigFile(value = "machine-core", type = ModConfig.Type.COMMON)
+@ConfigFile(value = "machine-core", type = ModConfig.Type.LOCAL)
 public class MachineCoreConfig {
 }

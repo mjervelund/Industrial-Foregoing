@@ -122,7 +122,7 @@ public class ItemInfinityDrill extends ItemInfinity {
                 totalDrops.forEach(itemStack -> {
                     Block.popResource(worldIn, entityLiving.blockPosition(), itemStack);
                 });
-                worldIn.getEntitiesOfClass(ExperienceOrb.class, new AABB(area.getLeft().getCenter(), area.getRight().getCenter()).inflate(1)).forEach(entityXPOrb -> entityXPOrb.teleportTo(entityLiving.blockPosition().getX(), entityLiving.blockPosition().getY(), entityLiving.blockPosition().getZ()));
+                worldIn.getEntitiesOfClass(ExperienceOrb.class, new AABB(Vec3.atCenterOf(area.getLeft()), Vec3.atCenterOf(area.getRight())).inflate(1)).forEach(entityXPOrb -> entityXPOrb.teleportTo(entityLiving.blockPosition().getX(), entityLiving.blockPosition().getY(), entityLiving.blockPosition().getZ()));
             }
         }
         return super.mineBlock(stack, worldIn, state, pos, entityLiving);

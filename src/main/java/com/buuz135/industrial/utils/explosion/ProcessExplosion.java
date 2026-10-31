@@ -349,7 +349,7 @@ public class ProcessExplosion {
         //LogHelper.startTimer("Adding Blocks For Removal");
         final BlockPos pos = new BlockPos((int) origin.x(), (int) origin.y(), (int) origin.z());
         new Thread(() -> {
-            List<Entity> list = world.getEntitiesOfClass(Entity.class, new AABB(pos.getCenter(), pos.offset(1, 1, 1).getCenter()).inflate(radius * 2.5, radius * 2.5, radius * 2.5));
+            List<Entity> list = world.getEntitiesOfClass(Entity.class, new AABB(Vec3.atCenterOf(pos), Vec3.atCenterOf(pos.offset(1, 1, 1))).inflate(radius * 2.5, radius * 2.5, radius * 2.5));
             for (Entity e : list) {
                 if (e instanceof Cat) continue;
                 float dmg = 10000F;
