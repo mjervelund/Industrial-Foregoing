@@ -1,7 +1,7 @@
 package com.buuz135.industrial.plugin.jei;
 
 import mezz.jei.api.gui.drawable.IDrawable;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public abstract class CustomJeiDrawable implements IDrawable {
 

@@ -22,12 +22,27 @@
 
 package com.buuz135.industrial.plugin.jei;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.List;
 
 public class JEIHelper {
 
     public static boolean isInstalled() {
         return false;
+    }
+
+    // 26.3: Ingredient#getItems and Ingredient.of(TagKey) are gone
+    public static List<ItemStack> stacks(Ingredient ingredient) {
+        return ingredient.items().map(ItemStack::new).toList();
+    }
+
+    public static List<ItemStack> stacks(TagKey<Item> tag) {
+        return BuiltInRegistries.ITEM.get(tag).map(set -> set.stream().map(ItemStack::new).toList()).orElse(List.of());
     }
 
     public static void openBlockUses(ItemStack stack) {

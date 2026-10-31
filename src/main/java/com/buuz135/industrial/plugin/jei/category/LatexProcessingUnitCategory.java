@@ -42,7 +42,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -74,8 +74,26 @@ public class LatexProcessingUnitCategory implements IRecipeCategory<LatexProcess
         return Component.translatable(ModuleCore.LATEX_PROCESSING.getBlock().getDescriptionId());
     }
 
+
+    // JEI 31: categories give their size and draw their own background
+    private IDrawable background;
+
+    private IDrawable getBackground() {
+        if (background == null) background = createBackground();
+        return background;
+    }
+
     @Override
-    public IDrawable getBackground() {
+    public int getWidth() {
+        return getBackground().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getBackground().getHeight();
+    }
+
+    private IDrawable createBackground() {
         return helper.createBlankDrawable(120, 60);
     }
 
@@ -93,18 +111,19 @@ public class LatexProcessingUnitCategory implements IRecipeCategory<LatexProcess
     }
 
     @Override
-    public void draw(Recipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(Recipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        getBackground().draw(guiGraphics);
         IRecipeCategory.super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
 
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.ENERGY_BACKGROUND), 0, 3);
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_NORMAL), 24, 3);
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_NORMAL), 48, 3);
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.PROGRESS_BAR_BACKGROUND_ARROW_HORIZONTAL), 72, 22);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.ENERGY_BACKGROUND), 0, 3);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_NORMAL), 24, 3);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_NORMAL), 48, 3);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.PROGRESS_BAR_BACKGROUND_ARROW_HORIZONTAL), 72, 22);
 
-        SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 100, 5, 0, 0, 3, integer -> Pair.of(18 * (integer % 1), 18 * (integer / 1)), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
+        SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 100, 5, 0, 0, 3, integer -> Pair.of(18 * (integer % 1), 18 * (integer / 1)), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
 
         int consumed = LatexProcessingUnitConfig.maxProgress * LatexProcessingUnitConfig.powerPerTick;
-        EnergyBarScreenAddon.drawForeground(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 0, 3, 0, 0, consumed, Math.max(LatexProcessingUnitConfig.maxStoredPower, consumed));
+        EnergyBarScreenAddon.drawForeground(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 0, 3, 0, 0, consumed, Math.max(LatexProcessingUnitConfig.maxStoredPower, consumed));
     }
 
     @Override

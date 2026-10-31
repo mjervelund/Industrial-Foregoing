@@ -18,8 +18,4 @@ public class InfinitySubtypeInterpreter implements ISubtypeInterpreter<ItemStack
         );
     }
 
-    @Override
-    public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
-        return ingredient.getOrDefault(IFAttachments.INFINITY_ITEM_POWER, 0L).toString() + "_" + ingredient.getOrDefault(IFAttachments.INFINITY_ITEM_SPECIAL, true).toString();
-    }
 }

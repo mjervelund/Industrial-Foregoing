@@ -16,11 +16,4 @@ public class AddonSubtypeInterpreter implements ISubtypeInterpreter<ItemStack> {
         return ingredient.get(AugmentWrapper.ATTACHMENT);
     }
 
-    @Override
-    public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
-        Map<String, Float> attachment = ingredient.getOrDefault(AugmentWrapper.ATTACHMENT, new HashMap<>());
-        var result = new StringBuilder();
-        attachment.forEach((key, value) -> result.append(key).append("=").append(value).append('-'));
-        return result.toString();
-    }
 }

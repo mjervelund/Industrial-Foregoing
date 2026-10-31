@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.plugin.jei.category;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.neoforged.neoforge.fluids.FluidStack;
 import com.buuz135.industrial.plugin.jei.IndustrialRecipeTypes;
 import com.buuz135.industrial.recipe.LaserDrillFluidRecipe;
 import com.buuz135.industrial.recipe.data.EntityIngredient;
@@ -43,7 +45,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -79,8 +81,26 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
         return Component.literal(Component.translatable("text.industrialforegoing.jei.recipe.laser_drill_fluids").getString());
     }
 
+
+    // JEI 31: categories give their size and draw their own background
+    private IDrawable background;
+
+    private IDrawable getBackground() {
+        if (background == null) background = createBackground();
+        return background;
+    }
+
     @Override
-    public IDrawable getBackground() {
+    public int getWidth() {
+        return getBackground().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getBackground().getHeight();
+    }
+
+    private IDrawable createBackground() {
         return guiHelper.drawableBuilder(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 0, 0, 52, 26).addPadding(0, 60, 35, 65).build();
     }
 
@@ -92,37 +112,38 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, LaserDrillFluidRecipe recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 36, 5).addIngredients(recipe.catalyst);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 60 + 35 + 6, 6).setFluidRenderer(200, false, 12, 13).setOverlay(smallTank, 0, 0).addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.stream(recipe.output.getFluids()).toList());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 60 + 35 + 6, 6).setFluidRenderer(200, false, 12, 13).setOverlay(smallTank, 0, 0).addIngredients(NeoForgeTypes.FLUID_STACK, recipe.output.ingredient().fluids().stream().map(fluid -> new FluidStack(fluid, recipe.output.amount())).toList());
 
     }
 
     @Override
-    public void draw(LaserDrillFluidRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(LaserDrillFluidRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        getBackground().draw(guiGraphics);
         int recipeWidth = 82 + 35 + 35;
         if (recipe.pointer > 0)
-            AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.BUTTON_ARROW_LEFT), 0, 70);
+            AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.BUTTON_ARROW_LEFT), 0, 70);
         if (recipe.pointer < recipe.rarity.size() - 1)
-            AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.BUTTON_ARROW_RIGHT), 137, 70);
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 60 + 35 + 3, 3);
+            AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.BUTTON_ARROW_RIGHT), 137, 70);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 60 + 35 + 3, 3);
         var toasts = Identifier.fromNamespaceAndPath("minecraft", "toast/tree");
-        guiGraphics.blitSprite(toasts, recipeWidth / 10 * 2, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
-        guiGraphics.blitSprite(toasts, recipeWidth / 10 * 7, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, toasts, recipeWidth / 10 * 2, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, toasts, recipeWidth / 10 * 7, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3, 20, 20);
         var icons = Identifier.fromNamespaceAndPath("neoforge", "textures/gui/icons.png");
-        guiGraphics.blit(icons, recipeWidth / 10 * 7 + 1, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3 + 3, 0, 16, 16, 16);
+        AssetUtil.blit(guiGraphics, icons, recipeWidth / 10 * 7 + 1, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 3 + 3, 0, 16, 16, 16);
 
         String minY = Component.translatable("text.industrialforegoing.miny").getString() + " " + recipe.rarity.get(recipe.pointer).depth_min();
         String maxY = Component.translatable("text.industrialforegoing.maxy").getString() + " " + recipe.rarity.get(recipe.pointer).depth_max();
         String biomes = Component.translatable("text.industrialforegoing.requirements").getString();
 
-        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + minY, recipeWidth / 10, 30, 0, false);
-        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + maxY, recipeWidth / 10 * 6, 30, 0, false);
+        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + minY, recipeWidth / 10, 30, 0xFF000000, false);
+        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + maxY, recipeWidth / 10 * 6, 30, 0xFF000000, false);
         if (recipe.entityData.isPresent()) {
             EntityIngredient entityIngredient = recipe.entityData.get().getEntity();
             String name = entityIngredient.isTag() ? "#" + entityIngredient.tag().location() : entityIngredient.getType().getDescription().getString();
             String wight = "Over: " + name;
-            guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + wight, recipeWidth / 10, 30 + (Minecraft.getInstance().font.lineHeight + 2), 0, false);
+            guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + wight, recipeWidth / 10, 30 + (Minecraft.getInstance().font.lineHeight + 2), 0xFF000000, false);
         }
-        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + "" + ChatFormatting.UNDERLINE + biomes, recipeWidth / 2 - Minecraft.getInstance().font.width(biomes) / 2, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 2, 0, false);
+        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + "" + ChatFormatting.UNDERLINE + biomes, recipeWidth / 2 - Minecraft.getInstance().font.width(biomes) / 2, 30 + (Minecraft.getInstance().font.lineHeight + 2) * 2, 0xFF000000, false);
 
     }
 
@@ -153,7 +174,7 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
                 tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.jei.recipe.any").getString()));
             else {
                 for (ResourceKey<DimensionType> registryKey : recipe.rarity.get(recipe.pointer).dimensionRarity().whitelist()) {
-                    tooltip.add(Component.literal("- " + WordUtils.capitalize(Arrays.stream(registryKey.location().getPath().split("_")).reduce((string, string2) -> string + " " + string2).get())));
+                    tooltip.add(Component.literal("- " + WordUtils.capitalize(Arrays.stream(registryKey.identifier().getPath().split("_")).reduce((string, string2) -> string + " " + string2).get())));
                 }
             }
             tooltip.add(Component.empty());
@@ -162,8 +183,8 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
                 tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.jei.recipe.any").getString()));
             else {
                 for (TagKey<Biome> registryKey : recipe.rarity.get(recipe.pointer).biomeRarity().whitelist()) {
-                    for (Holder<Biome> biomeHolder : Minecraft.getInstance().level.registryAccess().registryOrThrow(Registries.BIOME).getTagOrEmpty(registryKey)) {
-                        tooltip.add(Component.literal("- ").append(Component.translatable("biome." + biomeHolder.getKey().location().getNamespace() + "." + biomeHolder.getKey().location().getPath())));
+                    for (Holder<Biome> biomeHolder : Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.BIOME).getTagOrEmpty(registryKey)) {
+                        tooltip.add(Component.literal("- ").append(Component.translatable("biome." + biomeHolder.getKey().identifier().getNamespace() + "." + biomeHolder.getKey().identifier().getPath())));
                     }
                 }
             }
@@ -174,7 +195,7 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
                 tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.jei.recipe.none").getString()));
             else {
                 for (ResourceKey<DimensionType> registryKey : recipe.rarity.get(recipe.pointer).dimensionRarity().blacklist()) {
-                    tooltip.add(Component.literal("- " + WordUtils.capitalize(Arrays.stream(registryKey.location().getPath().split("_")).reduce((string, string2) -> string + " " + string2).get())));
+                    tooltip.add(Component.literal("- " + WordUtils.capitalize(Arrays.stream(registryKey.identifier().getPath().split("_")).reduce((string, string2) -> string + " " + string2).get())));
                 }
             }
             tooltip.add(Component.empty());
@@ -183,8 +204,8 @@ public class LaserDrillFluidCategory implements IRecipeCategory<LaserDrillFluidR
                 tooltip.add(Component.literal(Component.translatable("text.industrialforegoing.jei.recipe.none").getString()));
             else {
                 for (TagKey<Biome> registryKey : recipe.rarity.get(recipe.pointer).biomeRarity().blacklist()) {
-                    for (Holder<Biome> biomeHolder : Minecraft.getInstance().level.registryAccess().registryOrThrow(Registries.BIOME).getTagOrEmpty(registryKey)) {
-                        tooltip.add(Component.literal("- ").append(Component.translatable("biome." + biomeHolder.getKey().location().getNamespace() + "." + biomeHolder.getKey().location().getPath())));
+                    for (Holder<Biome> biomeHolder : Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.BIOME).getTagOrEmpty(registryKey)) {
+                        tooltip.add(Component.literal("- ").append(Component.translatable("biome." + biomeHolder.getKey().identifier().getNamespace() + "." + biomeHolder.getKey().identifier().getPath())));
                     }
                 }
             }

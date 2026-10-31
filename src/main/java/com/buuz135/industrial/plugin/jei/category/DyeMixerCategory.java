@@ -45,10 +45,10 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -61,7 +61,7 @@ import java.util.Locale;
 public class DyeMixerCategory implements IRecipeCategory<DyeMixerCategory.Recipe> {
     public record Recipe(int red, int green, int blue, int dye) {
         public Item dyeItem() {
-            return DyeItem.byColor(DyeColor.byId(this.dye));
+            return Items.DYE.pick(DyeColor.byId(this.dye));
         }
     }
     public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.create(Reference.MOD_ID, "dummy/dye_mixer", Recipe.class);
@@ -82,8 +82,26 @@ public class DyeMixerCategory implements IRecipeCategory<DyeMixerCategory.Recipe
         return Component.translatable(ModuleResourceProduction.DYE_MIXER.getBlock().getDescriptionId());
     }
 
+
+    // JEI 31: categories give their size and draw their own background
+    private IDrawable background;
+
+    private IDrawable getBackground() {
+        if (background == null) background = createBackground();
+        return background;
+    }
+
     @Override
-    public IDrawable getBackground() {
+    public int getWidth() {
+        return getBackground().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getBackground().getHeight();
+    }
+
+    private IDrawable createBackground() {
         return helper.createBlankDrawable(112, 60);
     }
 
@@ -99,13 +117,14 @@ public class DyeMixerCategory implements IRecipeCategory<DyeMixerCategory.Recipe
     }
 
     @Override
-    public void draw(Recipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(Recipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        getBackground().draw(guiGraphics);
         IRecipeCategory.super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
 
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.ENERGY_BACKGROUND), 0, 3);
-        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.PROGRESS_BAR_BACKGROUND_ARROW_HORIZONTAL), 64, 22);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.ENERGY_BACKGROUND), 0, 3);
+        AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.PROGRESS_BAR_BACKGROUND_ARROW_HORIZONTAL), 64, 22);
 
-        SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 92, 5, 0, 0, 3, integer -> Pair.of(18 * (integer % 1), 18 * (integer / 1)), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
+        SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 92, 5, 0, 0, 3, integer -> Pair.of(18 * (integer % 1), 18 * (integer / 1)), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
 
         var red = new ProgressBarScreenAddon<DyeMixerTile>(20, 3, new ProgressBarComponent<>(0, 0, 3)) {
             @Override
@@ -132,12 +151,12 @@ public class DyeMixerCategory implements IRecipeCategory<DyeMixerCategory.Recipe
         blue.getProgressBar().setColor(DyeColor.BLUE);
         blue.getProgressBar().setProgress(recipe.blue);
 
-        red.drawBackgroundLayer(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 0, 0, 0, 0, 3);
-        green.drawBackgroundLayer(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 0, 0, 0, 0, 3);
-        blue.drawBackgroundLayer(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 0, 0, 0, 0, 3);
+        red.drawBackgroundLayer(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 0, 0, 0, 0, 3);
+        green.drawBackgroundLayer(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 0, 0, 0, 0, 3);
+        blue.drawBackgroundLayer(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 0, 0, 0, 0, 3);
 
         int consumed = DyeMixerConfig.powerPerTick * 100;
-        EnergyBarScreenAddon.drawForeground(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 0, 3, 0, 0, consumed, Math.max(DyeMixerConfig.maxStoredPower, consumed));
+        EnergyBarScreenAddon.drawForeground(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 0, 3, 0, 0, consumed, Math.max(DyeMixerConfig.maxStoredPower, consumed));
     }
 
     @Override

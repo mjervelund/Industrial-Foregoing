@@ -1,5 +1,6 @@
 package com.buuz135.industrial.plugin;
 
+import com.buuz135.industrial.proxy.client.IFClientRecipes;
 import com.buuz135.industrial.block.generator.tile.BioReactorTile;
 import com.buuz135.industrial.block.resourceproduction.tile.MaterialStoneWorkFactoryTile;
 import com.buuz135.industrial.module.ModuleCore;
@@ -57,8 +58,8 @@ public class RecipeViewerHelper {
 
     public static List<StoneWorkWrapper> getStoneWork() {
         List<StoneWorkWrapper> perfectStoneWorkWrappers = new ArrayList<>();
-        for (StoneWorkGenerateRecipe generatorRecipe : RecipeUtil.getRecipes(Minecraft.getInstance().level, (RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get())) {
-            List<StoneWorkWrapper> wrappers = findAllStoneWorkOutputs(generatorRecipe.output, new ArrayList<>());
+        for (StoneWorkGenerateRecipe generatorRecipe : IFClientRecipes.getRecipes((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get())) {
+            List<StoneWorkWrapper> wrappers = findAllStoneWorkOutputs(generatorRecipe.getOutput(), new ArrayList<>());
             for (StoneWorkWrapper workWrapper : new ArrayList<>(wrappers)) {
                 if (perfectStoneWorkWrappers.stream().noneMatch(stoneWorkWrapper -> ItemStack.isSameItem(workWrapper.output(), stoneWorkWrapper.output()))) {
                     boolean isSomoneShorter = false;

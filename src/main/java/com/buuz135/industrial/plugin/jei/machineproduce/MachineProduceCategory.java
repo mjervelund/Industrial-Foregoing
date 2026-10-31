@@ -41,7 +41,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
@@ -77,8 +77,13 @@ public class MachineProduceCategory implements IRecipeCategory<MachineProduceWra
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return background.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return background.getHeight();
     }
 
     @Override
@@ -92,25 +97,25 @@ public class MachineProduceCategory implements IRecipeCategory<MachineProduceWra
                 .addItemStack(new ItemStack(recipe.getBlock()))
                 .setBackground(guiHelper.getSlotDrawable(), -1, -1);
 
-        Ingredient outputItem = recipe.getOutputItem();
+        List<ItemStack> outputItem = recipe.getOutputItem();
         if (outputItem == null) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, 57 + 2, 5 + 2)
                     .setFluidRenderer(1000, false, 12, 13)
                     .setOverlay(smallTank, 0, 0)
                     .addIngredient(NeoForgeTypes.FLUID_STACK, recipe.getOutputFluid());
         } else {
-            List<ItemStack> output = Arrays.asList(outputItem.getItems().clone());
             builder.addSlot(RecipeIngredientRole.OUTPUT, 57, 5)
-                    .addItemStacks(output);
+                    .addItemStacks(outputItem);
         }
     }
 
     @Override
-    public void draw(MachineProduceWrapper recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(MachineProduceWrapper recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        background.draw(guiGraphics);
         if (recipe.getOutputItem() == null) {
-            AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 56, Minecraft.getInstance().font.lineHeight / 2);
+            AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 56, Minecraft.getInstance().font.lineHeight / 2);
         } else {
-            SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 56, Minecraft.getInstance().font.lineHeight / 2, 0, 0, 1, integer -> Pair.of(1, 1), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
+            SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 56, Minecraft.getInstance().font.lineHeight / 2, 0, 0, 1, integer -> Pair.of(1, 1), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
         }
     }
 }

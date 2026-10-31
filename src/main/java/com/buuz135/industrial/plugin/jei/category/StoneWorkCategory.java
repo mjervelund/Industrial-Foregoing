@@ -28,7 +28,9 @@ import com.buuz135.industrial.utils.Reference;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -53,8 +55,26 @@ public class StoneWorkCategory implements IRecipeCategory<StoneWorkWrapper> {
         return Component.translatable(ModuleResourceProduction.MATERIAL_STONEWORK_FACTORY.getBlock().getDescriptionId());
     }
 
+
+    // JEI 31: categories give their size and draw their own background
+    private IDrawable background;
+
+    private IDrawable getBackground() {
+        if (background == null) background = createBackground();
+        return background;
+    }
+
     @Override
-    public IDrawable getBackground() {
+    public int getWidth() {
+        return getBackground().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getBackground().getHeight();
+    }
+
+    private IDrawable createBackground() {
         return helper.createDrawable(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jei.png"), 94, 0, 160, 26);
     }
 
@@ -68,9 +88,12 @@ public class StoneWorkCategory implements IRecipeCategory<StoneWorkWrapper> {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 5).addIngredient(VanillaTypes.ITEM_STACK, recipe.input());
         builder.addSlot(RecipeIngredientRole.OUTPUT, 139, 5).addIngredient(VanillaTypes.ITEM_STACK, recipe.output());
         for (int i = 0; i < recipe.modes().size(); i++) {
-            builder.addSlot(RecipeIngredientRole.CATALYST, 29 + i * 24, 5).addIngredient(VanillaTypes.ITEM_STACK, recipe.modes().get(i).getIcon());
+            builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, 29 + i * 24, 5).addIngredient(VanillaTypes.ITEM_STACK, recipe.modes().get(i).getIcon());
         }
     }
 
-
+    @Override
+    public void draw(StoneWorkWrapper recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        getBackground().draw(guiGraphics);
+    }
 }

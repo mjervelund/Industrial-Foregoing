@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.plugin.jei.machineproduce;
 
+import com.buuz135.industrial.plugin.jei.JEIHelper;
+import java.util.List;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,18 +34,18 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public class MachineProduceWrapper {
 
     private Block block;
-    private Ingredient outputItem;
+    private List<ItemStack> outputItem;
     private FluidStack outputFluid;
 
     public MachineProduceWrapper(Block block, ItemStack... output) {
         this.block = block;
-        this.outputItem = Ingredient.of(output);
+        this.outputItem = List.of(output);
         this.outputFluid = FluidStack.EMPTY;
     }
 
     public MachineProduceWrapper(Block block, TagKey<Item> output) {
         this.block = block;
-        this.outputItem = Ingredient.of(output);
+        this.outputItem = JEIHelper.stacks(output);
         this.outputFluid = FluidStack.EMPTY;
     }
 
@@ -57,7 +59,7 @@ public class MachineProduceWrapper {
         return block;
     }
 
-    public Ingredient getOutputItem() {
+    public List<ItemStack> getOutputItem() {
         return outputItem;
     }
 

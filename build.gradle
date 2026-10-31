@@ -87,7 +87,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 // 26.3 port (tekkit): compat for mods without a 26.3 build is left out of the build. Titanium's
 // @FeaturePlugin scan only loads these when the target mod is present, so nothing references them.
-// JEI compat is excluded until it is ported to JEI 31 (notes/Industrial-Foregoing.md).
+// EMI has no 26.3 build; JEI compat (plugin/jei, RecipeViewerHelper) is ported to JEI 31.
 sourceSets.main.java.exclude(
     'com/buuz135/industrial/plugin/CuriosPlugin.java',
     'com/buuz135/industrial/plugin/curios/**',
@@ -95,16 +95,6 @@ sourceSets.main.java.exclude(
     'com/buuz135/industrial/plugin/patchouli/**',
     'com/buuz135/industrial/plugin/FTBChunksPlugin.java',
     'com/buuz135/industrial/plugin/emi/**',
-    // MycelialGeneratorRecipe is a plain data class the mycelial generators use; everything else in
-    // plugin/jei is real JEI compat
-    'com/buuz135/industrial/plugin/jei/*.java',
-    'com/buuz135/industrial/plugin/jei/category/**',
-    'com/buuz135/industrial/plugin/jei/generator/MycelialGeneratorCategory.java',
-    'com/buuz135/industrial/plugin/jei/ghost/**',
-    'com/buuz135/industrial/plugin/jei/machineproduce/**',
-    'com/buuz135/industrial/plugin/jei/subtype/**',
-    // only the JEI/EMI plugins use it (it builds JEI category wrappers)
-    'com/buuz135/industrial/plugin/RecipeViewerHelper.java',
     // blockstate/model datagen targets NeoForge's removed model builders; output is committed in src/generated
     'com/buuz135/industrial/utils/data/**',
 )

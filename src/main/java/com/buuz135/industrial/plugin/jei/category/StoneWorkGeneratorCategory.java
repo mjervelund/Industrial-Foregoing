@@ -38,7 +38,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -66,8 +66,26 @@ public class StoneWorkGeneratorCategory implements IRecipeCategory<StoneWorkGene
         return Component.literal(Component.translatable("text.industrialforegoing.jei.recipe.stonework_generation").getString());
     }
 
+
+    // JEI 31: categories give their size and draw their own background
+    private IDrawable background;
+
+    private IDrawable getBackground() {
+        if (background == null) background = createBackground();
+        return background;
+    }
+
     @Override
-    public IDrawable getBackground() {
+    public int getWidth() {
+        return getBackground().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getBackground().getHeight();
+    }
+
+    private IDrawable createBackground() {
         return helper.createBlankDrawable(130, 9 * 6);
     }
 
@@ -79,13 +97,14 @@ public class StoneWorkGeneratorCategory implements IRecipeCategory<StoneWorkGene
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, StoneWorkGenerateRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 9, 19).addIngredient(VanillaTypes.ITEM_STACK, recipe.output);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 9, 19).addIngredient(VanillaTypes.ITEM_STACK, recipe.getOutput());
     }
 
     @Override
-    public void draw(StoneWorkGenerateRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(StoneWorkGenerateRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        getBackground().draw(guiGraphics);
         List<Component> lines = new ArrayList<>();
-        SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 8, 9 * 2, 0, 0, 1, integer -> Pair.of(1, 1), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
+        SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 8, 9 * 2, 0, 0, 1, integer -> Pair.of(1, 1), integer -> ItemStack.EMPTY, true, integer -> new Color(DyeColor.ORANGE.getFireworkColor()), integer -> true, 1);
         lines.add(Component.literal(ChatFormatting.GOLD + LangUtil.getString("tooltip.industrialforegoing.needs")));
         lines.add(Component.literal(ChatFormatting.YELLOW + " - " + ChatFormatting.DARK_GRAY + recipe.waterNeed + ChatFormatting.DARK_AQUA + LangUtil.getString("tooltip.industrialforegoing.mb_of", LangUtil.getString("block.minecraft.water"))));
         lines.add(Component.literal(ChatFormatting.YELLOW + " - " + ChatFormatting.DARK_GRAY + recipe.lavaNeed + ChatFormatting.DARK_AQUA + LangUtil.getString("tooltip.industrialforegoing.mb_of", LangUtil.getString("block.minecraft.lava"))));
@@ -94,7 +113,7 @@ public class StoneWorkGeneratorCategory implements IRecipeCategory<StoneWorkGene
         lines.add(Component.literal(ChatFormatting.YELLOW + " - " + ChatFormatting.DARK_GRAY + recipe.lavaConsume + ChatFormatting.DARK_AQUA + LangUtil.getString("tooltip.industrialforegoing.mb_of", LangUtil.getString("block.minecraft.lava"))));
         int y = 0;
         for (Component line : lines) {
-            guiGraphics.drawString(Minecraft.getInstance().font, line.getString(), 36, y * Minecraft.getInstance().font.lineHeight, 0xFFFFFFFF, false);
+            guiGraphics.text(Minecraft.getInstance().font, line.getString(), 36, y * Minecraft.getInstance().font.lineHeight, 0xFFFFFFFF, false);
             ++y;
         }
     }

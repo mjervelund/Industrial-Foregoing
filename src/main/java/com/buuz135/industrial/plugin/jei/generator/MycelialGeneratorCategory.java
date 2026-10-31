@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.plugin.jei.generator;
 
+import com.buuz135.industrial.plugin.jei.JEIHelper;
 import com.buuz135.industrial.block.generator.mycelial.IMycelialGeneratorType;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.api.client.AssetTypes;
@@ -39,7 +40,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -74,8 +75,26 @@ public class MycelialGeneratorCategory implements IRecipeCategory<MycelialGenera
         return Component.translatable("industrialforegoing.jei.category." + type.getName());
     }
 
+
+    // JEI 31: categories give their size and draw their own background
+    private IDrawable background;
+
+    private IDrawable getBackground() {
+        if (background == null) background = createBackground();
+        return background;
+    }
+
     @Override
-    public IDrawable getBackground() {
+    public int getWidth() {
+        return getBackground().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getBackground().getHeight();
+    }
+
+    private IDrawable createBackground() {
         return guiHelper.createBlankDrawable(20 * type.getInputs().length + 110, Minecraft.getInstance().font.lineHeight * 3);
     }
 
@@ -94,7 +113,7 @@ public class MycelialGeneratorCategory implements IRecipeCategory<MycelialGenera
             IMycelialGeneratorType.Input input = type.getInputs()[i];
             if (input == IMycelialGeneratorType.Input.SLOT) {
                 builder.addSlot(RecipeIngredientRole.INPUT, 20 * i + 1, Minecraft.getInstance().font.lineHeight / 2 + 1)
-                        .addItemStacks(recipe.getInputItems().get(i).stream().map(ingredient -> Arrays.asList(ingredient.getItems())).flatMap(Collection::stream).collect(Collectors.toList()));
+                        .addItemStacks(recipe.getInputItems().get(i).stream().map(JEIHelper::stacks).flatMap(Collection::stream).collect(Collectors.toList()));
             } else if (input == IMycelialGeneratorType.Input.TANK) {
                 builder.addSlot(RecipeIngredientRole.INPUT, 20 * i + 3, 3 + Minecraft.getInstance().font.lineHeight / 2)
                         .setFluidRenderer(1000, false, 12, 13)
@@ -105,18 +124,19 @@ public class MycelialGeneratorCategory implements IRecipeCategory<MycelialGenera
     }
 
     @Override
-    public void draw(MycelialGeneratorRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(MycelialGeneratorRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        getBackground().draw(guiGraphics);
         for (int i = 0; i < type.getInputs().length; i++) {
             if (type.getInputs()[i] == IMycelialGeneratorType.Input.SLOT) {
                 int finalI = i;
-                SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER, 20 * i, Minecraft.getInstance().font.lineHeight / 2, 0, 0, 1, integer -> Pair.of(1, 1), integer -> ItemStack.EMPTY, true, integer -> new Color(type.getInputColors()[finalI].getFireworkColor()), integer -> true, 1);
+                SlotsScreenAddon.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER, 20 * i, Minecraft.getInstance().font.lineHeight / 2, 0, 0, 1, integer -> Pair.of(1, 1), integer -> ItemStack.EMPTY, true, integer -> new Color(type.getInputColors()[finalI].getFireworkColor()), integer -> true, 1);
             } else if (type.getInputs()[i] == IMycelialGeneratorType.Input.TANK) {
-                AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().screen, DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 20 * i, Minecraft.getInstance().font.lineHeight / 2);
+                AssetUtil.drawAsset(guiGraphics, Minecraft.getInstance().gui.screen(), DefaultAssetProvider.DEFAULT_PROVIDER.getAsset(AssetTypes.TANK_SMALL), 20 * i, Minecraft.getInstance().font.lineHeight / 2);
             }
         }
         int x = 20 * type.getInputs().length + 3;
-        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.jei.recipe.time").getString() + ChatFormatting.DARK_AQUA + new DecimalFormat().format(recipe.getTicks() / 20D) + ChatFormatting.DARK_GRAY + Component.translatable("tooltip.industrialforegoing.sec_short").getString(), x, Minecraft.getInstance().font.lineHeight * 0, 0xFFFFFFFF, false);
-        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.jei.recipe.production").getString() + ChatFormatting.DARK_AQUA + recipe.getPowerTick() + ChatFormatting.DARK_GRAY + Component.translatable("tooltip.industrialforegoing.fe_t").getString(), x, Minecraft.getInstance().font.lineHeight * 1, 0xFFFFFFFF, false);
-        guiGraphics.drawString(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.jei.recipe.total").getString() + ChatFormatting.DARK_AQUA + new DecimalFormat().format(recipe.getTicks() * recipe.getPowerTick()) + ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.display._fe").getString(), x, Minecraft.getInstance().font.lineHeight * 2, 0xFFFFFFFF, false);
+        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.jei.recipe.time").getString() + ChatFormatting.DARK_AQUA + new DecimalFormat().format(recipe.getTicks() / 20D) + ChatFormatting.DARK_GRAY + Component.translatable("tooltip.industrialforegoing.sec_short").getString(), x, Minecraft.getInstance().font.lineHeight * 0, 0xFFFFFFFF, false);
+        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.jei.recipe.production").getString() + ChatFormatting.DARK_AQUA + recipe.getPowerTick() + ChatFormatting.DARK_GRAY + Component.translatable("tooltip.industrialforegoing.fe_t").getString(), x, Minecraft.getInstance().font.lineHeight * 1, 0xFFFFFFFF, false);
+        guiGraphics.text(Minecraft.getInstance().font, ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.jei.recipe.total").getString() + ChatFormatting.DARK_AQUA + new DecimalFormat().format(recipe.getTicks() * recipe.getPowerTick()) + ChatFormatting.DARK_GRAY + Component.translatable("text.industrialforegoing.display._fe").getString(), x, Minecraft.getInstance().font.lineHeight * 2, 0xFFFFFFFF, false);
     }
 }

@@ -22,6 +22,7 @@
 package com.buuz135.industrial.plugin.jei;
 
 
+import com.buuz135.industrial.proxy.client.IFClientRecipes;
 import com.buuz135.industrial.api.recipe.ore.OreFluidEntryFermenter;
 import com.buuz135.industrial.api.recipe.ore.OreFluidEntryRaw;
 import com.buuz135.industrial.api.recipe.ore.OreFluidEntrySieve;
@@ -249,11 +250,11 @@ public class JEICustomPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(IndustrialRecipeTypes.FLUID_EXTRACTOR, RecipeUtil.getRecipes(Minecraft.getInstance().level, (RecipeType<FluidExtractorRecipe>) ModuleCore.FLUID_EXTRACTOR_TYPE.get()));
-        registration.addRecipes(IndustrialRecipeTypes.DISSOLUTION, RecipeUtil.getRecipes(Minecraft.getInstance().level, (RecipeType<DissolutionChamberRecipe>) ModuleCore.DISSOLUTION_TYPE.get()));
+        registration.addRecipes(IndustrialRecipeTypes.FLUID_EXTRACTOR, IFClientRecipes.getRecipes((RecipeType<FluidExtractorRecipe>) ModuleCore.FLUID_EXTRACTOR_TYPE.get()));
+        registration.addRecipes(IndustrialRecipeTypes.DISSOLUTION, IFClientRecipes.getRecipes((RecipeType<DissolutionChamberRecipe>) ModuleCore.DISSOLUTION_TYPE.get()));
         registration.addRecipes(IndustrialRecipeTypes.BIOREACTOR, generateBioreactorRecipes());
-        registration.addRecipes(IndustrialRecipeTypes.LASER_ORE, RecipeUtil.getRecipes(Minecraft.getInstance().level, (RecipeType<LaserDrillOreRecipe>) ModuleCore.LASER_DRILL_TYPE.get()).stream().filter(laserDrillOreRecipe -> !laserDrillOreRecipe.output.ingredient().isEmpty()).collect(Collectors.toList()));
-        registration.addRecipes(IndustrialRecipeTypes.LASER_FLUID, RecipeUtil.getRecipes(Minecraft.getInstance().level, (RecipeType<LaserDrillFluidRecipe>) ModuleCore.LASER_DRILL_FLUID_TYPE.get()));
+        registration.addRecipes(IndustrialRecipeTypes.LASER_ORE, IFClientRecipes.getRecipes((RecipeType<LaserDrillOreRecipe>) ModuleCore.LASER_DRILL_TYPE.get()).stream().filter(laserDrillOreRecipe -> !laserDrillOreRecipe.output.ingredient().isEmpty()).collect(Collectors.toList()));
+        registration.addRecipes(IndustrialRecipeTypes.LASER_FLUID, IFClientRecipes.getRecipes((RecipeType<LaserDrillFluidRecipe>) ModuleCore.LASER_DRILL_FLUID_TYPE.get()));
         for (int i = 0; i < IMycelialGeneratorType.TYPES.size(); i++) {
             registration.addRecipes(mycelialGeneratorCategories.get(i).getRecipeType(), IMycelialGeneratorType.TYPES.get(i).getRecipes(IFAttachments.registryAccess()).stream().sorted(Comparator.comparingInt(value -> ((MycelialGeneratorRecipe) value).getTicks() * ((MycelialGeneratorRecipe) value).getPowerTick()).reversed()).collect(Collectors.toList()));
         }
@@ -274,13 +275,13 @@ public class JEICustomPlugin implements IModPlugin {
                 )
         );
 
-        registration.addRecipes(IndustrialRecipeTypes.STONE_WORK_GENERATOR, RecipeUtil.getRecipes(Minecraft.getInstance().level, (RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get()));
+        registration.addRecipes(IndustrialRecipeTypes.STONE_WORK_GENERATOR, IFClientRecipes.getRecipes((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get()));
 
         List<OreFluidEntryRaw> washer = new ArrayList<>();
         List<OreFluidEntryFermenter> fluidEntryFermenters = new ArrayList<>();
         List<OreFluidEntrySieve> fluidSieve = new ArrayList<>();
 
-        BuiltInRegistries.ITEM.getTagNames().map(itemTagKey -> itemTagKey.location())
+        BuiltInRegistries.ITEM.getTags().map(named -> named.key().location())
                 .filter(resourceLocation -> resourceLocation.toString().startsWith("c:raw_materials/") && OreTitaniumFluidType.isValid(resourceLocation))
                 .forEach(resourceLocation -> {
                     TagKey<Item> tag = TagUtil.getItemTag(resourceLocation);
