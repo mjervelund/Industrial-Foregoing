@@ -152,7 +152,7 @@ public class ModuleTool implements IModule {
             }, INFINITY_SAW.get(), INFINITY_DRILL.get(), INFINITY_HAMMER.get(), INFINITY_TRIDENT.get(), INFINITY_BACKPACK.get(), INFINITY_LAUNCHER.get(), INFINITY_NUKE.get());
             event.registerItem(Capabilities.FluidHandler.ITEM, (o, unused) -> new InfinityTankStorage(o, new InfinityTankStorage.TankDefinition("meat", 512_000, 0, 0, fluidStack -> fluidStack.is(ModuleCore.MEAT.getSourceFluid()), true, true, FluidTankComponent.Type.SMALL, new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 1000))), MEAT_FEEDER.get());
             event.registerItem(CapabilityItemStackHolder.ITEMSTACK_HOLDER_CAPABILITY, (o, unused) -> new InfinityStackHolder(), INFINITY_SAW.get(), INFINITY_DRILL.get(), INFINITY_HAMMER.get(), INFINITY_TRIDENT.get(), INFINITY_BACKPACK.get(), INFINITY_LAUNCHER.get(), INFINITY_NUKE.get());
-            event.registerItem(Capabilities.ItemHandler.ITEM, (o, unused) -> {
+            event.registerItem(Capabilities.Item.ITEM, (o, unused) -> {
                 if (o.getItem() instanceof ItemInfinityBackpack itemInfinity && o.has(IFAttachments.INFINITY_BACKPACK_ID)) {
                     String id = o.get(IFAttachments.INFINITY_BACKPACK_ID);
                     if (BackpackDataManager.CLIENT_SIDE_BACKPACKS.containsKey(id)) {
@@ -166,7 +166,7 @@ public class ModuleTool implements IModule {
                 }
                 return null;
             }, INFINITY_BACKPACK.get());
-            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, INFINITY_BACKPACK_BLOCK.type().get(), (object, context) -> {
+            event.registerBlockEntity(Capabilities.Item.BLOCK, INFINITY_BACKPACK_BLOCK.type().get(), (object, context) -> {
                 if (object instanceof InfinityBackpackTile tile) {
                     String id = tile.getBackpack().get(IFAttachments.INFINITY_BACKPACK_ID);
                     BackpackDataManager manager = BackpackDataManager.getData(tile.getLevel());

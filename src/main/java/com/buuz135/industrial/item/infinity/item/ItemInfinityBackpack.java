@@ -62,6 +62,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -99,7 +100,6 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -368,7 +368,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                                 handler.getSlotDefinition(slot).setStack(ItemStack.EMPTY);
                                 handler.getSlotDefinition(slot).setAmount(0);
                             } else {
-                                ItemHandlerHelper.giveItemToPlayer(playerEntity, handler.extractItem(slot, maxStack, false));
+                                playerEntity.getInventory().placeItemBackInInventory(handler.extractItem(slot, maxStack, false), Prediction.SERVER_ONLY);
                             }
                         } else {
                             result = handler.extractItem(slot, maxStack, false);

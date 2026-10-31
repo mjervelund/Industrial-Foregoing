@@ -22,20 +22,31 @@
 
 package com.buuz135.industrial.worlddata;
 
+import com.buuz135.industrial.utils.Reference;
+import com.buuz135.industrial.utils.TransferUtils;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.TransferPreconditions;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class BackpackDataManager extends SavedData {
@@ -43,6 +54,12 @@ public class BackpackDataManager extends SavedData {
 
     public static final String NAME = "IFBackpack";
     public static final int SLOT_AMOUNT = 4 * 8;
+    // The "data" tag keeps the 1.21 layout (Backpacks/<id>/Slots, MaxAmount); only the file moved, see LegacySavedData
+    public static final SavedDataType<BackpackDataManager> TYPE = new SavedDataType<>(
+            Identifier.fromNamespaceAndPath(Reference.MOD_ID, "backpack"),
+            BackpackDataManager::create,
+            level -> CompoundTag.CODEC.xmap(tag -> load(registries(level), tag), manager -> manager.save(new CompoundTag(), registries(level))));
+
     public HashMap<String, BackpackItemHandler> itemHandlers;
 
     public BackpackDataManager(String name) {
@@ -51,6 +68,18 @@ public class BackpackDataManager extends SavedData {
 
     public BackpackDataManager() {
         itemHandlers = new HashMap<>();
+    }
+
+    private static BackpackDataManager create(@Nullable ServerLevel level) {
+        CompoundTag legacy = LegacySavedData.read(level, NAME);
+        if (legacy == null) return new BackpackDataManager();
+        BackpackDataManager manager = load(registries(level), legacy);
+        manager.setDirty();
+        return manager;
+    }
+
+    private static HolderLookup.Provider registries(@Nullable ServerLevel level) {
+        return Objects.requireNonNull(level, "IF backpack data is level storage").registryAccess();
     }
 
     public void createBackPack(UUID uuid) {
@@ -79,14 +108,11 @@ public class BackpackDataManager extends SavedData {
     public static BackpackDataManager getData(LevelAccessor world) {
         if (world instanceof ServerLevel) {
             ServerLevel serverWorld = ((ServerLevel) world).getServer().getLevel(Level.OVERWORLD);
-            BackpackDataManager data = serverWorld.getDataStorage().computeIfAbsent(
-                    new Factory<>(BackpackDataManager::new, (compoundTag, provider) -> BackpackDataManager.load(provider, compoundTag)), NAME);
-            return data;
+            return serverWorld.getDataStorage().computeIfAbsent(TYPE);
         }
         return null;
     }
 
-    @Override
     public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
         itemHandlers.forEach((s, iItemHandler) -> nbt.put(s, iItemHandler.serializeNBT(provider)));
@@ -94,16 +120,19 @@ public class BackpackDataManager extends SavedData {
         return compound;
     }
 
-    public static class BackpackItemHandler implements IItemHandler {
+    public static class BackpackItemHandler implements ResourceHandler<ItemResource> {
 
         private List<SlotDefinition> definitionList;
+        private List<SlotJournal> journals;
         private int maxAmount;
         private BackpackDataManager dataManager;
 
         public BackpackItemHandler(BackpackDataManager manager) {
             definitionList = new ArrayList<>();
+            journals = new ArrayList<>();
             for (int i = 0; i < SLOT_AMOUNT; i++) {
                 definitionList.add(new SlotDefinition(this));
+                journals.add(new SlotJournal(definitionList.get(i)));
             }
             this.maxAmount = 2048;
             this.dataManager = manager;
@@ -129,67 +158,92 @@ public class BackpackDataManager extends SavedData {
         }
 
         @Override
-        public int getSlots() {
+        public int size() {
             return definitionList.size();
         }
 
-        @Nonnull
         @Override
+        public ItemResource getResource(int index) {
+            SlotDefinition definition = definitionList.get(index);
+            return definition.amount > 0 ? ItemResource.of(definition.stack) : ItemResource.EMPTY;
+        }
+
+        @Override
+        public long getAmountAsLong(int index) {
+            SlotDefinition definition = definitionList.get(index);
+            return definition.stack.isEmpty() ? 0 : definition.amount;
+        }
+
+        @Override
+        public long getCapacityAsLong(int index, ItemResource resource) {
+            return resource.isEmpty() || isValid(index, resource) ? maxAmount : 0;
+        }
+
+        @Override
+        public boolean isValid(int index, ItemResource resource) {
+            SlotDefinition def = definitionList.get(index);
+            return def.stack.isEmpty() || resource.matches(def.stack);
+        }
+
+        @Override
+        public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+            if (!isValid(index, resource)) return 0;
+            SlotDefinition definition = definitionList.get(index);
+            int inserted = Math.max(0, Math.min(maxAmount - definition.amount, amount));
+            if (definition.voidItems) inserted = amount; //Void
+            if (inserted > 0) {
+                journals.get(index).updateSnapshots(transaction);
+                definition.stack = resource.toStack(1);
+                definition.amount = Math.min(definition.amount + inserted, maxAmount);
+            }
+            return inserted;
+        }
+
+        @Override
+        public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+            SlotDefinition definition = definitionList.get(index);
+            if (definition.stack.isEmpty() || !resource.matches(definition.stack)) return 0;
+            int extracted = Math.min(amount, definition.amount);
+            if (extracted > 0) {
+                journals.get(index).updateSnapshots(transaction);
+                definition.amount -= extracted;
+            }
+            return extracted;
+        }
+
+        public int getSlots() {
+            return size();
+        }
+
+        @Nonnull
         public ItemStack getStackInSlot(int slot) {
             return definitionList.get(slot).getStack().copyWithCount(definitionList.get(slot).getAmount());
         }
 
         @Nonnull
-        @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (isItemValid(slot, stack)) {
-                SlotDefinition definition = definitionList.get(slot);
-                int inserted = Math.min(maxAmount - definition.getAmount(), stack.getCount());
-                if (definition.isVoidItems()) inserted = stack.getCount(); //Void
-                if (!simulate) {
-                    definition.setStack(stack);
-                    definition.setAmount(Math.min(definition.getAmount() + inserted, maxAmount));
-                    markDirty();
-                }
+            if (stack.isEmpty()) return ItemStack.EMPTY;
+            try (var transaction = Transaction.open(null)) {
+                int inserted = insert(slot, ItemResource.of(stack), stack.getCount(), transaction);
+                if (!simulate) transaction.commit();
                 if (inserted == stack.getCount()) return ItemStack.EMPTY;
                 return stack.copyWithCount(stack.getCount() - inserted);
             }
-            return stack;
         }
 
         @Nonnull
-        @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (amount == 0) return ItemStack.EMPTY;
-            SlotDefinition definition = definitionList.get(slot);
-            if (definition.getStack().isEmpty()) return ItemStack.EMPTY;
-            if (definition.getAmount() <= amount) {
-                ItemStack out = definition.getStack().copy();
-                int newAmount = definition.getAmount();
-                if (!simulate) {
-                    definition.setAmount(0);
-                    markDirty();
-                }
-                out.setCount(newAmount);
-                return out;
-            } else {
-                if (!simulate) {
-                    definition.setAmount(definition.getAmount() - amount);
-                    markDirty();
-                }
-                return definition.getStack().copyWithCount(amount);
-            }
+            return TransferUtils.extractItem(this, slot, amount, simulate);
         }
 
-        @Override
         public int getSlotLimit(int slot) {
             return maxAmount;
         }
 
-        @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-            SlotDefinition def = definitionList.get(slot);
-            return def.getStack().isEmpty() || ItemStack.isSameItemSameComponents(def.getStack(), stack);
+            return isValid(slot, ItemResource.of(stack));
         }
 
         public void setMaxAmount(int maxAmount) {
@@ -203,6 +257,33 @@ public class BackpackDataManager extends SavedData {
 
         public SlotDefinition getSlotDefinition(int slot) {
             return definitionList.get(slot);
+        }
+
+        private record SlotSnapshot(ItemStack stack, int amount) {
+        }
+
+        private class SlotJournal extends SnapshotJournal<SlotSnapshot> {
+            private final SlotDefinition definition;
+
+            private SlotJournal(SlotDefinition definition) {
+                this.definition = definition;
+            }
+
+            @Override
+            protected SlotSnapshot createSnapshot() {
+                return new SlotSnapshot(definition.stack, definition.amount);
+            }
+
+            @Override
+            protected void revertToSnapshot(SlotSnapshot snapshot) {
+                definition.stack = snapshot.stack();
+                definition.amount = snapshot.amount();
+            }
+
+            @Override
+            protected void onRootCommit(SlotSnapshot originalState) {
+                markDirty();
+            }
         }
     }
 
@@ -242,7 +323,7 @@ public class BackpackDataManager extends SavedData {
 
         public CompoundTag serializeNBT(HolderLookup.Provider provider) {
             CompoundTag compoundNBT = new CompoundTag();
-            compoundNBT.put("Stack", stack.saveOptional(provider));
+            compoundNBT.put("Stack", ItemStackSerialization.save(provider, stack));
             compoundNBT.putInt("Amount", amount);
             compoundNBT.putBoolean("Void", voidItems);
             compoundNBT.putBoolean("Refill", refillItems);
@@ -250,7 +331,7 @@ public class BackpackDataManager extends SavedData {
         }
 
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-            this.stack = ItemStack.parseOptional(provider, nbt.getCompoundOrEmpty("Stack"));
+            this.stack = ItemStackSerialization.load(provider, nbt.getCompoundOrEmpty("Stack"));
             this.amount = nbt.getIntOr("Amount", 0);
             this.voidItems = nbt.getBooleanOr("Void", false);
             this.refillItems = nbt.getBooleanOr("Refill", false);

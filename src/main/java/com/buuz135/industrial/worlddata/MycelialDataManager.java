@@ -23,6 +23,7 @@
 package com.buuz135.industrial.worlddata;
 
 import com.buuz135.industrial.block.generator.mycelial.IMycelialGeneratorType;
+import com.buuz135.industrial.utils.Reference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -33,18 +34,37 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class MycelialDataManager extends SavedData {
 
     public static final String NAME = "IFMycelial";
+    // The "data" tag keeps the 1.21 layout (values/<owner>/<generator>/<i>); only the file moved, see LegacySavedData
+    public static final SavedDataType<MycelialDataManager> TYPE = new SavedDataType<>(
+            Identifier.fromNamespaceAndPath(Reference.MOD_ID, "mycelial"),
+            MycelialDataManager::create,
+            level -> CompoundTag.CODEC.xmap(tag -> load(registries(level), tag), manager -> manager.save(new CompoundTag(), registries(level))));
     public HashMap<String, HashMap<String, List<GeneratorInfo>>> infos = new HashMap();
 
     public MycelialDataManager() {
+    }
+
+    private static MycelialDataManager create(@Nullable ServerLevel level) {
+        CompoundTag legacy = LegacySavedData.read(level, NAME);
+        if (legacy == null) return new MycelialDataManager();
+        MycelialDataManager manager = load(registries(level), legacy);
+        manager.setDirty();
+        return manager;
+    }
+
+    private static HolderLookup.Provider registries(@Nullable ServerLevel level) {
+        return Objects.requireNonNull(level, "IF mycelial data is level storage").registryAccess();
     }
 
     public static void setGeneratorInfo(String uuid, Level world, BlockPos pos, IMycelialGeneratorType type) {
@@ -117,13 +137,11 @@ public class MycelialDataManager extends SavedData {
     public static MycelialDataManager getData(LevelAccessor world) {
         if (world instanceof ServerLevel) {
             ServerLevel serverWorld = ((ServerLevel) world).getServer().getLevel(Level.OVERWORLD);
-            MycelialDataManager data = serverWorld.getDataStorage().computeIfAbsent(new Factory<MycelialDataManager>(MycelialDataManager::new, (compoundTag, provider) -> MycelialDataManager.load(provider, compoundTag)), NAME);
-            return data;
+            return serverWorld.getDataStorage().computeIfAbsent(TYPE);
         }
         return null;
     }
 
-    @Override
     public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
         CompoundTag values = new CompoundTag();
         for (String uuid : infos.keySet()) {
@@ -165,7 +183,7 @@ public class MycelialDataManager extends SavedData {
             compoundNBT.putLong("Run", lastRun);
             compoundNBT.putLong("Track", lastTracked);
             compoundNBT.putLong("Pos", pos.asLong());
-            compoundNBT.putString("RKValue", world.location().toString());
+            compoundNBT.putString("RKValue", world.identifier().toString());
             return compoundNBT;
         }
 
