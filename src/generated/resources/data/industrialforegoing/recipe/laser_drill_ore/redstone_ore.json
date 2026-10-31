@@ -1,11 +1,9 @@
 {
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:red_laser_lens"
-  },
+  "catalyst": "industrialforegoing:red_laser_lens",
   "output": {
-    "count": 1,
-    "item": "minecraft:redstone_ore"
+    "ingredient": "minecraft:redstone_ore",
+    "count": 1
   },
   "rarity": [
     {

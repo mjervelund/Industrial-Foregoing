@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:sewage_composter"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:sewage_composter"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:sewage_composter"
+        "recipes": [
+          "industrialforegoing:sewage_composter"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

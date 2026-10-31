@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/coal_ore"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/coal_ore"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

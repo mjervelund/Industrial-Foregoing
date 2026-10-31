@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:stonework_generate/cobblestone"
+        "recipes": [
+          "industrialforegoing:stonework_generate/cobblestone"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

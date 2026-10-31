@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/ores/ruby"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/ores/ruby"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

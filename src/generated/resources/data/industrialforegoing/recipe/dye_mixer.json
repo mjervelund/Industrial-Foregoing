@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:dye_mixer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:dye_mixer"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "D": {
-      "tag": "c:dyes"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "tag": "c:gears/gold"
-    }
+    "D": "#c:dyes",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "R": "#c:gears/gold"
   },
   "pattern": [
     "PDP",

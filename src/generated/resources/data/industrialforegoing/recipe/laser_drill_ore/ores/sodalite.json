@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:blue_laser_lens"
-  },
+  "catalyst": "industrialforegoing:blue_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:ores/sodalite"
+    "ingredient": "#c:ores/sodalite",
+    "count": 1
   },
   "rarity": [
     {

@@ -6,9 +6,7 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_fluid",
-  "catalyst": {
-    "item": "industrialforegoing:purple_laser_lens"
-  },
+  "catalyst": "industrialforegoing:purple_laser_lens",
   "entity_data": {
     "data": {},
     "display": "",
@@ -17,8 +15,8 @@
     }
   },
   "output": {
-    "amount": 10,
-    "fluid": "industrialforegoing:ether_gas"
+    "ingredient": "industrialforegoing:ether_gas",
+    "amount": 10
   },
   "rarity": [
     {

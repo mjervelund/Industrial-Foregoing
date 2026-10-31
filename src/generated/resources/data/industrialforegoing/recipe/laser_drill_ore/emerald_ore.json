@@ -1,11 +1,9 @@
 {
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:lime_laser_lens"
-  },
+  "catalyst": "industrialforegoing:lime_laser_lens",
   "output": {
-    "count": 1,
-    "item": "minecraft:emerald_ore"
+    "ingredient": "minecraft:emerald_ore",
+    "count": 1
   },
   "rarity": [
     {

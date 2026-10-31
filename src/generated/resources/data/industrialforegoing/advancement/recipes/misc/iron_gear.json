@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:iron_gear"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:iron_gear"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:iron_gear"
+        "recipes": [
+          "industrialforegoing:iron_gear"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

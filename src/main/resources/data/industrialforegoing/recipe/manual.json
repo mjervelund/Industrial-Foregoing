@@ -1,21 +1,15 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "patchouli:guide_book"
+      "type": "neoforge:registered",
+      "value": "patchouli:guide_book"
     }
   ],
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:book"
-    },
-    {
-      "item": "minecraft:redstone"
-    },
-    {
-      "item": "minecraft:dirt"
-    }
+    "minecraft:book",
+    "minecraft:redstone",
+    "minecraft:dirt"
   ],
   "result": {
     "id": "patchouli:guide_book",

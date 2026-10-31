@@ -1,40 +1,24 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:machine_frame_simple"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:machine_frame_simple"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "tag": "c:plastics"
-    },
-    {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    {
-      "tag": "c:plastics"
-    },
-    {
-      "item": "minecraft:nether_brick"
-    },
-    {
-      "item": "minecraft:nether_brick"
-    },
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "c:gears/gold"
-    },
-    {
-      "tag": "c:ingots/iron"
-    }
+    "#c:plastics",
+    "#industrialforegoing:machine_frame/pity",
+    "#c:plastics",
+    "minecraft:nether_brick",
+    "minecraft:nether_brick",
+    "#c:ingots/iron",
+    "#c:gears/gold",
+    "#c:ingots/iron"
   ],
   "inputFluid": {
-    "amount": 250,
-    "fluid": "industrialforegoing:latex"
+    "ingredient": "industrialforegoing:latex",
+    "amount": 250
   },
   "output": {
     "count": 1,

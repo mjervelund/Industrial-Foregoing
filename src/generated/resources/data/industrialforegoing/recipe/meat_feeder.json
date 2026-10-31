@@ -1,22 +1,16 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:meat_feeder"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:meat_feeder"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "minecraft:glass_bottle"
-    },
-    "i": {
-      "tag": "c:ingots/iron"
-    },
-    "p": {
-      "item": "industrialforegoing:plastic"
-    }
+    "g": "minecraft:glass_bottle",
+    "i": "#c:ingots/iron",
+    "p": "industrialforegoing:plastic"
   },
   "pattern": [
     "pip",

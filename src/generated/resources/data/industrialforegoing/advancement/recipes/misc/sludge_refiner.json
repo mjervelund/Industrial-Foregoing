@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:sludge_refiner"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:sludge_refiner"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:sludge_refiner"
+        "recipes": [
+          "industrialforegoing:sludge_refiner"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

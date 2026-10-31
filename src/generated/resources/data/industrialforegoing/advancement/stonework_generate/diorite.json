@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:stonework_generate/diorite"
+        "recipes": [
+          "industrialforegoing:stonework_generate/diorite"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

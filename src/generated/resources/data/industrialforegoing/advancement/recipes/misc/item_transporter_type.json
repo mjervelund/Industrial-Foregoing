@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:item_transporter_type"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:item_transporter_type"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:item_transporter_type"
+        "recipes": [
+          "industrialforegoing:item_transporter_type"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

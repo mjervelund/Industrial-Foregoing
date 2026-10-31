@@ -13,7 +13,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:pink_slime"
+        "recipes": [
+          "industrialforegoing:pink_slime"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

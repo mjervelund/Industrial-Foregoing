@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:spores_recreator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:spores_recreator"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": {
-      "tag": "c:mushrooms"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "S": {
-      "tag": "c:gears/iron"
-    }
+    "I": "#c:mushrooms",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "S": "#c:gears/iron"
   },
   "pattern": [
     "PSP",

@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/ores/fluorite"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/ores/fluorite"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

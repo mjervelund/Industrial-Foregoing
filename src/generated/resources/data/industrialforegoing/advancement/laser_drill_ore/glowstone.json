@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/glowstone"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/glowstone"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

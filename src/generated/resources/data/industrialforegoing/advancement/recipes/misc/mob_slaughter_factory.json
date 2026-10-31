@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_slaughter_factory"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_slaughter_factory"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mob_slaughter_factory"
+        "recipes": [
+          "industrialforegoing:mob_slaughter_factory"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

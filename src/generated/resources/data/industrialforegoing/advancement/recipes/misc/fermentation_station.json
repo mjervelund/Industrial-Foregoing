@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fermentation_station"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fermentation_station"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fermentation_station"
+        "recipes": [
+          "industrialforegoing:fermentation_station"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

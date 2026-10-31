@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:crusher/gravel"
+        "recipes": [
+          "industrialforegoing:crusher/gravel"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

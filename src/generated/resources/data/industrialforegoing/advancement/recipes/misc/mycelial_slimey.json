@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_slimey"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_slimey"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mycelial_slimey"
+        "recipes": [
+          "industrialforegoing:mycelial_slimey"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

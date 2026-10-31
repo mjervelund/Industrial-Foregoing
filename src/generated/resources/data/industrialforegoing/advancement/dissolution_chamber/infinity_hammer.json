@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_hammer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_hammer"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/infinity_hammer"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/infinity_hammer"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

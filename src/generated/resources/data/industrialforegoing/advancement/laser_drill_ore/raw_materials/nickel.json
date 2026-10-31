@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/raw_materials/nickel"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/raw_materials/nickel"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

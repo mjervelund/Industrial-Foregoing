@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fluid_extractor/oak"
+        "recipes": [
+          "industrialforegoing:fluid_extractor/oak"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

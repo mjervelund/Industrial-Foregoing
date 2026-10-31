@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_backpack"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_backpack"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "C": {
-      "tag": "c:chests/wooden"
-    },
-    "D": {
-      "tag": "c:gears/diamond"
-    },
-    "G": {
-      "tag": "c:gears/gold"
-    },
-    "P": {
-      "item": "minecraft:ender_pearl"
-    }
+    "B": "minecraft:bucket",
+    "C": "#c:chests/wooden",
+    "D": "#c:gears/diamond",
+    "G": "#c:gears/gold",
+    "P": "minecraft:ender_pearl"
   },
   "pattern": [
     "CDC",

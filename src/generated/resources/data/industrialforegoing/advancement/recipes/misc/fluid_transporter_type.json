@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fluid_transporter_type"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fluid_transporter_type"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fluid_transporter_type"
+        "recipes": [
+          "industrialforegoing:fluid_transporter_type"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

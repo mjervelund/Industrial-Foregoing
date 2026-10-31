@@ -1,40 +1,24 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:machine_frame_advanced"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:machine_frame_advanced"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "tag": "c:plastics"
-    },
-    {
-      "tag": "industrialforegoing:machine_frame/simple"
-    },
-    {
-      "tag": "c:plastics"
-    },
-    {
-      "item": "minecraft:netherite_scrap"
-    },
-    {
-      "item": "minecraft:netherite_scrap"
-    },
-    {
-      "tag": "c:ingots/gold"
-    },
-    {
-      "tag": "c:gears/diamond"
-    },
-    {
-      "tag": "c:ingots/gold"
-    }
+    "#c:plastics",
+    "#industrialforegoing:machine_frame/simple",
+    "#c:plastics",
+    "minecraft:netherite_scrap",
+    "minecraft:netherite_scrap",
+    "#c:ingots/gold",
+    "#c:gears/diamond",
+    "#c:ingots/gold"
   ],
   "inputFluid": {
-    "amount": 500,
-    "fluid": "industrialforegoing:pink_slime"
+    "ingredient": "industrialforegoing:pink_slime",
+    "amount": 500
   },
   "output": {
     "count": 1,

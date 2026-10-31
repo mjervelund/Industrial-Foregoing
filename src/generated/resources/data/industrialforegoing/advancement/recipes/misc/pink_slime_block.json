@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:pink_slime_block"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:pink_slime_block"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:pink_slime_block"
+        "recipes": [
+          "industrialforegoing:pink_slime_block"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

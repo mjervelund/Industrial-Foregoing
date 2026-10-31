@@ -1,11 +1,9 @@
 {
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:brown_laser_lens"
-  },
+  "catalyst": "industrialforegoing:brown_laser_lens",
   "output": {
-    "count": 1,
-    "item": "minecraft:ancient_debris"
+    "ingredient": "minecraft:ancient_debris",
+    "count": 1
   },
   "rarity": [
     {

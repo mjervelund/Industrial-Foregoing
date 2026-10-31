@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:dissolution_chamber"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:dissolution_chamber"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

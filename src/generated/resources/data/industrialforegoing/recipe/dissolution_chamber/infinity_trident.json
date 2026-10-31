@@ -1,40 +1,24 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_trident"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_trident"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "item": "minecraft:diamond_block"
-    },
-    {
-      "item": "minecraft:trident"
-    },
-    {
-      "item": "minecraft:diamond_block"
-    },
-    {
-      "item": "minecraft:diamond_hoe"
-    },
-    {
-      "item": "industrialforegoing:range_addon_tier_11"
-    },
-    {
-      "tag": "c:gears/gold"
-    },
-    {
-      "tag": "c:gears/gold"
-    },
-    {
-      "tag": "c:gears/gold"
-    }
+    "minecraft:diamond_block",
+    "minecraft:trident",
+    "minecraft:diamond_block",
+    "minecraft:diamond_hoe",
+    "industrialforegoing:range_addon_tier_11",
+    "#c:gears/gold",
+    "#c:gears/gold",
+    "#c:gears/gold"
   ],
   "inputFluid": {
-    "amount": 2000,
-    "fluid": "industrialforegoing:pink_slime"
+    "ingredient": "industrialforegoing:pink_slime",
+    "amount": 2000
   },
   "output": {
     "components": {

@@ -13,7 +13,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_lens_orange_recolor"
+        "recipes": [
+          "industrialforegoing:laser_lens_orange_recolor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

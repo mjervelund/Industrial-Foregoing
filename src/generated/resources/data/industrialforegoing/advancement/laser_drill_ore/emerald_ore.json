@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/emerald_ore"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/emerald_ore"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

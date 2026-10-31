@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor_insertion_upgrade"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor_insertion_upgrade"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "industrialforegoing:conveyor"
-    },
-    "D": {
-      "item": "minecraft:hopper"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "P": {
-      "tag": "c:plastics"
-    }
+    "C": "industrialforegoing:conveyor",
+    "D": "minecraft:hopper",
+    "I": "#c:ingots/iron",
+    "P": "#c:plastics"
   },
   "pattern": [
     "IPI",

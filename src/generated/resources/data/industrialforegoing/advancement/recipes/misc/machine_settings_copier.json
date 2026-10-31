@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:machine_settings_copier"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:machine_settings_copier"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:machine_settings_copier"
+        "recipes": [
+          "industrialforegoing:machine_settings_copier"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:orange_laser_lens"
-  },
+  "catalyst": "industrialforegoing:orange_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:raw_materials/copper"
+    "ingredient": "#c:raw_materials/copper",
+    "count": 1
   },
   "rarity": [
     {

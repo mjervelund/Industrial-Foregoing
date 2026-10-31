@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fluid_laser_base"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fluid_laser_base"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fluid_laser_base"
+        "recipes": [
+          "industrialforegoing:fluid_laser_base"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_reactor"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_reactor"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/mycelial_reactor"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/mycelial_reactor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

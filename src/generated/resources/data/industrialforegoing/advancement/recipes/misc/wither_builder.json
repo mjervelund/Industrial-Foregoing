@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:wither_builder"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:wither_builder"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:wither_builder"
+        "recipes": [
+          "industrialforegoing:wither_builder"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

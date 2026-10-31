@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:pitiful_generator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:pitiful_generator"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:pitiful_generator"
+        "recipes": [
+          "industrialforegoing:pitiful_generator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

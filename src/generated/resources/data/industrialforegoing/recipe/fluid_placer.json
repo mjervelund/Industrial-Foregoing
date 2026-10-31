@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fluid_placer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fluid_placer"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:water_bucket"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "S": {
-      "tag": "c:gears/iron"
-    }
+    "B": "minecraft:water_bucket",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "R": "minecraft:redstone",
+    "S": "#c:gears/iron"
   },
   "pattern": [
     "PBP",

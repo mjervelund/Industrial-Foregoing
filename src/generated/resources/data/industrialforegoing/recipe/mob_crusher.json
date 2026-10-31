@@ -1,31 +1,19 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_crusher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_crusher"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:book"
-    },
-    "G": {
-      "tag": "c:gears/gold"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/advanced"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "S": {
-      "item": "minecraft:iron_sword"
-    }
+    "B": "minecraft:book",
+    "G": "#c:gears/gold",
+    "M": "#industrialforegoing:machine_frame/advanced",
+    "P": "#c:plastics",
+    "R": "minecraft:redstone",
+    "S": "minecraft:iron_sword"
   },
   "pattern": [
     "PSP",

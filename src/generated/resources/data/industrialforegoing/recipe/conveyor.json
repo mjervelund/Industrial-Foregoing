@@ -1,22 +1,16 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "i": {
-      "tag": "c:ingots/iron"
-    },
-    "p": {
-      "tag": "c:plastics"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    }
+    "i": "#c:ingots/iron",
+    "p": "#c:plastics",
+    "r": "minecraft:redstone"
   },
   "pattern": [
     "ppp",

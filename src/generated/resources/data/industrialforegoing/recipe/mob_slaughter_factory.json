@@ -1,31 +1,19 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_slaughter_factory"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_slaughter_factory"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "A": {
-      "item": "minecraft:iron_axe"
-    },
-    "D": {
-      "tag": "c:gears/gold"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "S": {
-      "item": "minecraft:iron_sword"
-    }
+    "A": "minecraft:iron_axe",
+    "D": "#c:gears/gold",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "R": "minecraft:redstone",
+    "S": "minecraft:iron_sword"
   },
   "pattern": [
     "PDP",

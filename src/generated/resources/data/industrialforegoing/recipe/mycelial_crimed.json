@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_crimed"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_crimed"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:nether_wart_block"
-    },
-    "C": {
-      "item": "minecraft:crimson_fungus"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/advanced"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "minecraft:nether_wart_block",
+    "C": "minecraft:crimson_fungus",
+    "M": "#industrialforegoing:machine_frame/advanced",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "BBB",

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:stasis_chamber"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:stasis_chamber"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:stasis_chamber"
+        "recipes": [
+          "industrialforegoing:stasis_chamber"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

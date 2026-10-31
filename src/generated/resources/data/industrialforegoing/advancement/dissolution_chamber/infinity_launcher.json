@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_launcher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_launcher"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/infinity_launcher"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/infinity_launcher"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

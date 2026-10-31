@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:black_laser_lens"
-  },
+  "catalyst": "industrialforegoing:black_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:raw_materials/tungsten"
+    "ingredient": "#c:raw_materials/tungsten",
+    "count": 1
   },
   "rarity": [
     {

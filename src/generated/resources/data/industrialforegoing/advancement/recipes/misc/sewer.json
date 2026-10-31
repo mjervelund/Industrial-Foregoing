@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:sewer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:sewer"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:sewer"
+        "recipes": [
+          "industrialforegoing:sewer"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

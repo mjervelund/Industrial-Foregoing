@@ -1,11 +1,9 @@
 {
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:white_laser_lens"
-  },
+  "catalyst": "industrialforegoing:white_laser_lens",
   "output": {
-    "count": 1,
-    "item": "minecraft:nether_quartz_ore"
+    "ingredient": "minecraft:nether_quartz_ore",
+    "count": 1
   },
   "rarity": [
     {

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:dye_mixer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:dye_mixer"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dye_mixer"
+        "recipes": [
+          "industrialforegoing:dye_mixer"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

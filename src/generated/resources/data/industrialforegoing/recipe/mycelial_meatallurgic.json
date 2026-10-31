@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_meatallurgic"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_meatallurgic"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "tag": "c:ingots"
-    },
-    "C": {
-      "item": "industrialforegoing:meat_bucket"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/supreme"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "#c:ingots",
+    "C": "industrialforegoing:meat_bucket",
+    "M": "#industrialforegoing:machine_frame/supreme",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "BBB",

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:animal_baby_separator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:animal_baby_separator"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:animal_baby_separator"
+        "recipes": [
+          "industrialforegoing:animal_baby_separator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

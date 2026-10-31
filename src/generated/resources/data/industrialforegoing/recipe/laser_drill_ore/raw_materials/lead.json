@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:purple_laser_lens"
-  },
+  "catalyst": "industrialforegoing:purple_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:raw_materials/lead"
+    "ingredient": "#c:raw_materials/lead",
+    "count": 1
   },
   "rarity": [
     {

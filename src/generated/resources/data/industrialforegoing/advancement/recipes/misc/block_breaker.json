@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:block_breaker"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:block_breaker"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:block_breaker"
+        "recipes": [
+          "industrialforegoing:block_breaker"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

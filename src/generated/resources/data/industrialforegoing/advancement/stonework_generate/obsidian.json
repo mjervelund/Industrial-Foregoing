@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:stonework_generate/obsidian"
+        "recipes": [
+          "industrialforegoing:stonework_generate/obsidian"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

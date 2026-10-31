@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_frosty"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_frosty"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:snowball"
-    },
-    "C": {
-      "item": "minecraft:ice"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/simple"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "minecraft:snowball",
+    "C": "minecraft:ice",
+    "M": "#industrialforegoing:machine_frame/simple",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "BBB",

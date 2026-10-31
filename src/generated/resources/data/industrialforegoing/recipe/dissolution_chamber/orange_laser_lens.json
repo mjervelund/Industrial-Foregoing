@@ -1,31 +1,21 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:orange_laser_lens"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:orange_laser_lens"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:dyes/orange"
-    }
+    "#c:glass_panes",
+    "#c:glass_panes",
+    "#c:glass_panes",
+    "#c:glass_panes",
+    "#c:dyes/orange"
   ],
   "inputFluid": {
-    "amount": 250,
-    "fluid": "industrialforegoing:latex"
+    "ingredient": "industrialforegoing:latex",
+    "amount": 250
   },
   "output": {
     "count": 1,

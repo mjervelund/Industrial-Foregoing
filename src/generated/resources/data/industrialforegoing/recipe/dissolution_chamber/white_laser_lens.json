@@ -1,31 +1,21 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:white_laser_lens"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:white_laser_lens"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:dyes/white"
-    }
+    "#c:glass_panes",
+    "#c:glass_panes",
+    "#c:glass_panes",
+    "#c:glass_panes",
+    "#c:dyes/white"
   ],
   "inputFluid": {
-    "amount": 250,
-    "fluid": "industrialforegoing:latex"
+    "ingredient": "industrialforegoing:latex",
+    "amount": 250
   },
   "output": {
     "count": 1,

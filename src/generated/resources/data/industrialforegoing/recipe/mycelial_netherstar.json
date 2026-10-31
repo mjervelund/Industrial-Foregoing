@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_netherstar"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_netherstar"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:wither_skeleton_skull"
-    },
-    "C": {
-      "item": "minecraft:nether_star"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/supreme"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "minecraft:wither_skeleton_skull",
+    "C": "minecraft:nether_star",
+    "M": "#industrialforegoing:machine_frame/supreme",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "BBB",

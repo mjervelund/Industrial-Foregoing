@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:straw"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:straw"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:straw"
+        "recipes": [
+          "industrialforegoing:straw"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

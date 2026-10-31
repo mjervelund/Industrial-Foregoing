@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fluid_collector"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fluid_collector"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fluid_collector"
+        "recipes": [
+          "industrialforegoing:fluid_collector"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

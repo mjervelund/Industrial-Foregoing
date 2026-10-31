@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:resourceful_furnace"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:resourceful_furnace"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "L": {
-      "item": "minecraft:furnace"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "tag": "c:gears/gold"
-    }
+    "B": "minecraft:bucket",
+    "L": "minecraft:furnace",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "R": "#c:gears/gold"
   },
   "pattern": [
     "PBP",

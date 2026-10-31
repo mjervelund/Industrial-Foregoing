@@ -9,7 +9,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_fluid/ether"
+        "recipes": [
+          "industrialforegoing:laser_drill_fluid/ether"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

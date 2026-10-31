@@ -3,58 +3,24 @@
   "category": "misc",
   "ingredients": [
     [
-      {
-        "item": "industrialforegoing:white_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:orange_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:magenta_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:light_blue_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:yellow_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:lime_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:pink_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:gray_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:light_gray_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:cyan_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:purple_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:blue_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:brown_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:green_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:red_laser_lens"
-      },
-      {
-        "item": "industrialforegoing:black_laser_lens"
-      }
+      "industrialforegoing:white_laser_lens",
+      "industrialforegoing:orange_laser_lens",
+      "industrialforegoing:magenta_laser_lens",
+      "industrialforegoing:light_blue_laser_lens",
+      "industrialforegoing:yellow_laser_lens",
+      "industrialforegoing:lime_laser_lens",
+      "industrialforegoing:pink_laser_lens",
+      "industrialforegoing:gray_laser_lens",
+      "industrialforegoing:light_gray_laser_lens",
+      "industrialforegoing:cyan_laser_lens",
+      "industrialforegoing:purple_laser_lens",
+      "industrialforegoing:blue_laser_lens",
+      "industrialforegoing:brown_laser_lens",
+      "industrialforegoing:green_laser_lens",
+      "industrialforegoing:red_laser_lens",
+      "industrialforegoing:black_laser_lens"
     ],
-    {
-      "tag": "c:dyes/purple"
-    }
+    "#c:dyes/purple"
   ],
   "result": {
     "count": 1,

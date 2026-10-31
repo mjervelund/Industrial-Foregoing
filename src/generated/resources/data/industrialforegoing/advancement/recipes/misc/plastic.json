@@ -13,7 +13,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:plastic"
+        "recipes": [
+          "industrialforegoing:plastic"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

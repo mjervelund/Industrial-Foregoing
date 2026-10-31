@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:marine_fisher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:marine_fisher"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:marine_fisher"
+        "recipes": [
+          "industrialforegoing:marine_fisher"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -9,10 +9,6 @@
     }
   ],
   "type": "industrialforegoing:crusher",
-  "input": {
-    "tag": "c:sands"
-  },
-  "output": {
-    "tag": "c:silicon"
-  }
+  "input": "#c:sands",
+  "output": "#c:silicon"
 }

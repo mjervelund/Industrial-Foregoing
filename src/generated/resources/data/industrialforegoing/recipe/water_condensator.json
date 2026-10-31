@@ -1,31 +1,19 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:water_condensator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:water_condensator"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:water_bucket"
-    },
-    "G": {
-      "tag": "c:gears/iron"
-    },
-    "L": {
-      "item": "minecraft:piston"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "minecraft:water_bucket",
+    "G": "#c:gears/iron",
+    "L": "minecraft:piston",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "PBP",

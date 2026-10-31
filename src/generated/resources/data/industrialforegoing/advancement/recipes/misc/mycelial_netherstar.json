@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_netherstar"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_netherstar"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mycelial_netherstar"
+        "recipes": [
+          "industrialforegoing:mycelial_netherstar"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

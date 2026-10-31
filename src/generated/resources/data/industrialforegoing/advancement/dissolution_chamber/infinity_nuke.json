@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_nuke"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_nuke"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/infinity_nuke"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/infinity_nuke"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

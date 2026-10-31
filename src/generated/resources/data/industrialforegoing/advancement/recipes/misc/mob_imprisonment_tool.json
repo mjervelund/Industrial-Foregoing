@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_imprisonment_tool"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_imprisonment_tool"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mob_imprisonment_tool"
+        "recipes": [
+          "industrialforegoing:mob_imprisonment_tool"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

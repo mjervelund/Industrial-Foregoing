@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:animal_rancher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:animal_rancher"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "G": {
-      "tag": "c:gears/gold"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "S": {
-      "item": "minecraft:shears"
-    }
+    "B": "minecraft:bucket",
+    "G": "#c:gears/gold",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "S": "minecraft:shears"
   },
   "pattern": [
     "PPP",

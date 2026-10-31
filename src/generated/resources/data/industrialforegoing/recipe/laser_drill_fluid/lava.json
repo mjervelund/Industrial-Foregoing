@@ -6,12 +6,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_fluid",
-  "catalyst": {
-    "item": "industrialforegoing:orange_laser_lens"
-  },
+  "catalyst": "industrialforegoing:orange_laser_lens",
   "output": {
-    "amount": 100,
-    "fluid": "minecraft:lava"
+    "ingredient": "minecraft:lava",
+    "amount": 100
   },
   "rarity": [
     {

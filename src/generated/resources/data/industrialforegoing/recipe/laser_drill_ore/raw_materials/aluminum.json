@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:brown_laser_lens"
-  },
+  "catalyst": "industrialforegoing:brown_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:raw_materials/aluminum"
+    "ingredient": "#c:raw_materials/aluminum",
+    "count": 1
   },
   "rarity": [
     {

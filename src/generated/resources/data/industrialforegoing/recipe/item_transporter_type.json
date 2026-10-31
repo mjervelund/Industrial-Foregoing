@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:item_transporter_type"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:item_transporter_type"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "minecraft:piston"
-    },
-    "G": {
-      "tag": "c:ingots/gold"
-    },
-    "I": {
-      "tag": "c:dusts/redstone"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "item": "minecraft:ender_pearl"
-    }
+    "C": "minecraft:piston",
+    "G": "#c:ingots/gold",
+    "I": "#c:dusts/redstone",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "minecraft:ender_pearl"
   },
   "pattern": [
     "IPI",

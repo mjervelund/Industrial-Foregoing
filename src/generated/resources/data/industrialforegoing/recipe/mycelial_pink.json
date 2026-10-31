@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_pink"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_pink"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "tag": "c:dyes/pink"
-    },
-    "C": {
-      "item": "minecraft:pink_wool"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/simple"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "#c:dyes/pink",
+    "C": "minecraft:pink_wool",
+    "M": "#industrialforegoing:machine_frame/simple",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "BBB",

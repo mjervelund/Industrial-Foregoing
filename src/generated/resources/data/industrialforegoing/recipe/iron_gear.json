@@ -1,16 +1,14 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:iron_gear"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:iron_gear"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": {
-      "item": "minecraft:iron_ingot"
-    }
+    "P": "minecraft:iron_ingot"
   },
   "pattern": [
     " P ",

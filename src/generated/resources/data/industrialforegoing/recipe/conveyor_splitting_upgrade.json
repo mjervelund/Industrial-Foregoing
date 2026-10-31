@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor_splitting_upgrade"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor_splitting_upgrade"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "industrialforegoing:conveyor"
-    },
-    "D": {
-      "item": "minecraft:hopper"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "P": {
-      "item": "industrialforegoing:conveyor"
-    }
+    "C": "industrialforegoing:conveyor",
+    "D": "minecraft:hopper",
+    "I": "#c:ingots/iron",
+    "P": "industrialforegoing:conveyor"
   },
   "pattern": [
     "IPI",

@@ -1,34 +1,20 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:block_breaker"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:block_breaker"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "D": {
-      "item": "minecraft:iron_shovel"
-    },
-    "G": {
-      "tag": "c:gears/gold"
-    },
-    "I": {
-      "item": "minecraft:iron_pickaxe"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "S": {
-      "tag": "c:gears/iron"
-    }
+    "D": "minecraft:iron_shovel",
+    "G": "#c:gears/gold",
+    "I": "minecraft:iron_pickaxe",
+    "M": "#industrialforegoing:machine_frame/pity",
+    "P": "#c:plastics",
+    "R": "minecraft:redstone",
+    "S": "#c:gears/iron"
   },
   "pattern": [
     "PGP",

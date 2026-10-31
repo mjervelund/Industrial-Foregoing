@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:potion_brewer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:potion_brewer"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:potion_brewer"
+        "recipes": [
+          "industrialforegoing:potion_brewer"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

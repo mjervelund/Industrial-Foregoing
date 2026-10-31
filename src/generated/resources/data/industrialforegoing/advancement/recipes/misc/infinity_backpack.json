@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_backpack"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_backpack"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:infinity_backpack"
+        "recipes": [
+          "industrialforegoing:infinity_backpack"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

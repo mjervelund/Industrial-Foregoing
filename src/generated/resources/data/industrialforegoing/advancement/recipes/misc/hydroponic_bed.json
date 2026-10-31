@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:hydroponic_bed"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:hydroponic_bed"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:hydroponic_bed"
+        "recipes": [
+          "industrialforegoing:hydroponic_bed"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

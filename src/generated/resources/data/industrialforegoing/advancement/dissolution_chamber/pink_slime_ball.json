@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:pink_slime"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:pink_slime"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/pink_slime_ball"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/pink_slime_ball"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

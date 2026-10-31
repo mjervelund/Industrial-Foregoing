@@ -1,40 +1,24 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:range_addon_tier_6"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:range_addon_tier_6"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "item": "minecraft:redstone"
-    },
-    {
-      "item": "minecraft:redstone"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    }
+    "minecraft:redstone",
+    "minecraft:redstone",
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "minecraft:iron_ingot",
+    "minecraft:iron_ingot",
+    "minecraft:iron_ingot",
+    "minecraft:iron_ingot"
   ],
   "inputFluid": {
-    "amount": 1000,
-    "fluid": "industrialforegoing:latex"
+    "ingredient": "industrialforegoing:latex",
+    "amount": 1000
   },
   "output": {
     "components": {

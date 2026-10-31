@@ -1,19 +1,15 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_imprisonment_tool"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_imprisonment_tool"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "item": "minecraft:ghast_tear"
-    },
-    "P": {
-      "tag": "c:plastics"
-    }
+    "G": "minecraft:ghast_tear",
+    "P": "#c:plastics"
   },
   "pattern": [
     " P ",

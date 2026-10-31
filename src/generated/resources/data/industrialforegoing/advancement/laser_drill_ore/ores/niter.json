@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/ores/niter"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/ores/niter"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

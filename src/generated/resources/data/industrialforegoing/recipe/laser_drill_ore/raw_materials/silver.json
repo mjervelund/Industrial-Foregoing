@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:gray_laser_lens"
-  },
+  "catalyst": "industrialforegoing:gray_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:raw_materials/silver"
+    "ingredient": "#c:raw_materials/silver",
+    "count": 1
   },
   "rarity": [
     {

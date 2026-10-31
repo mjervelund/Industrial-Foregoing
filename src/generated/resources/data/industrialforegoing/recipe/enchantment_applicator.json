@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:enchantment_applicator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:enchantment_applicator"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:anvil"
-    },
-    "G": {
-      "tag": "c:gears/gold"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/advanced"
-    },
-    "P": {
-      "tag": "c:plastics"
-    }
+    "B": "minecraft:anvil",
+    "G": "#c:gears/gold",
+    "M": "#industrialforegoing:machine_frame/advanced",
+    "P": "#c:plastics"
   },
   "pattern": [
     "PPP",

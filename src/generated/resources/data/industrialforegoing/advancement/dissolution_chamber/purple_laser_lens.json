@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:purple_laser_lens"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:purple_laser_lens"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/purple_laser_lens"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/purple_laser_lens"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

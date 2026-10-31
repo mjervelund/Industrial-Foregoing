@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:plant_sower"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:plant_sower"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:plant_sower"
+        "recipes": [
+          "industrialforegoing:plant_sower"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

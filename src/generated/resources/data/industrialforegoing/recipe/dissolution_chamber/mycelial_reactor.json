@@ -1,40 +1,24 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_reactor"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_reactor"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "tag": "c:plastics"
-    },
-    {
-      "tag": "industrialforegoing:machine_frame/supreme"
-    },
-    {
-      "tag": "c:plastics"
-    },
-    {
-      "item": "minecraft:netherite_ingot"
-    },
-    {
-      "item": "minecraft:netherite_ingot"
-    },
-    {
-      "tag": "c:gears/diamond"
-    },
-    {
-      "item": "minecraft:nether_star"
-    },
-    {
-      "tag": "c:gears/diamond"
-    }
+    "#c:plastics",
+    "#industrialforegoing:machine_frame/supreme",
+    "#c:plastics",
+    "minecraft:netherite_ingot",
+    "minecraft:netherite_ingot",
+    "#c:gears/diamond",
+    "minecraft:nether_star",
+    "#c:gears/diamond"
   ],
   "inputFluid": {
-    "amount": 500,
-    "fluid": "industrialforegoing:ether_gas"
+    "ingredient": "industrialforegoing:ether_gas",
+    "amount": 500
   },
   "output": {
     "count": 1,

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_crusher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_crusher"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mob_crusher"
+        "recipes": [
+          "industrialforegoing:mob_crusher"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

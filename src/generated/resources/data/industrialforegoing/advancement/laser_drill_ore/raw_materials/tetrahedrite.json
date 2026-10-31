@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/raw_materials/tetrahedrite"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/raw_materials/tetrahedrite"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

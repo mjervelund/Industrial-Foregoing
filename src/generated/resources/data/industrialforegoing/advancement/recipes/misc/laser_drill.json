@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:laser_drill"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:laser_drill"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill"
+        "recipes": [
+          "industrialforegoing:laser_drill"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

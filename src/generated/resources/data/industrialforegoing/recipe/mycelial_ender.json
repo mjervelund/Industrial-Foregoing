@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_ender"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_ender"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:ender_pearl"
-    },
-    "C": {
-      "item": "minecraft:ender_eye"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/advanced"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "minecraft:ender_pearl",
+    "C": "minecraft:ender_eye",
+    "M": "#industrialforegoing:machine_frame/advanced",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "BBB",

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:enchantment_applicator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:enchantment_applicator"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:enchantment_applicator"
+        "recipes": [
+          "industrialforegoing:enchantment_applicator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

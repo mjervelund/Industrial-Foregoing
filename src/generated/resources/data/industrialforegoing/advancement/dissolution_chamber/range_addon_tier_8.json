@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:range_addon_tier_8"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:range_addon_tier_8"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/range_addon_tier_8"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/range_addon_tier_8"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

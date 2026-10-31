@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:potion_brewer"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:potion_brewer"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "tag": "c:gears/gold"
-    },
-    "G": {
-      "item": "minecraft:repeater"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/advanced"
-    },
-    "P": {
-      "tag": "c:plastics"
-    },
-    "S": {
-      "item": "minecraft:brewing_stand"
-    }
+    "B": "#c:gears/gold",
+    "G": "minecraft:repeater",
+    "M": "#industrialforegoing:machine_frame/advanced",
+    "P": "#c:plastics",
+    "S": "minecraft:brewing_stand"
   },
   "pattern": [
     "PSP",

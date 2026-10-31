@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor_extraction_upgrade"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor_extraction_upgrade"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "industrialforegoing:conveyor"
-    },
-    "D": {
-      "item": "minecraft:dispenser"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "P": {
-      "tag": "c:plastics"
-    }
+    "C": "industrialforegoing:conveyor",
+    "D": "minecraft:dispenser",
+    "I": "#c:ingots/iron",
+    "P": "#c:plastics"
   },
   "pattern": [
     "IPI",

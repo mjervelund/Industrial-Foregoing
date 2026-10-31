@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_explosive"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_explosive"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mycelial_explosive"
+        "recipes": [
+          "industrialforegoing:mycelial_explosive"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

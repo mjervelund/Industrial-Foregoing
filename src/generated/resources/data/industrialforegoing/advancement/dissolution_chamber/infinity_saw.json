@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_saw"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_saw"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/infinity_saw"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/infinity_saw"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -9,12 +9,10 @@
     }
   ],
   "type": "industrialforegoing:laser_drill_ore",
-  "catalyst": {
-    "item": "industrialforegoing:green_laser_lens"
-  },
+  "catalyst": "industrialforegoing:green_laser_lens",
   "output": {
-    "count": 1,
-    "tag": "c:ores/peridot"
+    "ingredient": "#c:ores/peridot",
+    "count": 1
   },
   "rarity": [
     {

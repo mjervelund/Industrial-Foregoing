@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:stasis_chamber"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:stasis_chamber"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "minecraft:ghast_tear"
-    },
-    "i": {
-      "tag": "c:gears/gold"
-    },
-    "m": {
-      "tag": "industrialforegoing:machine_frame/advanced"
-    },
-    "p": {
-      "item": "minecraft:piston"
-    },
-    "s": {
-      "item": "minecraft:soul_sand"
-    }
+    "g": "minecraft:ghast_tear",
+    "i": "#c:gears/gold",
+    "m": "#industrialforegoing:machine_frame/advanced",
+    "p": "minecraft:piston",
+    "s": "minecraft:soul_sand"
   },
   "pattern": [
     "sss",

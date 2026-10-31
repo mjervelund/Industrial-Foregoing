@@ -2,9 +2,7 @@
   "type": "industrialforegoing:fluid_extractor",
   "breakChance": 0.01,
   "defaultRecipe": false,
-  "input": {
-    "item": "minecraft:mangrove_log"
-  },
+  "input": "minecraft:mangrove_log",
   "output": {
     "amount": 4,
     "id": "industrialforegoing:latex"

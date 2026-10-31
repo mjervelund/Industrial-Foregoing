@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:washing_factory"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:washing_factory"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:washing_factory"
+        "recipes": [
+          "industrialforegoing:washing_factory"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

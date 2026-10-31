@@ -1,22 +1,16 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:machine_settings_copier"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:machine_settings_copier"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "L": {
-      "tag": "c:plastics"
-    },
-    "P": {
-      "item": "minecraft:paper"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "L": "#c:plastics",
+    "P": "minecraft:paper",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "PLP",

@@ -1,15 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:infinity_drill"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:infinity_drill"
     }
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:dissolution_chamber/infinity_drill"
+        "recipes": [
+          "industrialforegoing:dissolution_chamber/infinity_drill"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mob_duplicator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mob_duplicator"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mob_duplicator"
+        "recipes": [
+          "industrialforegoing:mob_duplicator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

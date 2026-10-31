@@ -1,40 +1,24 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:speed_addon_tier_2"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:speed_addon_tier_2"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "item": "minecraft:redstone"
-    },
-    {
-      "item": "minecraft:redstone"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "tag": "c:gears/diamond"
-    },
-    {
-      "tag": "c:gears/diamond"
-    },
-    {
-      "item": "minecraft:sugar"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "minecraft:redstone",
+    "minecraft:redstone",
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "#c:gears/diamond",
+    "#c:gears/diamond",
+    "minecraft:sugar",
+    "minecraft:sugar"
   ],
   "inputFluid": {
-    "amount": 1000,
-    "fluid": "industrialforegoing:latex"
+    "ingredient": "industrialforegoing:latex",
+    "amount": 1000
   },
   "output": {
     "components": {

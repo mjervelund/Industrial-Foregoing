@@ -1,19 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:pink_slime"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:pink_slime"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "item": "minecraft:glass_pane"
-    }
+    "minecraft:glass_pane"
   ],
   "inputFluid": {
-    "amount": 300,
-    "fluid": "industrialforegoing:pink_slime"
+    "ingredient": "industrialforegoing:pink_slime",
+    "amount": 300
   },
   "output": {
     "count": 1,

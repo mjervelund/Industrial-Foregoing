@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:water_condensator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:water_condensator"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:water_condensator"
+        "recipes": [
+          "industrialforegoing:water_condensator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

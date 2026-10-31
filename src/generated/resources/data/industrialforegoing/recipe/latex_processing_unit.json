@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:latex_processing_unit"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:latex_processing_unit"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "F": {
-      "item": "minecraft:furnace"
-    },
-    "G": {
-      "tag": "c:storage_blocks/redstone"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "M": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    }
+    "B": "minecraft:bucket",
+    "F": "minecraft:furnace",
+    "G": "#c:storage_blocks/redstone",
+    "I": "#c:ingots/iron",
+    "M": "#industrialforegoing:machine_frame/pity"
   },
   "pattern": [
     "IGI",

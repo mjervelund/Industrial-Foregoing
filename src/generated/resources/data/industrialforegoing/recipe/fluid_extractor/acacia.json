@@ -2,9 +2,7 @@
   "type": "industrialforegoing:fluid_extractor",
   "breakChance": 0.01,
   "defaultRecipe": false,
-  "input": {
-    "item": "minecraft:acacia_log"
-  },
+  "input": "minecraft:acacia_log",
   "output": {
     "amount": 4,
     "id": "industrialforegoing:latex"

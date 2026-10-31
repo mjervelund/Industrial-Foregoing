@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fluid_extractor/default"
+        "recipes": [
+          "industrialforegoing:fluid_extractor/default"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,31 +1,21 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mechanical_dirt"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mechanical_dirt"
     }
   ],
   "type": "industrialforegoing:dissolution_chamber",
   "input": [
-    {
-      "item": "minecraft:dirt"
-    },
-    {
-      "item": "minecraft:dirt"
-    },
-    {
-      "item": "minecraft:rotten_flesh"
-    },
-    {
-      "item": "minecraft:rotten_flesh"
-    },
-    {
-      "tag": "industrialforegoing:machine_frame/pity"
-    }
+    "minecraft:dirt",
+    "minecraft:dirt",
+    "minecraft:rotten_flesh",
+    "minecraft:rotten_flesh",
+    "#industrialforegoing:machine_frame/pity"
   ],
   "inputFluid": {
-    "amount": 1000,
-    "fluid": "industrialforegoing:meat"
+    "ingredient": "industrialforegoing:meat",
+    "amount": 1000
   },
   "output": {
     "count": 1,

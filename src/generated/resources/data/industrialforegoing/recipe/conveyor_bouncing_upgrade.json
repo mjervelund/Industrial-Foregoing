@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor_bouncing_upgrade"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor_bouncing_upgrade"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "industrialforegoing:conveyor"
-    },
-    "D": {
-      "item": "minecraft:piston"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "P": {
-      "item": "minecraft:slime_block"
-    }
+    "C": "industrialforegoing:conveyor",
+    "D": "minecraft:piston",
+    "I": "#c:ingots/iron",
+    "P": "minecraft:slime_block"
   },
   "pattern": [
     "IPI",

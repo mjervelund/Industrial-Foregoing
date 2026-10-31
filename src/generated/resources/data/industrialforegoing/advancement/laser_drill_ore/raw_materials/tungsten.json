@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/raw_materials/tungsten"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/raw_materials/tungsten"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

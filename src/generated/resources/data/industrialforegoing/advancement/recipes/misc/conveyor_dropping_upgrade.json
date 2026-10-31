@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor_dropping_upgrade"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor_dropping_upgrade"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:conveyor_dropping_upgrade"
+        "recipes": [
+          "industrialforegoing:conveyor_dropping_upgrade"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:crusher/sand"
+        "recipes": [
+          "industrialforegoing:crusher/sand"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

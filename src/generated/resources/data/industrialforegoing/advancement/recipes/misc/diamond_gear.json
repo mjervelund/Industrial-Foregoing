@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:diamond_gear"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:diamond_gear"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:diamond_gear"
+        "recipes": [
+          "industrialforegoing:diamond_gear"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

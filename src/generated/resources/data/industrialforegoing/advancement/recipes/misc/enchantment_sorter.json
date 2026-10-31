@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:enchantment_sorter"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:enchantment_sorter"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:enchantment_sorter"
+        "recipes": [
+          "industrialforegoing:enchantment_sorter"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

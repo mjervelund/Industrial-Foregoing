@@ -1,16 +1,14 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:diamond_gear"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:diamond_gear"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": {
-      "item": "minecraft:diamond"
-    }
+    "P": "minecraft:diamond"
   },
   "pattern": [
     " P ",

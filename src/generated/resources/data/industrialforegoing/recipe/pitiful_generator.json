@@ -1,28 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:pitiful_generator"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:pitiful_generator"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "d": {
-      "tag": "c:ingots/gold"
-    },
-    "f": {
-      "item": "minecraft:furnace"
-    },
-    "g": {
-      "item": "minecraft:iron_bars"
-    },
-    "m": {
-      "tag": "industrialforegoing:machine_frame/pity"
-    },
-    "p": {
-      "item": "minecraft:cobblestone"
-    }
+    "d": "#c:ingots/gold",
+    "f": "minecraft:furnace",
+    "g": "minecraft:iron_bars",
+    "m": "#industrialforegoing:machine_frame/pity",
+    "p": "minecraft:cobblestone"
   },
   "pattern": [
     "pdp",

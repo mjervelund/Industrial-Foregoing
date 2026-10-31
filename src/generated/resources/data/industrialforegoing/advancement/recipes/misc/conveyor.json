@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:conveyor"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:conveyor"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:conveyor"
+        "recipes": [
+          "industrialforegoing:conveyor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

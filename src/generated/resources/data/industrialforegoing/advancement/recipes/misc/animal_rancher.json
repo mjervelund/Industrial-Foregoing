@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:animal_rancher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:animal_rancher"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:animal_rancher"
+        "recipes": [
+          "industrialforegoing:animal_rancher"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

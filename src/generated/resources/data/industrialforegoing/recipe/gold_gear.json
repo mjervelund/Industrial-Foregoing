@@ -1,16 +1,14 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:gold_gear"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:gold_gear"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": {
-      "item": "minecraft:gold_ingot"
-    }
+    "P": "minecraft:gold_ingot"
   },
   "pattern": [
     " P ",

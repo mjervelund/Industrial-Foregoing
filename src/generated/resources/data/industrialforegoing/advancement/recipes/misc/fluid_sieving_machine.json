@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fluid_sieving_machine"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fluid_sieving_machine"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:fluid_sieving_machine"
+        "recipes": [
+          "industrialforegoing:fluid_sieving_machine"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:material_stonework_factory"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:material_stonework_factory"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:material_stonework_factory"
+        "recipes": [
+          "industrialforegoing:material_stonework_factory"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

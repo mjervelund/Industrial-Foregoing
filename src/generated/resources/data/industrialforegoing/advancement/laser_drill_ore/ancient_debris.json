@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/ancient_debris"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/ancient_debris"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

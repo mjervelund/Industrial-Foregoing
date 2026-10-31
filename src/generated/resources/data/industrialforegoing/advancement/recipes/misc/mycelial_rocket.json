@@ -1,8 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:mycelial_rocket"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:mycelial_rocket"
     }
   ],
   "parent": "minecraft:recipes/root",
@@ -19,7 +19,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:mycelial_rocket"
+        "recipes": [
+          "industrialforegoing:mycelial_rocket"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

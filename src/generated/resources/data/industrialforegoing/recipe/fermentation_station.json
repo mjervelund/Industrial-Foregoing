@@ -1,25 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:fermentation_station"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:fermentation_station"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "tag": "industrialforegoing:machine_frame/simple"
-    },
-    "g": {
-      "tag": "c:gears/gold"
-    },
-    "p": {
-      "tag": "c:plastics"
-    },
-    "w": {
-      "tag": "minecraft:logs"
-    }
+    "b": "#industrialforegoing:machine_frame/simple",
+    "g": "#c:gears/gold",
+    "p": "#c:plastics",
+    "w": "#minecraft:logs"
   },
   "pattern": [
     "pwp",

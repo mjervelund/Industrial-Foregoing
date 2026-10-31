@@ -12,7 +12,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "industrialforegoing:laser_drill_ore/ores/sapphire"
+        "recipes": [
+          "industrialforegoing:laser_drill_ore/ores/sapphire"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

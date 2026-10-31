@@ -1,31 +1,19 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "industrialforegoing:marine_fisher"
+      "type": "neoforge:registered",
+      "value": "industrialforegoing:marine_fisher"
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "minecraft:bucket"
-    },
-    "f": {
-      "item": "minecraft:fishing_rod"
-    },
-    "g": {
-      "tag": "c:gears/iron"
-    },
-    "m": {
-      "tag": "industrialforegoing:machine_frame/simple"
-    },
-    "p": {
-      "tag": "c:plastics"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    }
+    "b": "minecraft:bucket",
+    "f": "minecraft:fishing_rod",
+    "g": "#c:gears/iron",
+    "m": "#industrialforegoing:machine_frame/simple",
+    "p": "#c:plastics",
+    "r": "minecraft:redstone"
   },
   "pattern": [
     "pfp",
