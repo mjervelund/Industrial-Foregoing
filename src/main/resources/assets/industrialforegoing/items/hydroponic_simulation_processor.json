@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "industrialforegoing:hydroponic_simulation_processor",
+    "base": {
+      "type": "minecraft:model",
+      "model": "industrialforegoing:item/clean_hydroponic_simulation_processor"
+    }
+  }
+}

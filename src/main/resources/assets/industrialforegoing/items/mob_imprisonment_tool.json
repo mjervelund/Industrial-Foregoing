@@ -1,0 +1,24 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "industrialforegoing:item/mob_imprisonment_tool",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16777215
+      },
+      {
+        "type": "industrialforegoing:mob_imprisonment",
+        "layer": 1
+      },
+      {
+        "type": "industrialforegoing:mob_imprisonment",
+        "layer": 2
+      },
+      {
+        "type": "industrialforegoing:mob_imprisonment",
+        "layer": 3
+      }
+    ]
+  }
+}

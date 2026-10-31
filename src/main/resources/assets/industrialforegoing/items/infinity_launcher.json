@@ -1,0 +1,29 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:cooldown",
+    "entries": [
+      {
+        "threshold": 0.0001,
+        "model": {
+          "type": "minecraft:model",
+          "model": "industrialforegoing:item/infinity_launcher_empty",
+          "tints": [
+            {
+              "type": "industrialforegoing:infinity_tier"
+            }
+          ]
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "industrialforegoing:item/infinity_launcher_full",
+      "tints": [
+        {
+          "type": "industrialforegoing:infinity_tier"
+        }
+      ]
+    }
+  }
+}
