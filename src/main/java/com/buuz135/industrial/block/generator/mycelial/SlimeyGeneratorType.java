@@ -33,6 +33,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForgeMod;
@@ -105,7 +106,7 @@ public class SlimeyGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
-        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(Tags.Items.SLIMEBALLS))), Arrays.asList(Arrays.asList(new FluidStack(NeoForgeMod.MILK.get(), 250)), Arrays.asList()), 20 * 20, 200));
+        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.SLIMEBALLS)))), Arrays.asList(Arrays.asList(new FluidStack(NeoForgeMod.MILK.get(), 250)), Arrays.asList()), 20 * 20, 200));
     }
 
     @Override

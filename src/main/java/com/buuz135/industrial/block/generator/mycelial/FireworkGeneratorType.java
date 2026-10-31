@@ -117,7 +117,7 @@ public class FireworkGeneratorType implements IMycelialGeneratorType {
                 Fireworks fireworks = new Fireworks(flight, new ArrayList<>());
                 stack.set(DataComponents.FIREWORKS, fireworks);
                 Pair<Integer, Integer> power = calculate(stack);
-                recipes.add(new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack))), new ArrayList<>(), power.getLeft(), power.getRight()));
+                recipes.add(new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack.getItem()))), new ArrayList<>(), power.getLeft(), power.getRight()));
             }
         }
         return recipes;

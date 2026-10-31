@@ -54,6 +54,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -204,14 +205,14 @@ public class ItemInfinityLauncher extends ItemInfinity {
     public void registerRecipe(RecipeOutput consumer) {
         DissolutionChamberRecipe.createRecipe(consumer, "infinity_launcher", new DissolutionChamberRecipe(
                 List.of(
-                        Ingredient.of(new ItemStack(Items.DIAMOND_BLOCK)),
-                        Ingredient.of(new ItemStack(Items.BOW)),
-                        Ingredient.of(new ItemStack(Items.DIAMOND_BLOCK)),
-                        Ingredient.of(new ItemStack(ModuleTool.MOB_IMPRISONMENT_TOOL.get())),
-                        Ingredient.of(new ItemStack(ModuleCore.RANGE_ADDONS[11].get())),
-                        Ingredient.of(IndustrialTags.Items.GEAR_GOLD),
-                        Ingredient.of(IndustrialTags.Items.GEAR_GOLD),
-                        Ingredient.of(IndustrialTags.Items.GEAR_GOLD)
+                        Ingredient.of(Items.DIAMOND_BLOCK),
+                        Ingredient.of(Items.BOW),
+                        Ingredient.of(Items.DIAMOND_BLOCK),
+                        Ingredient.of(ModuleTool.MOB_IMPRISONMENT_TOOL.get()),
+                        Ingredient.of(ModuleCore.RANGE_ADDONS[11].get()),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_GOLD)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_GOLD)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_GOLD))
                 ), new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 2000), 400, Optional.of(new ItemStack(this)), Optional.empty()));
     }
 

@@ -29,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -49,10 +50,10 @@ public class LaserLensItem extends IFCustomItem {
     @Override
     public void registerRecipe(RecipeOutput consumer) {
         DissolutionChamberRecipe.createRecipe(consumer, color.getName() + "_laser_lens", new DissolutionChamberRecipe(List.of(
-                Ingredient.of(Tags.Items.GLASS_PANES),
-                Ingredient.of(Tags.Items.GLASS_PANES),
-                Ingredient.of(Tags.Items.GLASS_PANES),
-                Ingredient.of(Tags.Items.GLASS_PANES),
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
                 Ingredient.of(color.getTag())
         ), new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 250), 100, Optional.of(new ItemStack(this)), Optional.empty()));
 

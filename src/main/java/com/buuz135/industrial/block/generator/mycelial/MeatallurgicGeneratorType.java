@@ -34,6 +34,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -104,7 +105,7 @@ public class MeatallurgicGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
-        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(Tags.Items.INGOTS))), Arrays.asList(Collections.singletonList(new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 250)), Collections.emptyList()), 20 * 20, 100));
+        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS)))), Arrays.asList(Collections.singletonList(new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 250)), Collections.emptyList()), 20 * 20, 100));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.buuz135.industrial.plugin.emi.recipe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.buuz135.industrial.config.machine.resourceproduction.SludgeRefinerConfig;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.plugin.emi.IFEmiPlugin;
@@ -32,7 +33,7 @@ public class SludgeRefinerEmiRecipe extends CustomEmiRecipe {
 
     public static List<EmiStack> getPossibleOutputs() {
         if (POSSIBLE_OUTPUTS == null) {
-            POSSIBLE_OUTPUTS = EmiIngredient.of(IndustrialTags.Items.SLUDGE_OUTPUT).getEmiStacks();
+            POSSIBLE_OUTPUTS = EmiIngredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.SLUDGE_OUTPUT)).getEmiStacks();
             for (var output : POSSIBLE_OUTPUTS) {
                 output.setChance(1.0F / POSSIBLE_OUTPUTS.size());
             }

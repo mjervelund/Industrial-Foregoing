@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.plugin;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.buuz135.industrial.module.ModuleTool;
 import com.hrznstudio.titanium.annotation.plugin.FeaturePlugin;
 import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;

@@ -108,7 +108,7 @@ public class FrostyGeneratorType implements IMycelialGeneratorType {
         for (Item item : new Item[]{Items.ICE, Items.PACKED_ICE, Items.SNOWBALL, Items.SNOW_BLOCK, Items.SNOW, Items.BLUE_ICE}) {
             ItemStack stack = new ItemStack(item);
             Pair<Integer, Integer> power = calculate(stack);
-            recipes.add(new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack))), new ArrayList<>(), power.getLeft(), power.getRight()));
+            recipes.add(new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack.getItem()))), new ArrayList<>(), power.getLeft(), power.getRight()));
         }
         return recipes;
     }

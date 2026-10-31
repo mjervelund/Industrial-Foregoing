@@ -303,7 +303,7 @@ public class JEICustomPlugin implements IModPlugin {
         }
         registration.addRecipes(DyeMixerCategory.RECIPE_TYPE, mixerRecipes);
 
-        registration.addRecipes(SporesRecreatorCategory.RECIPE_TYPE, List.of(new SporesRecreatorCategory.Recipe(Ingredient.of(Tags.Items.MUSHROOMS)), new SporesRecreatorCategory.Recipe(Ingredient.of(Items.CRIMSON_FUNGUS, Items.WARPED_FUNGUS))));
+        registration.addRecipes(SporesRecreatorCategory.RECIPE_TYPE, List.of(new SporesRecreatorCategory.Recipe(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.MUSHROOMS))), new SporesRecreatorCategory.Recipe(Ingredient.of(Items.CRIMSON_FUNGUS, Items.WARPED_FUNGUS))));
     }
 
 

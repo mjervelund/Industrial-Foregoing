@@ -47,6 +47,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -89,7 +90,7 @@ public class SludgeRefinerCategory implements IRecipeCategory<SludgeRefinerCateg
     public void setRecipe(IRecipeLayoutBuilder builder, Recipe recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 24 + 3, 3 + 3).setFluidRenderer(SludgeRefinerConfig.maxSludgeTankSize, false, 12, 50).setOverlay(bigTank, 0, 0).addIngredient(NeoForgeTypes.FLUID_STACK, new FluidStack(ModuleCore.SLUDGE.getSourceFluid(), 500));
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 5).addIngredients(Ingredient.of(IndustrialTags.Items.SLUDGE_OUTPUT));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 5).addIngredients(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.SLUDGE_OUTPUT)));
     }
 
     @Override

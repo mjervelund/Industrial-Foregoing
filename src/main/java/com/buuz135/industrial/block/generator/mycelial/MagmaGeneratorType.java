@@ -33,6 +33,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
@@ -109,7 +110,7 @@ public class MagmaGeneratorType implements IMycelialGeneratorType {
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
         List<MycelialGeneratorRecipe> recipes = new ArrayList<>();
         recipes.add(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), new ArrayList<>()), Arrays.asList(Arrays.asList(new FluidStack(Fluids.LAVA, 250)), Arrays.asList()), 2 * 250, 50));
-        recipes.add(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Arrays.asList(Ingredient.of(Tags.Items.DUSTS_REDSTONE))), Arrays.asList(Arrays.asList(new FluidStack(Fluids.LAVA, 250)), Arrays.asList()), 2 * 250, 100));
+        recipes.add(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Arrays.asList(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.DUSTS_REDSTONE)))), Arrays.asList(Arrays.asList(new FluidStack(Fluids.LAVA, 250)), Arrays.asList()), 2 * 250, 100));
         return recipes;
     }
 

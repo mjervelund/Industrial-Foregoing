@@ -111,7 +111,7 @@ public class PotionGeneratorType implements IMycelialGeneratorType {
                         PotionContents.createItemStack(Items.LINGERING_POTION, Holder.direct(effect))
                 ))
                 .flatMap(Collection::stream)
-                .map(stack -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack))), new ArrayList<>(), calculate(stack).getLeft(), calculate(stack).getRight())).collect(Collectors.toList());
+                .map(stack -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack.getItem()))), new ArrayList<>(), calculate(stack).getLeft(), calculate(stack).getRight())).collect(Collectors.toList());
     }
 
     private Pair<Integer, Integer> calculate(ItemStack stack) {

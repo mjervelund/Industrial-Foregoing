@@ -24,7 +24,7 @@ public class BioreactorEmiRecipe extends CustomEmiRecipe {
 
     public BioreactorEmiRecipe(TagKey<Item> stack, FluidStack fluid) {
         super(Identifier.fromNamespaceAndPath(stack.location().getNamespace(), "emi_" + stack.location().getPath()), IFEmiPlugin.BIOREACTOR_EMI_CATEGORY,
-                fromInput(EmiIngredient.of(stack)),
+                fromInput(EmiIngredient.of(stack.getItem())),
                 fromOutput(NeoForgeEmiStack.of(fluid)));
     }
 

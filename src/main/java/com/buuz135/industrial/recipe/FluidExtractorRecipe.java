@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.recipe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.Reference;
 import com.mojang.serialization.Codec;
@@ -69,15 +70,15 @@ public class FluidExtractorRecipe implements Recipe<CraftingInput> {
     }
 
     public static void init(RecipeOutput output) {
-        createRecipe(output, "acacia", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.ACACIA_LOG)), Blocks.STRIPPED_ACACIA_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 4), false));
-        createRecipe(output, "mangrove", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.MANGROVE_LOG)), Blocks.STRIPPED_MANGROVE_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 4), false));
-        createRecipe(output, "dark_oak", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.DARK_OAK_LOG)), Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 3), false));
-        createRecipe(output, "cherry", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.CHERRY_LOG)), Blocks.STRIPPED_CHERRY_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 3), false));
-        createRecipe(output, "oak", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.OAK_LOG)), Blocks.STRIPPED_OAK_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
-        createRecipe(output, "spruce", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.SPRUCE_LOG)), Blocks.STRIPPED_SPRUCE_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
-        createRecipe(output, "birch", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.BIRCH_LOG)), Blocks.STRIPPED_BIRCH_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
-        createRecipe(output, "jungle", new FluidExtractorRecipe(Ingredient.of(new ItemStack(Blocks.JUNGLE_LOG)), Blocks.STRIPPED_JUNGLE_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
-        createRecipe(output, "default", new FluidExtractorRecipe(Ingredient.of(ItemTags.LOGS), Blocks.AIR.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 1), true));
+        createRecipe(output, "acacia", new FluidExtractorRecipe(Ingredient.of(Blocks.ACACIA_LOG), Blocks.STRIPPED_ACACIA_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 4), false));
+        createRecipe(output, "mangrove", new FluidExtractorRecipe(Ingredient.of(Blocks.MANGROVE_LOG), Blocks.STRIPPED_MANGROVE_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 4), false));
+        createRecipe(output, "dark_oak", new FluidExtractorRecipe(Ingredient.of(Blocks.DARK_OAK_LOG), Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 3), false));
+        createRecipe(output, "cherry", new FluidExtractorRecipe(Ingredient.of(Blocks.CHERRY_LOG), Blocks.STRIPPED_CHERRY_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 3), false));
+        createRecipe(output, "oak", new FluidExtractorRecipe(Ingredient.of(Blocks.OAK_LOG), Blocks.STRIPPED_OAK_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
+        createRecipe(output, "spruce", new FluidExtractorRecipe(Ingredient.of(Blocks.SPRUCE_LOG), Blocks.STRIPPED_SPRUCE_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
+        createRecipe(output, "birch", new FluidExtractorRecipe(Ingredient.of(Blocks.BIRCH_LOG), Blocks.STRIPPED_BIRCH_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
+        createRecipe(output, "jungle", new FluidExtractorRecipe(Ingredient.of(Blocks.JUNGLE_LOG), Blocks.STRIPPED_JUNGLE_LOG.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 2), false));
+        createRecipe(output, "default", new FluidExtractorRecipe(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(ItemTags.LOGS)), Blocks.AIR.defaultBlockState(), 0.010f, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 1), true));
     }
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, FluidExtractorRecipe recipe) {

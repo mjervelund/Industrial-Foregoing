@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.recipe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.util.TagUtil;
@@ -69,9 +70,9 @@ public class CrusherRecipe implements Recipe<CraftingInput> {
     private Identifier isTag;
 
     public static void init(RecipeOutput output) {
-        createRecipe(output, "cobblestone", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "cobblestones/normal"))), Ingredient.of(Items.GRAVEL)));
-        createRecipe(output, "gravel", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gravels"))), Ingredient.of(Items.SAND)));
-        createRecipe(output, "sand", new CrusherRecipe(Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "sands"))), Ingredient.of(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "silicon"))), Identifier.fromNamespaceAndPath("c", "silicon")));
+        createRecipe(output, "cobblestone", new CrusherRecipe(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "cobblestones/normal")))), Ingredient.of(Items.GRAVEL)));
+        createRecipe(output, "gravel", new CrusherRecipe(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gravels")))), Ingredient.of(Items.SAND)));
+        createRecipe(output, "sand", new CrusherRecipe(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "sands")))), Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "silicon")))), Identifier.fromNamespaceAndPath("c", "silicon")));
     }
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, CrusherRecipe recipe) {

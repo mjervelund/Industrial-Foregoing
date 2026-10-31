@@ -30,6 +30,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
@@ -44,70 +45,70 @@ public class IndustrialSerializableProvider {
 
     public static void init(RecipeOutput output) {
         DissolutionChamberRecipe.createRecipe(output, "pink_slime_ball",
-                new DissolutionChamberRecipe(List.of(Ingredient.of(new ItemStack(Items.GLASS_PANE))), new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 300), 200, Optional.of(new ItemStack(ModuleCore.PINK_SLIME_ITEM.get())), Optional.of(new FluidStack(Fluids.WATER, 150))));
+                new DissolutionChamberRecipe(List.of(Ingredient.of(Items.GLASS_PANE)), new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 300), 200, Optional.of(new ItemStack(ModuleCore.PINK_SLIME_ITEM.get())), Optional.of(new FluidStack(Fluids.WATER, 150))));
         DissolutionChamberRecipe.createRecipe(output, "pink_slime_ingot",
                 new DissolutionChamberRecipe(
                         List.of(
-                                Ingredient.of(Tags.Items.INGOTS_IRON),
-                                Ingredient.of(Tags.Items.INGOTS_IRON),
-                                Ingredient.of(Tags.Items.INGOTS_GOLD),
-                                Ingredient.of(Tags.Items.INGOTS_GOLD)
+                                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_IRON)),
+                                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_IRON)),
+                                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_GOLD)),
+                                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_GOLD))
                         ), new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 1000), 300, Optional.of(new ItemStack(ModuleCore.PINK_SLIME_INGOT.get())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "mechanical_dirt",
                 new DissolutionChamberRecipe(
                         List.of(
-                                Ingredient.of(new ItemStack(Blocks.DIRT)),
-                                Ingredient.of(new ItemStack(Blocks.DIRT)),
-                                Ingredient.of(new ItemStack(Items.ROTTEN_FLESH)),
-                                Ingredient.of(new ItemStack(Items.ROTTEN_FLESH)),
-                                Ingredient.of(IndustrialTags.Items.MACHINE_FRAME_PITY)
+                                Ingredient.of(Blocks.DIRT),
+                                Ingredient.of(Blocks.DIRT),
+                                Ingredient.of(Items.ROTTEN_FLESH),
+                                Ingredient.of(Items.ROTTEN_FLESH),
+                                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.MACHINE_FRAME_PITY))
                         ), new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 1000), 100, Optional.of(new ItemStack(ModuleResourceProduction.MECHANICAL_DIRT.getBlock())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "simple_machine_frame", new DissolutionChamberRecipe(
                 List.of(
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(IndustrialTags.Items.MACHINE_FRAME_PITY),
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(new ItemStack(Items.NETHER_BRICK)),
-                        Ingredient.of(new ItemStack(Items.NETHER_BRICK)),
-                        Ingredient.of(Tags.Items.INGOTS_IRON),
-                        Ingredient.of(IndustrialTags.Items.GEAR_GOLD),
-                        Ingredient.of(Tags.Items.INGOTS_IRON)
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.MACHINE_FRAME_PITY)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(Items.NETHER_BRICK),
+                        Ingredient.of(Items.NETHER_BRICK),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_IRON)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_GOLD)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_IRON))
                 ),
                 new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 250), 300, Optional.of(new ItemStack(ModuleCore.SIMPLE.get())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "advanced_machine_frame", new DissolutionChamberRecipe(
                 List.of(
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(IndustrialTags.Items.MACHINE_FRAME_SIMPLE),
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(new ItemStack(Items.NETHERITE_SCRAP)),
-                        Ingredient.of(new ItemStack(Items.NETHERITE_SCRAP)),
-                        Ingredient.of(Tags.Items.INGOTS_GOLD),
-                        Ingredient.of(IndustrialTags.Items.GEAR_DIAMOND),
-                        Ingredient.of(Tags.Items.INGOTS_GOLD)
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.MACHINE_FRAME_SIMPLE)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(Items.NETHERITE_SCRAP),
+                        Ingredient.of(Items.NETHERITE_SCRAP),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_GOLD)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_DIAMOND)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.INGOTS_GOLD))
                 ),
                 new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 500), 300, Optional.of(new ItemStack(ModuleCore.ADVANCED.get())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "supreme_machine_frame", new DissolutionChamberRecipe(
                 List.of(
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(IndustrialTags.Items.MACHINE_FRAME_ADVANCED),
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(new ItemStack(Items.NETHERITE_INGOT)),
-                        Ingredient.of(new ItemStack(Items.NETHERITE_INGOT)),
-                        Ingredient.of(Tags.Items.GEMS_DIAMOND),
-                        Ingredient.of(IndustrialTags.Items.GEAR_DIAMOND),
-                        Ingredient.of(Tags.Items.GEMS_DIAMOND)
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.MACHINE_FRAME_ADVANCED)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(Items.NETHERITE_INGOT),
+                        Ingredient.of(Items.NETHERITE_INGOT),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GEMS_DIAMOND)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_DIAMOND)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GEMS_DIAMOND))
                 ),
                 new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), 135), 300, Optional.of(new ItemStack(ModuleCore.SUPREME.get())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "mycelial_reactor", new DissolutionChamberRecipe(
                 List.of(
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(IndustrialTags.Items.MACHINE_FRAME_SUPREME),
-                        Ingredient.of(IndustrialTags.Items.PLASTIC),
-                        Ingredient.of(new ItemStack(Items.NETHERITE_INGOT)),
-                        Ingredient.of(new ItemStack(Items.NETHERITE_INGOT)),
-                        Ingredient.of(IndustrialTags.Items.GEAR_DIAMOND),
-                        Ingredient.of(new ItemStack(Items.NETHER_STAR)),
-                        Ingredient.of(IndustrialTags.Items.GEAR_DIAMOND)
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.MACHINE_FRAME_SUPREME)),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.PLASTIC)),
+                        Ingredient.of(Items.NETHERITE_INGOT),
+                        Ingredient.of(Items.NETHERITE_INGOT),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_DIAMOND)),
+                        Ingredient.of(Items.NETHER_STAR),
+                        Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(IndustrialTags.Items.GEAR_DIAMOND))
                 ),
                 new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), 500), 600, Optional.of(new ItemStack(ModuleGenerator.MYCELIAL_REACTOR.getBlock())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "xp_bottles", new DissolutionChamberRecipe(

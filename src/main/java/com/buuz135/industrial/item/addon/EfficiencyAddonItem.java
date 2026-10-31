@@ -36,6 +36,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -63,14 +64,14 @@ public class EfficiencyAddonItem extends AddonItem implements ISpecialCreativeTa
     public void registerRecipe(RecipeOutput consumer) {
         TagKey<Item> tierMaterial = tier == 1 ? IndustrialTags.Items.GEAR_GOLD : IndustrialTags.Items.GEAR_DIAMOND;
         DissolutionChamberRecipe.createRecipe(consumer, "efficiency_addon_tier_" + tier, new DissolutionChamberRecipe(List.of(
-                Ingredient.of(new ItemStack(Items.REDSTONE)),
-                Ingredient.of(new ItemStack(Items.REDSTONE)),
-                Ingredient.of(new ItemStack(Items.GLASS_PANE)),
-                Ingredient.of(new ItemStack(Items.GLASS_PANE)),
-                Ingredient.of(tierMaterial),
-                Ingredient.of(tierMaterial),
-                Ingredient.of(new ItemStack(Items.BLAZE_ROD)),
-                Ingredient.of(new ItemStack(Items.BLAZE_ROD))
+                Ingredient.of(Items.REDSTONE),
+                Ingredient.of(Items.REDSTONE),
+                Ingredient.of(Items.GLASS_PANE),
+                Ingredient.of(Items.GLASS_PANE),
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(tierMaterial)),
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(tierMaterial)),
+                Ingredient.of(Items.BLAZE_ROD),
+                Ingredient.of(Items.BLAZE_ROD)
         ), new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 1000), 200, Optional.of(new ItemStack(this)), Optional.empty()));
 
     }

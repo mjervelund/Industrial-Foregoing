@@ -102,7 +102,7 @@ public class CrimedGeneratorType implements IMycelialGeneratorType {
         for (Item item : new Item[]{Items.CRIMSON_FUNGUS, Items.CRIMSON_ROOTS, Items.WEEPING_VINES, Items.WARPED_FUNGUS, Items.WARPED_ROOTS, Items.NETHER_SPROUTS, Items.TWISTING_VINES, Items.SHROOMLIGHT, Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK}) {
             ItemStack stack = new ItemStack(item);
             Pair<Integer, Integer> power = calculate(stack);
-            recipes.add(new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack))), new ArrayList<>(), power.getLeft(), power.getRight()));
+            recipes.add(new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack.getItem()))), new ArrayList<>(), power.getLeft(), power.getRight()));
         }
         return recipes;
     }

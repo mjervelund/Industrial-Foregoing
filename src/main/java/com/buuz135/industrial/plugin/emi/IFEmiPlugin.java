@@ -221,7 +221,7 @@ public class IFEmiPlugin implements EmiPlugin {
 
         registry.addCategory(SPORES_RECREATOR_EMI_CATEGORY);
         registry.addWorkstation(SPORES_RECREATOR_EMI_CATEGORY, EmiStack.of(ModuleResourceProduction.SPORES_RECREATOR));
-        for (var shroom : EmiIngredient.of(Tags.Items.MUSHROOMS).getEmiStacks()) {
+        for (var shroom : EmiIngredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.MUSHROOMS)).getEmiStacks()) {
             registry.addRecipe(new SporesRecreatorEmiRecipe(shroom));
         }
         registry.addRecipe(new SporesRecreatorEmiRecipe(EmiStack.of(Items.CRIMSON_FUNGUS)));

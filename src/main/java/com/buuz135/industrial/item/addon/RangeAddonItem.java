@@ -86,14 +86,14 @@ public class RangeAddonItem extends AddonItem implements ISpecialCreativeTabItem
     @Override
     public void registerRecipe(RecipeOutput consumer) {
         DissolutionChamberRecipe.createRecipe(consumer, "range_addon_tier_" + tier, new DissolutionChamberRecipe(List.of(
-                Ingredient.of(new ItemStack(Items.REDSTONE)),
-                Ingredient.of(new ItemStack(Items.REDSTONE)),
-                Ingredient.of(new ItemStack(Items.GLASS_PANE)),
-                Ingredient.of(new ItemStack(Items.GLASS_PANE)),
-                Ingredient.of(new ItemStack(MATERIALS[tier])),
-                Ingredient.of(new ItemStack(MATERIALS[tier])),
-                Ingredient.of(new ItemStack(MATERIALS[tier])),
-                Ingredient.of(new ItemStack(MATERIALS[tier]))
+                Ingredient.of(Items.REDSTONE),
+                Ingredient.of(Items.REDSTONE),
+                Ingredient.of(Items.GLASS_PANE),
+                Ingredient.of(Items.GLASS_PANE),
+                Ingredient.of(MATERIALS[tier]),
+                Ingredient.of(MATERIALS[tier]),
+                Ingredient.of(MATERIALS[tier]),
+                Ingredient.of(MATERIALS[tier])
         ), new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 1000), 200, Optional.of(new ItemStack(this)), Optional.empty()));
 
     }

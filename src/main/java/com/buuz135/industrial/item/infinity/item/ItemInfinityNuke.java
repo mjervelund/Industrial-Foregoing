@@ -75,14 +75,14 @@ public class ItemInfinityNuke extends ItemInfinity {
     @Override
     public void registerRecipe(RecipeOutput consumer) {
         DissolutionChamberRecipe.createRecipe(consumer, "infinity_nuke", new DissolutionChamberRecipe(List.of(
-                Ingredient.of(new ItemStack(Items.TNT)),
-                Ingredient.of(new ItemStack(Items.TNT)),
-                Ingredient.of(new ItemStack(Items.TNT)),
-                Ingredient.of(new ItemStack(Items.TNT)),
-                Ingredient.of(new ItemStack(ModuleCore.RANGE_ADDONS[11].get())),
-                Ingredient.of(new ItemStack(Items.DIAMOND_BLOCK)),
-                Ingredient.of(new ItemStack(Items.NETHER_STAR)),
-                Ingredient.of(new ItemStack(Items.NETHER_STAR))
+                Ingredient.of(Items.TNT),
+                Ingredient.of(Items.TNT),
+                Ingredient.of(Items.TNT),
+                Ingredient.of(Items.TNT),
+                Ingredient.of(ModuleCore.RANGE_ADDONS[11].get()),
+                Ingredient.of(Items.DIAMOND_BLOCK),
+                Ingredient.of(Items.NETHER_STAR),
+                Ingredient.of(Items.NETHER_STAR)
         ), new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), 2000), 400, Optional.of(new ItemStack(this)), Optional.empty()));
     }
 }
