@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import java.util.List;
@@ -113,7 +114,7 @@ public class IndustrialSerializableProvider {
                 new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), 500), 600, Optional.of(new ItemStack(ModuleGenerator.MYCELIAL_REACTOR.getBlock())), Optional.empty()));
         DissolutionChamberRecipe.createRecipe(output, "xp_bottles", new DissolutionChamberRecipe(
                 List.of(),
-                SizedFluidIngredient.of(IndustrialTags.Fluids.EXPERIENCE, 250), 5, Optional.of(new ItemStack(Items.EXPERIENCE_BOTTLE)), Optional.empty()));
+                new SizedFluidIngredient(FluidIngredient.of(BuiltInRegistries.FLUID.getOrThrow(IndustrialTags.Fluids.EXPERIENCE)), 250), 5, Optional.of(new ItemStack(Items.EXPERIENCE_BOTTLE)), Optional.empty()));
 
         FluidExtractorRecipe.init(output);
         LaserDrillFluidRecipe.init(output);

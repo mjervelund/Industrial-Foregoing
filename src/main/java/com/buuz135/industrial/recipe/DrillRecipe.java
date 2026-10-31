@@ -2,9 +2,6 @@ package com.buuz135.industrial.recipe;
 
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
@@ -18,7 +15,7 @@ import com.buuz135.industrial.utils.Reference;
 
 import java.util.*;
 
-public abstract class DrillRecipe<I> implements Recipe<CraftingInput> {
+public abstract class DrillRecipe<I> implements IndustrialRecipe {
 
     public static Identifier EMPTY = Identifier.fromNamespaceAndPath("minecraft", "empty");
     
@@ -47,38 +44,10 @@ public abstract class DrillRecipe<I> implements Recipe<CraftingInput> {
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, String modIdCondition, DrillRecipe<?> recipe) {
         var rl = generateRL(name);
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
-        recipeOutput.accept(rl, recipe, advancementHolder, new ModLoadedCondition(modIdCondition));
+        IndustrialRecipe.save(recipeOutput, rl, recipe, new ModLoadedCondition(modIdCondition));
     }
 
     public static Identifier generateRL(String key) {
         return Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_fluid/" + key);
     }
-
-    @Override
-    public boolean matches(CraftingInput craftingInput, Level level) {
-        return false;
-    }
-
-    @Override
-    public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    public abstract RecipeSerializer<?> getSerializer();
-    
-    public abstract RecipeType<?> getType();
 }

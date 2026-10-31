@@ -194,17 +194,17 @@ public class ModuleCore implements IModule {
                 .addPotion(MobEffects.POISON, 1000, 2)
                 .addPotion(MobEffects.MOVEMENT_SLOWDOWN, 1000, 2));
 
-        DISSOLUTION_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "dissolution_chamber", () -> new CodecRecipeSerializer<>(DissolutionChamberRecipe.class, DISSOLUTION_TYPE, DissolutionChamberRecipe.CODEC));
+        DISSOLUTION_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "dissolution_chamber", () -> CodecRecipeSerializer.create(DissolutionChamberRecipe.class, DISSOLUTION_TYPE, DissolutionChamberRecipe.CODEC));
         DISSOLUTION_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "dissolution_chamber", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "dissolution_chamber")));
-        FLUID_EXTRACTOR_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "fluid_extractor", () -> new CodecRecipeSerializer<>(FluidExtractorRecipe.class, FLUID_EXTRACTOR_TYPE, FluidExtractorRecipe.CODEC));
+        FLUID_EXTRACTOR_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "fluid_extractor", () -> CodecRecipeSerializer.create(FluidExtractorRecipe.class, FLUID_EXTRACTOR_TYPE, FluidExtractorRecipe.CODEC));
         FLUID_EXTRACTOR_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "fluid_extractor", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "fluid_extractor")));
-        LASER_DRILL_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "laser_drill_ore", () -> new CodecRecipeSerializer<>(LaserDrillOreRecipe.class, LASER_DRILL_TYPE, LaserDrillOreRecipe.CODEC));
+        LASER_DRILL_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "laser_drill_ore", () -> CodecRecipeSerializer.create(LaserDrillOreRecipe.class, LASER_DRILL_TYPE, LaserDrillOreRecipe.CODEC));
         LASER_DRILL_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "laser_drill_ore", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_ore")));
-        LASER_DRILL_FLUID_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "laser_drill_fluid", () -> new CodecRecipeSerializer<>(LaserDrillFluidRecipe.class, LASER_DRILL_FLUID_TYPE, LaserDrillFluidRecipe.CODEC));
+        LASER_DRILL_FLUID_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "laser_drill_fluid", () -> CodecRecipeSerializer.create(LaserDrillFluidRecipe.class, LASER_DRILL_FLUID_TYPE, LaserDrillFluidRecipe.CODEC));
         LASER_DRILL_FLUID_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "laser_drill_fluid", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "laser_drill_fluid")));
-        STONEWORK_GENERATE_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "stonework_generate", () -> new CodecRecipeSerializer<>(StoneWorkGenerateRecipe.class, STONEWORK_GENERATE_TYPE, StoneWorkGenerateRecipe.CODEC));
+        STONEWORK_GENERATE_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "stonework_generate", () -> CodecRecipeSerializer.create(StoneWorkGenerateRecipe.class, STONEWORK_GENERATE_TYPE, StoneWorkGenerateRecipe.CODEC));
         STONEWORK_GENERATE_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "stonework_generate", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "stonework_generate")));
-        CRUSHER_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "crusher", () -> new CodecRecipeSerializer<>(CrusherRecipe.class, CRUSHER_TYPE, CrusherRecipe.CODEC));
+        CRUSHER_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "crusher", () -> CodecRecipeSerializer.create(CrusherRecipe.class, CRUSHER_TYPE, CrusherRecipe.CODEC));
         CRUSHER_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "crusher", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "crusher")));
 
         PINK_SLIME_BLOCK = helper.registerBlockWithItem("pink_slime_block", () -> new PinkSlimeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.GRASS).friction(0.8F).sound(SoundType.SLIME_BLOCK).noOcclusion()), (block) -> () -> new BlockItem(block.get(), new Item.Properties()), ModuleCore.TAB_CORE);

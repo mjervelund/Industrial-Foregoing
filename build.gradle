@@ -103,6 +103,8 @@ sourceSets.main.java.exclude(
     'com/buuz135/industrial/plugin/jei/ghost/**',
     'com/buuz135/industrial/plugin/jei/machineproduce/**',
     'com/buuz135/industrial/plugin/jei/subtype/**',
+    // blockstate/model datagen targets NeoForge's removed model builders; output is committed in src/generated
+    'com/buuz135/industrial/utils/data/**',
 )
 
 

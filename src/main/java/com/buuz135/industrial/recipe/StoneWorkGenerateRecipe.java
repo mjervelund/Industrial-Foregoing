@@ -23,13 +23,11 @@ package com.buuz135.industrial.recipe;
 
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.Reference;
+import com.buuz135.industrial.utils.TankUtils;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
@@ -40,10 +38,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
-public class StoneWorkGenerateRecipe implements Recipe<CraftingInput> {
+public class StoneWorkGenerateRecipe implements IndustrialRecipe {
 
     public static final MapCodec<StoneWorkGenerateRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
             ItemStack.CODEC.fieldOf("output").forGetter(o -> o.output),
@@ -78,11 +74,7 @@ public class StoneWorkGenerateRecipe implements Recipe<CraftingInput> {
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, StoneWorkGenerateRecipe recipe) {
         var rl = generateRL(name);
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
-        recipeOutput.accept(rl, recipe, advancementHolder);
+        IndustrialRecipe.save(recipeOutput, rl, recipe);
     }
 
     public static Identifier generateRL(String key) {
@@ -90,42 +82,22 @@ public class StoneWorkGenerateRecipe implements Recipe<CraftingInput> {
     }
 
     @Override
-    public boolean matches(CraftingInput craftingInput, Level level) {
-        return false;
+    public RecipeSerializer<? extends IndustrialRecipe> getSerializer() {
+        return IndustrialRecipe.cast(ModuleCore.STONEWORK_GENERATE_SERIALIZER.get());
     }
 
     @Override
-    public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
+    public RecipeType<? extends IndustrialRecipe> getType() {
+        return IndustrialRecipe.cast(ModuleCore.STONEWORK_GENERATE_TYPE.get());
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModuleCore.STONEWORK_GENERATE_SERIALIZER.get();
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModuleCore.STONEWORK_GENERATE_TYPE.get();
-    }
-
-    public boolean canIncrease(FluidTank fluidTank, FluidTank fluidTank2) {
+    public boolean canIncrease(FluidTankComponent<?> fluidTank, FluidTankComponent<?> fluidTank2) {
         return fluidTank.getFluidAmount() >= waterNeed && fluidTank2.getFluidAmount() >= lavaNeed;
     }
 
-    public void consume(FluidTankComponent fluidTank, FluidTankComponent fluidTank2) {
-        fluidTank.drainForced(waterConsume, IFluidHandler.FluidAction.EXECUTE);
-        fluidTank2.drainForced(lavaConsume, IFluidHandler.FluidAction.EXECUTE);
+    public void consume(FluidTankComponent<?> fluidTank, FluidTankComponent<?> fluidTank2) {
+        TankUtils.drainForced(fluidTank, waterConsume, false);
+        TankUtils.drainForced(fluidTank2, lavaConsume, false);
     }
 
 }

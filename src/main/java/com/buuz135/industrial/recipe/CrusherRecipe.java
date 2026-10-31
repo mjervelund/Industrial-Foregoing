@@ -27,9 +27,6 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.util.TagUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
@@ -44,13 +41,12 @@ import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrusherRecipe implements Recipe<CraftingInput> {
+public class CrusherRecipe implements IndustrialRecipe {
 
     public static final MapCodec<CrusherRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
             Ingredient.CODEC.fieldOf("input").forGetter(crusherRecipe -> crusherRecipe.input),
             Ingredient.CODEC.fieldOf("output").forGetter(crusherRecipe -> crusherRecipe.output)
     ).apply(in, CrusherRecipe::new));
-
 
     public CrusherRecipe(Ingredient input, Ingredient output) {
         this(input, output, null);
@@ -77,15 +73,11 @@ public class CrusherRecipe implements Recipe<CraftingInput> {
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, CrusherRecipe recipe) {
         var rl = generateRL(name);
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
         List<ICondition> conditions = new ArrayList<>();
         if (recipe.isTag != null) {
-            conditions.add(new NotCondition(new TagEmptyCondition(recipe.isTag)));
+            conditions.add(new NotCondition(new TagEmptyCondition<>(TagUtil.getItemTag(recipe.isTag))));
         }
-        recipeOutput.accept(rl, recipe, advancementHolder, conditions.toArray(new ICondition[conditions.size()]));
+        IndustrialRecipe.save(recipeOutput, rl, recipe, conditions.toArray(new ICondition[conditions.size()]));
     }
 
     public static Identifier generateRL(String key) {
@@ -93,34 +85,13 @@ public class CrusherRecipe implements Recipe<CraftingInput> {
     }
 
     @Override
-    public boolean matches(CraftingInput craftingInput, Level level) {
-        return false;
+    public RecipeSerializer<? extends IndustrialRecipe> getSerializer() {
+        return IndustrialRecipe.cast(ModuleCore.CRUSHER_SERIALIZER.get());
     }
 
     @Override
-    public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
+    public RecipeType<? extends IndustrialRecipe> getType() {
+        return IndustrialRecipe.cast(ModuleCore.CRUSHER_TYPE.get());
     }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModuleCore.CRUSHER_SERIALIZER.get();
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModuleCore.CRUSHER_TYPE.get();
-    }
-
 
 }

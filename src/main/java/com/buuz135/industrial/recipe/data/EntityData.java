@@ -1,5 +1,6 @@
 package com.buuz135.industrial.recipe.data;
 
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -99,7 +100,7 @@ public class EntityData {
         }
 
         public TagBuilder putUUID(String key, UUID value) {
-            tag.putUUID(key, value);
+            tag.store(key, UUIDUtil.CODEC, value);
             return this;
         }
 
@@ -124,7 +125,9 @@ public class EntityData {
         }
 
         public TagBuilder putByteArray(String key, List<Byte> value) {
-            tag.putByteArray(key, value);
+            byte[] array = new byte[value.size()];
+            for (int i = 0; i < array.length; i++) array[i] = value.get(i);
+            tag.putByteArray(key, array);
             return this;
         }
 
@@ -134,7 +137,7 @@ public class EntityData {
         }
 
         public TagBuilder putIntArray(String key, List<Integer> value) {
-            tag.putIntArray(key, value);
+            tag.putIntArray(key, value.stream().mapToInt(Integer::intValue).toArray());
             return this;
         }
 
@@ -144,7 +147,7 @@ public class EntityData {
         }
 
         public TagBuilder putLongArray(String key, List<Long> value) {
-            tag.putLongArray(key, value);
+            tag.putLongArray(key, value.stream().mapToLong(Long::longValue).toArray());
             return this;
         }
 

@@ -28,17 +28,15 @@ import com.buuz135.industrial.recipe.data.EntityIngredient;
 import com.buuz135.industrial.utils.Reference;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import me.desht.pneumaticcraft.common.registry.ModFluids;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -56,7 +54,7 @@ import java.util.Optional;
 public class LaserDrillFluidRecipe extends DrillRecipe<SizedFluidIngredient> {
 
     public static final MapCodec<LaserDrillFluidRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
-            SizedFluidIngredient.FLAT_CODEC.fieldOf("output").forGetter(o -> o.output),
+            SizedFluidIngredient.CODEC.fieldOf("output").forGetter(o -> o.output),
             Ingredient.CODEC.fieldOf("catalyst").forGetter(o -> o.catalyst),
             EntityData.CODEC.optionalFieldOf("entity_data").forGetter(o -> o.entityData),
             LaserDrillRarity.CODEC.listOf().fieldOf("rarity").forGetter(o -> o.rarity)
@@ -74,7 +72,6 @@ public class LaserDrillFluidRecipe extends DrillRecipe<SizedFluidIngredient> {
         super(output, color, Optional.empty(), rarity);
     }
 
-
     public static void init(RecipeOutput output) {
         createRecipe(output, "lava", "minecraft", new LaserDrillFluidRecipe(new SizedFluidIngredient(FluidIngredient.of(Fluids.LAVA), 100), 1,
                 new LaserDrillRarity(
@@ -82,14 +79,14 @@ public class LaserDrillFluidRecipe extends DrillRecipe<SizedFluidIngredient> {
                         new LaserDrillRarity.DimensionRarity(List.of(BuiltinDimensionTypes.NETHER), new ArrayList<>()),
                         5, 20, 8)));
         createRecipe(output, "ether", "minecraft", new LaserDrillFluidRecipe(new SizedFluidIngredient(FluidIngredient.of(ModuleCore.ETHER.getSourceFluid().get()), 10), 10,
-                Optional.of(EntityData.of(EntityType.WITHER)),
+                Optional.of(EntityData.of(EntityTypes.WITHER)),
                 new LaserDrillRarity(
                         new LaserDrillRarity.BiomeRarity(new ArrayList<>(), new ArrayList<>()),
                         new LaserDrillRarity.DimensionRarity(new ArrayList<>(), new ArrayList<>()),
                         -64, 256, 8)));
         if (ModList.get().isLoaded("pneumaticcraft")) {
             createRecipe(output, "oil", "pneumaticcraft",
-                    new LaserDrillFluidRecipe(new SizedFluidIngredient(FluidIngredient.of(ModFluids.OIL.get()), 50), 15,
+                    new LaserDrillFluidRecipe(new SizedFluidIngredient(FluidIngredient.of(BuiltInRegistries.FLUID.getValue(Identifier.fromNamespaceAndPath("pneumaticcraft", "oil"))), 50), 15,
                             new LaserDrillRarity(
                                     new LaserDrillRarity.BiomeRarity(LaserDrillRarity.BiomeRarity.OIL, new ArrayList<>()),
                                     new LaserDrillRarity.DimensionRarity(new ArrayList<>(), new ArrayList<>()),
@@ -99,11 +96,7 @@ public class LaserDrillFluidRecipe extends DrillRecipe<SizedFluidIngredient> {
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, String modIdCondition, LaserDrillFluidRecipe recipe) {
         var rl = generateRL(name);
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
-        recipeOutput.accept(rl, recipe, advancementHolder, new ModLoadedCondition(modIdCondition));
+        IndustrialRecipe.save(recipeOutput, rl, recipe, new ModLoadedCondition(modIdCondition));
     }
 
     public static Identifier generateRL(String key) {
@@ -111,35 +104,14 @@ public class LaserDrillFluidRecipe extends DrillRecipe<SizedFluidIngredient> {
     }
 
     @Override
-    public boolean matches(CraftingInput craftingInput, Level level) {
-        return false;
+    public RecipeSerializer<? extends IndustrialRecipe> getSerializer() {
+        return IndustrialRecipe.cast(ModuleCore.LASER_DRILL_FLUID_SERIALIZER.get());
     }
 
     @Override
-    public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
+    public RecipeType<? extends IndustrialRecipe> getType() {
+        return IndustrialRecipe.cast(ModuleCore.LASER_DRILL_FLUID_TYPE.get());
     }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModuleCore.LASER_DRILL_FLUID_SERIALIZER.get();
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModuleCore.LASER_DRILL_FLUID_TYPE.get();
-    }
-
 
     public static CompoundTag createNBT(String name, int amount) {
         CompoundTag nbt = new CompoundTag();

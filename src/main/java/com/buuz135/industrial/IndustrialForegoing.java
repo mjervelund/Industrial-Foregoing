@@ -36,8 +36,6 @@ import com.buuz135.industrial.registry.IFRegistries;
 import com.buuz135.industrial.utils.IFAttachments;
 import com.buuz135.industrial.utils.IFFakePlayer;
 import com.buuz135.industrial.utils.Reference;
-import com.buuz135.industrial.utils.data.IndustrialBlockstateProvider;
-import com.buuz135.industrial.utils.data.IndustrialModelProvider;
 import com.hrznstudio.titanium.datagenerator.loot.TitaniumLootTableProvider;
 import com.hrznstudio.titanium.datagenerator.model.BlockItemModelGeneratorProvider;
 import com.hrznstudio.titanium.event.handler.EventManager;
@@ -52,6 +50,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.inventory.MenuType;
@@ -75,6 +75,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.data.event.GatherDataRegistryEntriesEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforgespi.language.IModInfo;
@@ -171,7 +172,26 @@ public class IndustrialForegoing extends ModuleController {
     @Override
     public void addDataProvider(GatherDataEvent event) {
         super.addDataProvider(event);
-        Lazy<List<Block>> blocksToProcess = Lazy.of(() ->
+        if (event instanceof GatherDataEvent.Server) {
+            var blockProvider = event.createProvider((output, lookup) -> new IndustrialTagsProvider.Blocks(output, lookup, Reference.MOD_ID));
+            event.createProvider((output, lookup) -> new IndustrialTagsProvider.Items(output, lookup, blockProvider.contentsGetter(), Reference.MOD_ID));
+        } else {
+            event.addProvider(new BlockItemModelGeneratorProvider(event.getGenerator(), Reference.MOD_ID, blocksToProcess()));
+            // 26.3 port (tekkit): IndustrialBlockstateProvider/IndustrialModelProvider (utils/data) target the removed
+            // NeoForge model builders and are excluded from the build; their output is committed in src/generated.
+        }
+    }
+
+    @Override
+    public void addRegistryEntries(GatherDataRegistryEntriesEvent event) {
+        super.addRegistryEntries(event);
+        Lazy<List<Block>> blocksToProcess = blocksToProcess();
+        event.add(RecipeProvider.asBootstrap((recipes, advancements) -> new IndustrialRecipeProvider(recipes, advancements, blocksToProcess)));
+        event.add(Registries.LOOT_TABLE, new TitaniumLootTableProvider(blocksToProcess));
+    }
+
+    private static Lazy<List<Block>> blocksToProcess() {
+        return Lazy.of(() ->
                 BuiltInRegistries.BLOCK
                         .stream()
                         .filter(block -> !block.getClass().equals(LiquidBlock.class))
@@ -181,15 +201,6 @@ public class IndustrialForegoing extends ModuleController {
                                 .isPresent())
                         .collect(Collectors.toList())
         );
-        var blockProvider = new IndustrialTagsProvider.Blocks(event.getGenerator(),event.getLookupProvider() ,Reference.MOD_ID, event.getExistingFileHelper());
-        event.getGenerator().addProvider(true, blockProvider);
-        event.getGenerator().addProvider(true, new IndustrialTagsProvider.Items(event.getGenerator(),event.getLookupProvider(), blockProvider.contentsGetter(), Reference.MOD_ID, event.getExistingFileHelper()));
-        event.getGenerator().addProvider(true, new IndustrialRecipeProvider(event.getGenerator(), blocksToProcess, event.getLookupProvider()));
-        //event.getGenerator().addProvider(true, new IndustrialSerializableProvider(event.getGenerator(), Reference.MOD_ID));
-        event.getGenerator().addProvider(true, new TitaniumLootTableProvider(event.getGenerator(), blocksToProcess, event.getLookupProvider()));
-        event.getGenerator().addProvider(true, new BlockItemModelGeneratorProvider(event.getGenerator(), Reference.MOD_ID, blocksToProcess));
-        event.getGenerator().addProvider(true, new IndustrialBlockstateProvider(event.getGenerator(), event.getExistingFileHelper(), blocksToProcess));
-        event.getGenerator().addProvider(true, new IndustrialModelProvider(event.getGenerator(), event.getExistingFileHelper()));
     }
 
     @Override

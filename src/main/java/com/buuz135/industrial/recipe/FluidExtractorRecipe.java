@@ -28,9 +28,6 @@ import com.buuz135.industrial.utils.Reference;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -43,7 +40,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public class FluidExtractorRecipe implements Recipe<CraftingInput> {
+public class FluidExtractorRecipe implements IndustrialRecipe {
 
     public static final MapCodec<FluidExtractorRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
             Ingredient.CODEC.fieldOf("input").forGetter(o -> o.input),
@@ -83,11 +80,7 @@ public class FluidExtractorRecipe implements Recipe<CraftingInput> {
 
     public static void createRecipe(RecipeOutput recipeOutput, String name, FluidExtractorRecipe recipe) {
         var rl = generateRL(name);
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
-        recipeOutput.accept(rl, recipe, advancementHolder);
+        IndustrialRecipe.save(recipeOutput, rl, recipe);
     }
 
     public static Identifier generateRL(String key) {
@@ -103,34 +96,13 @@ public class FluidExtractorRecipe implements Recipe<CraftingInput> {
     }
 
     @Override
-    public boolean matches(CraftingInput craftingInput, Level level) {
-        return false;
+    public RecipeSerializer<? extends IndustrialRecipe> getSerializer() {
+        return IndustrialRecipe.cast(ModuleCore.FLUID_EXTRACTOR_SERIALIZER.get());
     }
 
     @Override
-    public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
+    public RecipeType<? extends IndustrialRecipe> getType() {
+        return IndustrialRecipe.cast(ModuleCore.FLUID_EXTRACTOR_TYPE.get());
     }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModuleCore.FLUID_EXTRACTOR_SERIALIZER.get();
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModuleCore.FLUID_EXTRACTOR_TYPE.get();
-    }
-
 
 }

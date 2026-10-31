@@ -29,9 +29,6 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.util.TagUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -57,7 +54,7 @@ import java.util.Optional;
 public class LaserDrillOreRecipe extends DrillRecipe<SizedIngredient> {
 
     public static final MapCodec<LaserDrillOreRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
-            SizedIngredient.FLAT_CODEC.fieldOf("output").forGetter(o -> o.output),
+            SizedIngredient.NESTED_CODEC.fieldOf("output").forGetter(o -> o.output),
             Ingredient.CODEC.fieldOf("catalyst").forGetter(o -> o.catalyst),
             EntityData.CODEC.optionalFieldOf("entity_data").forGetter(o -> o.entityData),
             LaserDrillRarity.CODEC.listOf().fieldOf("rarity").forGetter(o -> o.rarity)
@@ -213,23 +210,15 @@ public class LaserDrillOreRecipe extends DrillRecipe<SizedIngredient> {
         var output = SizedIngredient.of(itemLike, 1);
         var recipe = new LaserDrillOreRecipe(output, color, rarity);
         var rl = generateRL(BuiltInRegistries.ITEM.getKey(itemLike.asItem()).getPath());
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
-        recipeOutput.accept(rl, recipe, advancementHolder);
+        IndustrialRecipe.save(recipeOutput, rl, recipe);
     }
 
     public static void createTagRecipe(RecipeOutput recipeOutput, String tagString, int color, LaserDrillRarity... rarity) {
         var tag = TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", tagString));
-        var output = SizedIngredient.of(tag, 1);
+        var output = new SizedIngredient(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(tag)), 1);
         var recipe = new LaserDrillOreRecipe(output, color, rarity);
         var rl = generateRL(tagString);
-        var advancementHolder = recipeOutput.advancement()
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(rl))
-                .rewards(AdvancementRewards.Builder.recipe(rl))
-                .requirements(AdvancementRequirements.Strategy.OR).build(rl);
-        recipeOutput.accept(rl, recipe, advancementHolder, new NotCondition(new TagEmptyCondition(tag)));
+        IndustrialRecipe.save(recipeOutput, rl, recipe, new NotCondition(new TagEmptyCondition<>(tag)));
     }
 
     public static Identifier generateRL(String key) {
@@ -237,33 +226,13 @@ public class LaserDrillOreRecipe extends DrillRecipe<SizedIngredient> {
     }
 
     @Override
-    public boolean matches(CraftingInput craftingInput, Level level) {
-        return false;
+    public RecipeSerializer<? extends IndustrialRecipe> getSerializer() {
+        return IndustrialRecipe.cast(ModuleCore.LASER_DRILL_SERIALIZER.get());
     }
 
     @Override
-    public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModuleCore.LASER_DRILL_SERIALIZER.get();
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModuleCore.LASER_DRILL_TYPE.get();
+    public RecipeType<? extends IndustrialRecipe> getType() {
+        return IndustrialRecipe.cast(ModuleCore.LASER_DRILL_TYPE.get());
     }
 
     /*@Override

@@ -53,7 +53,7 @@ public record LaserDrillRarity(BiomeRarity biomeRarity, DimensionRarity dimensio
 
     public static void init() {
         CompoundSerializableDataHandler.map(LaserDrillRarity.class, buf -> {
-            return buf.readJsonWithCodec(CODEC);
+            return buf.readLenientJsonWithCodec(CODEC);
         }, (buf, laserDrillRarity) -> {
             buf.writeJsonWithCodec(CODEC, laserDrillRarity);
         });
@@ -72,11 +72,11 @@ public record LaserDrillRarity(BiomeRarity biomeRarity, DimensionRarity dimensio
 
     private static boolean checkForDimension(Level level, LaserDrillRarity rarity, DimensionType dimensionType) {
         if (dimensionType == null) return false;
-        var registry = level.registryAccess().registry(Registries.DIMENSION_TYPE).orElse(null);
+        var registry = level.registryAccess().lookup(Registries.DIMENSION_TYPE).orElse(null);
         if (registry == null) return false;
         return rarity.dimensionRarity().whitelist().isEmpty() ?
-                rarity.dimensionRarity().blacklist().stream().noneMatch(dimensionTypeResourceKey -> registry.get(dimensionTypeResourceKey).equals(dimensionType))
-                : rarity.dimensionRarity().whitelist().stream().anyMatch(dimensionTypeResourceKey -> registry.get(dimensionTypeResourceKey).equals(dimensionType));
+                rarity.dimensionRarity().blacklist().stream().noneMatch(dimensionTypeResourceKey -> dimensionType.equals(registry.getValue(dimensionTypeResourceKey)))
+                : rarity.dimensionRarity().whitelist().stream().anyMatch(dimensionTypeResourceKey -> dimensionType.equals(registry.getValue(dimensionTypeResourceKey)));
     }
 
     private static boolean checkForBiome(LaserDrillRarity rarity, Holder<Biome> biome) {
