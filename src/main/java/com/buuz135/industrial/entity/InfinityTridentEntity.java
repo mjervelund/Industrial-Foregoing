@@ -26,7 +26,6 @@ import com.buuz135.industrial.item.infinity.ItemInfinity;
 import com.buuz135.industrial.item.infinity.item.ItemInfinityTrident;
 import com.buuz135.industrial.module.ModuleTool;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -38,10 +37,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -94,15 +95,15 @@ public class InfinityTridentEntity extends AbstractArrow {
         if ((this.dealtDamage || this.isNoPhysics()) && entity != null) {
             int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL);
             if (!this.shouldReturnToThrower()) {
-                if (!this.level().isClientSide && this.pickup == AbstractArrow.Pickup.ALLOWED) {
-                    this.spawnAtLocation(this.getPickupItem(), 0.1F);
+                if (this.level() instanceof ServerLevel serverLevel && this.pickup == AbstractArrow.Pickup.ALLOWED) {
+                    this.spawnAtLocation(serverLevel, this.getPickupItem(), 0.1F);
                 }
                 this.onClientRemoval();
             } else if (loyaltyLevel > 0) {
                 this.setNoPhysics(true);
                 Vec3 vector3d = new Vec3(entity.getX() - this.getX(), entity.getEyeY() - this.getY(), entity.getZ() - this.getZ());
                 this.setPosRaw(this.getX(), this.getY() + vector3d.y * 0.015D * (double) loyaltyLevel, this.getZ());
-                if (this.level().isClientSide) {
+                if (this.level().isClientSide()) {
                     this.yOld = this.getY();
                 }
 
@@ -119,6 +120,7 @@ public class InfinityTridentEntity extends AbstractArrow {
         super.tick();
     }
 
+    @Override
     protected void onHitEntity(EntityHitResult p_213868_1_) {
         Entity target = p_213868_1_.getEntity();
         Entity owner = this.getOwner();
@@ -132,8 +134,8 @@ public class InfinityTridentEntity extends AbstractArrow {
 
 
         SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
-        if (target.hurt(damagesource, damageHit)) {
-            if (target.getType() == EntityType.ENDERMAN) {
+        if (target.hurtOrSimulate(damagesource, damageHit)) {
+            if (target.getType() == EntityTypes.ENDERMAN) {
                 return;
             }
 
@@ -149,7 +151,7 @@ public class InfinityTridentEntity extends AbstractArrow {
         this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01D, -0.1D, -0.01D));
         float f1 = 1.0F;
         AABB area = new AABB(target.getX(), target.getY(), target.getZ(), target.getX(), target.getY(), target.getZ()).inflate(this.entityData.get(TIER));
-        List<Mob> mobs = this.getCommandSenderWorld().getEntitiesOfClass(Mob.class, area);
+        List<Mob> mobs = this.level().getEntitiesOfClass(Mob.class, area);
         if (owner instanceof Player) {
             mobs.forEach(mobEntity -> {
                 float damage = (float) (DAMAGE + Math.pow(2, this.entityData.get(TIER))) * 0.5f;
@@ -157,27 +159,27 @@ public class InfinityTridentEntity extends AbstractArrow {
                     LivingEntity livingentity = (LivingEntity) target;
                     damage = EnchantmentHelper.modifyDamage(serverLevel, this.thrownStack, livingentity, damagesource, damage);
                 }
-                mobEntity.hurt(mobEntity.damageSources().playerAttack((Player) owner), damage);
+                mobEntity.hurtOrSimulate(mobEntity.damageSources().playerAttack((Player) owner), damage);
             });
-            this.getCommandSenderWorld().getEntitiesOfClass(ItemEntity.class, area.inflate(1)).forEach(itemEntity -> {
+            this.level().getEntitiesOfClass(ItemEntity.class, area.inflate(1)).forEach(itemEntity -> {
                 itemEntity.setNoPickUpDelay();
                 itemEntity.teleportTo(owner.blockPosition().getX(), owner.blockPosition().getY() + 1, owner.blockPosition().getZ());
             });
-            this.getCommandSenderWorld().getEntitiesOfClass(ExperienceOrb.class, area.inflate(1)).forEach(entityXPOrb -> entityXPOrb.teleportTo(owner.blockPosition().getX(), owner.blockPosition().getY(), owner.blockPosition().getZ()));
+            this.level().getEntitiesOfClass(ExperienceOrb.class, area.inflate(1)).forEach(entityXPOrb -> entityXPOrb.teleportTo(owner.blockPosition().getX(), owner.blockPosition().getY(), owner.blockPosition().getZ()));
         }
         if (this.level() instanceof ServerLevel && this.entityData.get(CHANNELING)) {
             BlockPos blockpos = target.blockPosition();
             if (this.level().canSeeSky(blockpos)) {
-                LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(this.level());
-                lightningboltentity.moveTo(Vec3.atBottomCenterOf(blockpos));
+                LightningBolt lightningboltentity = EntityTypes.LIGHTNING_BOLT.create(this.level(), EntitySpawnReason.TRIGGERED);
+                lightningboltentity.snapTo(Vec3.atBottomCenterOf(blockpos));
                 lightningboltentity.setCause(owner instanceof ServerPlayer ? (ServerPlayer) owner : null);
                 this.level().addFreshEntity(lightningboltentity);
                 soundevent = SoundEvents.TRIDENT_THUNDER.value();
                 f1 = 5.0F;
                 mobs.forEach(mobEntity -> {
                     if (this.level().canSeeSky(mobEntity.blockPosition())) {
-                        LightningBolt lightningboltentity1 = EntityType.LIGHTNING_BOLT.create(this.level());
-                        lightningboltentity1.moveTo(Vec3.atBottomCenterOf(mobEntity.blockPosition()));
+                        LightningBolt lightningboltentity1 = EntityTypes.LIGHTNING_BOLT.create(this.level(), EntitySpawnReason.TRIGGERED);
+                        lightningboltentity1.snapTo(Vec3.atBottomCenterOf(mobEntity.blockPosition()));
                         lightningboltentity1.setCause(owner instanceof ServerPlayer ? (ServerPlayer) owner : null);
                         this.level().addFreshEntity(lightningboltentity1);
                     }
@@ -234,22 +236,22 @@ public class InfinityTridentEntity extends AbstractArrow {
         return 0.99f;
     }
 
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        if (compound.contains("Trident")) {
-            this.thrownStack = ItemStack.parseOptional(this.level().registryAccess(), compound.getCompoundOrEmpty("Trident"));
-        }
+    @Override
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        input.read("Trident", ItemStack.OPTIONAL_CODEC).ifPresent(stack -> this.thrownStack = stack);
 
-        this.dealtDamage = compound.getBooleanOr("DealtDamage", false);
+        this.dealtDamage = input.getBooleanOr("DealtDamage", false);
         this.entityData.set(LOYALTY_LEVEL, ((ItemInfinityTrident) ModuleTool.INFINITY_TRIDENT.get()).getCurrentLoyalty(thrownStack));
         this.entityData.set(CHANNELING, ((ItemInfinityTrident) ModuleTool.INFINITY_TRIDENT.get()).getCurrentChanneling(thrownStack));
         this.entityData.set(TIER, ItemInfinity.getSelectedTier(thrownStack).getRadius());
     }
 
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.put("Trident", this.thrownStack.saveOptional(this.level().registryAccess()));
-        compound.putBoolean("DealtDamage", this.dealtDamage);
+    @Override
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.store("Trident", ItemStack.OPTIONAL_CODEC, this.thrownStack);
+        output.putBoolean("DealtDamage", this.dealtDamage);
     }
 
 }

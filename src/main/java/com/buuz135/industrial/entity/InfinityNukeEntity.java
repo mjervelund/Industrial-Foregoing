@@ -24,19 +24,19 @@ package com.buuz135.industrial.entity;
 import com.buuz135.industrial.item.infinity.item.ItemInfinityNuke;
 import com.buuz135.industrial.module.ModuleTool;
 import com.buuz135.industrial.proxy.client.sound.TickeableSound;
-import com.buuz135.industrial.utils.IFAttachments;
 import com.buuz135.industrial.utils.explosion.ExplosionTickHandler;
 import com.buuz135.industrial.utils.explosion.ProcessExplosion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
@@ -44,9 +44,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 
@@ -101,7 +103,7 @@ public class InfinityNukeEntity extends Entity {
                 ExplosionTickHandler.processExplosionList.add(explosionHelper);
             }
             setTicksExploding(this.getTicksExploding() + 1);
-            this.updateInWaterStateAndDoFluidPushing();
+            this.updateFluidInteraction();
         }
         if (this.level().isClientSide() && this.getEntityData().get(EXPLODING)) {
             if (this.level().isClientSide()) {
@@ -144,26 +146,26 @@ public class InfinityNukeEntity extends Entity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        compound.put("Original", this.getOriginal().saveOptional(IFAttachments.registryAccess()));
-        compound.putBoolean("Exploding", this.isExploding());
-        compound.putBoolean("Armed", this.isArmed());
-        compound.putInt("TicksExploding", this.getTicksExploding());
-        compound.putInt("Radius", this.getRadius());
+    protected void addAdditionalSaveData(ValueOutput output) {
+        output.store("Original", ItemStack.OPTIONAL_CODEC, this.getOriginal());
+        output.putBoolean("Exploding", this.isExploding());
+        output.putBoolean("Armed", this.isArmed());
+        output.putInt("TicksExploding", this.getTicksExploding());
+        output.putInt("Radius", this.getRadius());
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        this.setArmed(compound.getBooleanOr("Armed", false));
-        this.setExploding(compound.getBooleanOr("Exploding", false));
-        this.setOriginal(ItemStack.parseOptional(IFAttachments.registryAccess(), compound.getCompoundOrEmpty("Original")));
-        this.setTicksExploding(compound.getIntOr("TicksExploding", 0));
-        this.setRadius(compound.getIntOr("Radius", 0));
+    protected void readAdditionalSaveData(ValueInput input) {
+        this.setArmed(input.getBooleanOr("Armed", false));
+        this.setExploding(input.getBooleanOr("Exploding", false));
+        this.setOriginal(input.read("Original", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
+        this.setTicksExploding(input.getIntOr("TicksExploding", 0));
+        this.setRadius(input.getIntOr("Radius", 0));
     }
 
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         if (this.isExploding()) return InteractionResult.SUCCESS;
         if (player.level().isClientSide() && hand == InteractionHand.MAIN_HAND && player.getItemInHand(hand).isEmpty()) {
             arm();
@@ -171,7 +173,7 @@ public class InfinityNukeEntity extends Entity {
         if (!player.level().isClientSide() && hand == InteractionHand.MAIN_HAND) {
             if (player.getItemInHand(hand).isEmpty()) {
                 if (player.isShiftKeyDown()) {
-                    ItemHandlerHelper.giveItemToPlayer(player, this.original);
+                    player.getInventory().placeItemBackInInventory(this.original, Prediction.SERVER_ONLY);
                     this.remove(RemovalReason.KILLED);
                     this.onClientRemoval();
                     return InteractionResult.SUCCESS;
@@ -187,12 +189,17 @@ public class InfinityNukeEntity extends Entity {
                 return InteractionResult.SUCCESS;
             }
         }
-        return super.interact(player, hand);
+        return super.interact(player, hand, location);
     }
 
     @OnlyIn(Dist.CLIENT)
     private void arm() {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ModuleTool.NUKE_ARMING.get(), SoundSource.BLOCKS, 1, 1, Minecraft.getInstance().level.getRandom(), this.blockPosition()));
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+        return false;
     }
 
     @Override
