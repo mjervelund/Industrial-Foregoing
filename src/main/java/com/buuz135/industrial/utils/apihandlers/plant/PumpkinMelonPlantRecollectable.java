@@ -73,7 +73,7 @@ public class PumpkinMelonPlantRecollectable extends PlantRecollectable {
     @Override
     public ItemStack getSeedDrop(Level world, BlockPos pos, BlockState blockState) {
         if (blockState.getBlock() instanceof AttachedStemBlock) {
-            return blockState.getBlock().getCloneItemStack(world, pos, blockState);
+            return blockState.getCloneItemStack(world, pos, false);
         }
         return super.getSeedDrop(world, pos, blockState);
     }

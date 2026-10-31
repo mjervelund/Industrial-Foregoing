@@ -53,24 +53,18 @@ public class RangeAddonItem extends AddonItem implements ISpecialCreativeTabItem
     private int tier;
 
     public RangeAddonItem(int tier, TitaniumTab group) {
-        super("range_addon_tier_" + tier, group, new Properties().stacksTo(16));
+        super("range_addon_tier_" + tier, group, new Properties().stacksTo(16)
+                // 26.3: verifyComponentsAfterLoad is gone, the augment is a default component
+                .component(AugmentWrapper.ATTACHMENT.get(), java.util.Map.of(RANGE.getType(), (float) (tier))));
         this.tier = tier;
     }
 
-    @Override
-    public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
-        super.onCraftedBy(stack, worldIn, playerIn);
-    }
+
 
     @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        AugmentWrapper.setType(stack, RANGE, tier);
-    }
-
-    @Override
-    public String getDescriptionId() {
-        return Component.translatable("item.industrialforegoing.addon").getString() + Component.translatable("item.industrialforegoing.range_addon").getString() + Component.translatable("item.industrialforegoing.tier").getString() + (tier + 1) + " ";
+    public Component getName(ItemStack stack) {
+        // 26.3: getDescriptionId is final
+        return Component.translatable("item.industrialforegoing.addon").append(Component.translatable("item.industrialforegoing.range_addon")).append(Component.translatable("item.industrialforegoing.tier")).append(String.valueOf(tier + 1));
     }
 
     @Override

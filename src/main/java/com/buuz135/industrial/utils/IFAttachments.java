@@ -9,8 +9,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
@@ -56,7 +55,19 @@ public class IFAttachments {
         if (ServerLifecycleHooks.getCurrentServer() != null) {
             return ServerLifecycleHooks.getCurrentServer().registryAccess();
         }
-        return LogicalSidedProvider.CLIENTWORLD.get(LogicalSide.CLIENT).orElseThrow().registryAccess();
+        // 26.3: LogicalSidedProvider is gone; the client level is read through a nested class only loaded on the client.
+        if (FMLEnvironment.getDist().isClient()) {
+            RegistryAccess access = ClientAccess.registryAccess();
+            if (access != null) return access;
+        }
+        throw new IllegalStateException("No server and no client level to read registries from");
+    }
+
+    private static class ClientAccess {
+        private static RegistryAccess registryAccess() {
+            var level = net.minecraft.client.Minecraft.getInstance().level;
+            return level == null ? null : level.registryAccess();
+        }
     }
 
     public static class ComponentSupplier<T> implements Supplier<DataComponentType<T>> {

@@ -47,7 +47,8 @@ public class WaterStrawHandler extends StrawHandlerBase {
         player.clearFire();
         CompoundTag tag = player.getPersistentData();
         if (tag.contains("lavaDrink") && world.getGameTime() - tag.getLongOr("lavaDrink", 0L) < 120) { //6 Seconds to drink water after drinking lava to create obsidian
-            player.spawnAtLocation(new ItemStack(Blocks.OBSIDIAN), player.getEyeHeight());
+            if (world instanceof net.minecraft.server.level.ServerLevel serverLevel)
+                player.spawnAtLocation(serverLevel, new ItemStack(Blocks.OBSIDIAN), player.getEyeHeight());
             tag.putLong("lavaDrink", 0);
             world.playSound(null, player.blockPosition().getX(), player.blockPosition().getY(), player.blockPosition().getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 1.5F, world.getRandom().nextFloat() * 0.1F + 0.9F);
         }

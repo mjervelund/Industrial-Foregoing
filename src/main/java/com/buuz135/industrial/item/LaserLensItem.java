@@ -54,7 +54,7 @@ public class LaserLensItem extends IFCustomItem {
                 Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
                 Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
                 Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.GLASS_PANES)),
-                Ingredient.of(color.getTag())
+                Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(color.getTag()))
         ), new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 250), 100, Optional.of(new ItemStack(this)), Optional.empty()));
 
     }

@@ -26,7 +26,7 @@ import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.recipe.CrusherRecipe;
 import com.hrznstudio.titanium.util.RecipeUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -35,7 +35,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,44 +48,53 @@ public class CraftingUtils {
 
     public static ItemStack findOutput(int size, ItemStack input, Level world) {
         if (input.getCount() < size * size) return ItemStack.EMPTY;
-        var recipe = getRecipeFor(size, input, world);
+        // 26.3: recipes only exist on the server (ServerLevel#recipeAccess is the RecipeManager)
+        if (!(world instanceof ServerLevel serverLevel)) return ItemStack.EMPTY;
+        CraftingInput craftingInput = createInput(size, input);
+        var recipe = getRecipeFor(size, craftingInput, serverLevel);
         if (recipe != null) {
-            ItemStack output = recipe.getResultItem(world.registryAccess());
-            return output.copy();
+            return recipe.assemble(craftingInput).copy();
         }
         return ItemStack.EMPTY;
     }
 
-    private static List<CraftingRecipe> getRecipesWithSize(int size, Level world) {
+    private static List<CraftingRecipe> getRecipesWithSize(int size, ServerLevel world) {
         return recipesBySize.computeIfAbsent(size, k -> {
-            RecipeManager recipeManager = world.getRecipeManager();
-            return recipeManager.getAllRecipesFor(RecipeType.CRAFTING)
+            RecipeManager recipeManager = world.recipeAccess();
+            return recipeManager.recipeMap().byType(RecipeType.CRAFTING)
                 .stream()
                 .map(RecipeHolder::value)
-                .filter(recipe -> canCraftInDimensions(recipe, size) && allIngredientsEqual(recipe))
+                .filter(recipe -> !recipe.isSpecial())
+                .filter(recipe -> canCraftInDimensions(recipe, size) && allIngredientsEqual(ingredientsOf(recipe)))
                 .toList();
         });
     }
 
     private static boolean canCraftInDimensions(CraftingRecipe recipe, int size) {
-        if (!recipe.canCraftInDimensions(size, size)) {
-            return false;
-        }
         if (recipe instanceof ShapedRecipe shapedRecipe) {
             return shapedRecipe.getWidth() == size && shapedRecipe.getHeight() == size;
-        } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
-            return shapelessRecipe.getIngredients().size() == (size * size);
         }
-        return true;
+        // 26.3: canCraftInDimensions is gone; every other crafting recipe needs one ingredient per slot here
+        return ingredientsOf(recipe).size() == (size * size);
     }
 
-    private static boolean allIngredientsEqual(CraftingRecipe recipe) {
-        NonNullList<Ingredient> ingredients = recipe.getIngredients();
+    /**
+     * 1.21's getIngredients(): shaped recipes keep empty pattern slots (as null here, never equal to an ingredient).
+     */
+    private static List<Ingredient> ingredientsOf(CraftingRecipe recipe) {
+        if (recipe instanceof ShapedRecipe shapedRecipe) {
+            return shapedRecipe.getIngredients().stream().map(optional -> optional.orElse(null)).toList();
+        }
+        return recipe.placementInfo().ingredients();
+    }
+
+    private static boolean allIngredientsEqual(List<Ingredient> ingredients) {
         int count = ingredients.size();
         if (count <= 1) {
             return true;
         }
         Ingredient firstIngredient = ingredients.getFirst();
+        if (firstIngredient == null) return false;
         for (int i = 1; i < count; i++) {
             Ingredient ingredient = ingredients.get(i);
             if (!firstIngredient.equals(ingredient)) {
@@ -96,17 +104,17 @@ public class CraftingUtils {
         return true;
     }
 
-    @Nullable
-    private static CraftingRecipe getRecipeFor(int size, ItemStack input, Level world) {
-        List<CraftingRecipe> craftingRecipes = getRecipesWithSize(size, world);
-
+    private static CraftingInput createInput(int size, ItemStack input) {
         List<ItemStack> inputs = new ArrayList<>();
         for (int i = 0; i < size * size; i++) {
             inputs.add(input.copy());
         }
-        CraftingInput craftingInput = CraftingInput.of(size, size, inputs);
+        return CraftingInput.of(size, size, inputs);
+    }
 
-        for (CraftingRecipe recipe : craftingRecipes) {
+    @Nullable
+    private static CraftingRecipe getRecipeFor(int size, CraftingInput craftingInput, ServerLevel world) {
+        for (CraftingRecipe recipe : getRecipesWithSize(size, world)) {
             if (recipe.matches(craftingInput, world)) {
                 return recipe;
             }
@@ -116,7 +124,7 @@ public class CraftingUtils {
 
     public static ItemStack getCrushOutput(Level world, ItemStack stack) {
         for (CrusherRecipe recipe : RecipeUtil.getRecipes(world, (RecipeType<CrusherRecipe>)ModuleCore.CRUSHER_TYPE.get())) {
-            if (recipe.input.test(stack)) return recipe.output.getItems()[0];
+            if (recipe.input.test(stack)) return recipe.output.items().findFirst().map(ItemStack::new).orElse(ItemStack.EMPTY);
         }
         return ItemStack.EMPTY;
     }

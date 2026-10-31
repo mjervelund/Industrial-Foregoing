@@ -31,6 +31,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -40,7 +41,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.item.component.SwingAnimation;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -71,31 +77,34 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity target, InteractionHand hand) {
         if (!capture(stack, target,playerIn)) return InteractionResult.FAIL;
-        playerIn.swing(hand);
+        playerIn.swing(hand, SwingAnimation.DEFAULT, false);
         playerIn.setItemInHand(hand, stack);
         return InteractionResult.SUCCESS;
     }
 
     public boolean capture(ItemStack stack, LivingEntity target,Player player) {
-        if (target.getCommandSenderWorld().isClientSide) return false;
-        if (target instanceof Player || target.getType().is(Tags.EntityTypes.BOSSES) || !target.isAlive()) return false;
+        if (target.level().isClientSide()) return false;
+        if (target instanceof Player || target.is(Tags.EntityTypes.BOSSES) || !target.isAlive()) return false;
         if (containsEntity(stack)) return false;
         if (!canPlayerCaptureEntity(target,player)) return false;
         if (isBlacklisted(target.getType())) return false;
-        CompoundTag nbt = new CompoundTag();
+        // 26.3: entities save to a ValueOutput; the tag layout (entity id + saveWithoutId fields) is unchanged
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, target.level().registryAccess());
+        target.saveWithoutId(output);
+        CompoundTag nbt = output.buildResult();
         nbt.putString("entity", EntityType.getKey(target.getType()).toString());
-        target.saveWithoutId(nbt);
         stack.set(IFAttachments.MOB_IMPRISONMENT_TOOL, nbt);
         target.remove(Entity.RemovalReason.DISCARDED);
         return true;
     }
 
     public boolean release(Player player, BlockPos pos, Direction facing, Level worldIn, ItemStack stack) {
-        if (player.getCommandSenderWorld().isClientSide) return false;
+        if (worldIn.isClientSide()) return false;
         if (!containsEntity(stack)) return false;
         Entity entity = getEntityFromStack(stack, worldIn, true, false);
+        if (entity == null) return false;
         BlockPos blockPos = pos.relative(facing);
-        entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
+        entity.snapTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         stack.remove(IFAttachments.MOB_IMPRISONMENT_TOOL);
         worldIn.addFreshEntity(entity);
         return true;
@@ -122,8 +131,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
         switch (entity) {
             case AbstractHorse horse -> {
                 if (!MobImprisonmentToolConfig.onlyOwnerCanCapture || ((horse.isTamed()
-                        && horse.getOwnerUUID() != null
-                        && horse.getOwnerUUID().equals(player.getUUID())) || !horse.isTamed())) {
+                        && horse.getOwnerReference() != null
+                        && horse.getOwnerReference().getUUID().equals(player.getUUID())) || !horse.isTamed())) {
                     ret = true;
                 }
             }
@@ -165,11 +174,13 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     public Entity getEntityFromStack(ItemStack stack, Level world, boolean withInfo, boolean applyDuplicatorFilter) {
         if (stack.has(IFAttachments.MOB_IMPRISONMENT_TOOL)) {
             var nbt = stack.get(IFAttachments.MOB_IMPRISONMENT_TOOL);
-            EntityType type = EntityType.byString(nbt.getStringOr("entity", "")).orElse(null);
+            Identifier id = Identifier.tryParse(nbt.getStringOr("entity", ""));
+            EntityType<?> type = id == null ? null : BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
             if (type != null && !(applyDuplicatorFilter && TagUtil.hasTag(BuiltInRegistries.ENTITY_TYPE, type, IndustrialTags.EntityTypes.MOB_DUPLICATOR_BLACKLIST))) {
-                Entity entity = type.create(world);
+                Entity entity = type.create(world, withInfo ? EntitySpawnReason.LOAD : EntitySpawnReason.SPAWNER);
+                if (entity == null) return null;
                 if (withInfo) {
-                    entity.load(nbt);
+                    entity.load(TagValueInput.create(ProblemReporter.DISCARDING, world.registryAccess(), nbt));
                 } else if (!type.canSummon()) {
                     return null;
                 }
@@ -187,8 +198,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     @Override
     public Component getName(ItemStack stack) {
         if (!containsEntity(stack))
-            return Component.translatable(super.getDescriptionId(stack));
-        return Component.translatable(super.getDescriptionId(stack)).append(" (" + getID(stack) + ")");
+            return super.getName(stack);
+        return super.getName(stack).copy().append(" (" + getID(stack) + ")");
     }
 
     @Override

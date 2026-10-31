@@ -33,11 +33,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -63,27 +67,30 @@ public class MeatFeederItem extends IFCustomItem {
     @Override
     public void addTooltipDetails(@Nullable Key key, ItemStack stack, List<Component> tooltip, boolean advanced) {
         super.addTooltipDetails(key, stack, tooltip, advanced);
-        var handlerItemStack = stack.getCapability(Capabilities.FluidHandler.ITEM);
-        if (handlerItemStack != null && key == null) {
-            tooltip.add(Component.literal(NumberFormat.getNumberInstance(Locale.ROOT).format(handlerItemStack.getFluidInTank(0).getAmount()) + ChatFormatting.GOLD + "/" + ChatFormatting.WHITE + NumberFormat.getNumberInstance(Locale.ROOT).format(512000) + ChatFormatting.GOLD + Component.translatable("text.industrialforegoing.display.mb_of_meat").getString()));
+        if (key == null) {
+            tooltip.add(Component.literal(NumberFormat.getNumberInstance(Locale.ROOT).format(getFilledAmount(stack)) + ChatFormatting.GOLD + "/" + ChatFormatting.WHITE + NumberFormat.getNumberInstance(Locale.ROOT).format(512000) + ChatFormatting.GOLD + Component.translatable("text.industrialforegoing.display.mb_of_meat").getString()));
         }
     }
 
     public int getFilledAmount(ItemStack stack) {
-        var handlerItemStack = stack.getCapability(Capabilities.FluidHandler.ITEM);
-        return (handlerItemStack == null || handlerItemStack.getFluidInTank(0).isEmpty() ? 0 : handlerItemStack.getFluidInTank(0).getAmount());
+        var handlerItemStack = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
+        return (handlerItemStack == null || handlerItemStack.size() == 0 || handlerItemStack.getResource(0).isEmpty() ? 0 : handlerItemStack.getAmountAsInt(0));
     }
 
     public void drain(ItemStack stack, int amount) {
-        var handlerItemStack = stack.getCapability(Capabilities.FluidHandler.ITEM);
-        if (handlerItemStack != null)
-            handlerItemStack.drain(new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), amount), IFluidHandler.FluidAction.EXECUTE);
+        var handlerItemStack = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
+        if (handlerItemStack != null) {
+            try (var transaction = Transaction.open(null)) {
+                handlerItemStack.extract(FluidResource.of(ModuleCore.MEAT.getSourceFluid().get()), amount, transaction);
+                transaction.commit();
+            }
+        }
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-        if (!worldIn.isClientSide() && entityIn instanceof Player) {
+    public void inventoryTick(ItemStack stack, ServerLevel worldIn, Entity entityIn, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, worldIn, entityIn, slot);
+        if (entityIn instanceof Player) {
             Player player = (Player) entityIn;
             if (player.getFoodData().needsFood() || player.getFoodData().getSaturationLevel() < 10) {
                 if (stack.getItem().equals(ModuleTool.MEAT_FEEDER.get())) {

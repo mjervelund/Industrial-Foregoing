@@ -50,15 +50,12 @@ public class EfficiencyAddonItem extends AddonItem implements ISpecialCreativeTa
     private int tier;
 
     public EfficiencyAddonItem(int tier, TitaniumTab group) {
-        super("efficiency_addon_tier_" + tier, group, new Properties().stacksTo(16));
+        super("efficiency_addon_tier_" + tier, group, new Properties().stacksTo(16)
+                // 26.3: verifyComponentsAfterLoad is gone, the augment is a default component
+                .component(AugmentWrapper.ATTACHMENT.get(), java.util.Map.of(AugmentTypes.EFFICIENCY.getType(), (float) (1 - tier * 0.1f))));
         this.tier = tier;
     }
 
-    @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        AugmentWrapper.setType(stack, AugmentTypes.EFFICIENCY, 1 - this.tier * 0.1f);
-    }
 
     @Override
     public void registerRecipe(RecipeOutput consumer) {
@@ -77,8 +74,9 @@ public class EfficiencyAddonItem extends AddonItem implements ISpecialCreativeTa
     }
 
     @Override
-    public String getDescriptionId() {
-        return Component.translatable("item.industrialforegoing.addon").getString() + Component.translatable("item.industrialforegoing.efficiency").getString() + Component.translatable("item.industrialforegoing.tier").getString() + tier + " ";
+    public Component getName(ItemStack stack) {
+        // 26.3: getDescriptionId is final
+        return Component.translatable("item.industrialforegoing.addon").append(Component.translatable("item.industrialforegoing.efficiency")).append(Component.translatable("item.industrialforegoing.tier")).append(String.valueOf(tier));
     }
 
     @Override

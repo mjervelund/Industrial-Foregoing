@@ -53,15 +53,12 @@ public class ProcessingAddonItem extends AddonItem implements ISpecialCreativeTa
     private int tier;
 
     public ProcessingAddonItem(int tier, TitaniumTab group) {
-        super("processing_addon_tier_" + tier, group, new Properties().stacksTo(16));
+        super("processing_addon_tier_" + tier, group, new Properties().stacksTo(16)
+                // 26.3: verifyComponentsAfterLoad is gone, the augment is a default component
+                .component(AugmentWrapper.ATTACHMENT.get(), java.util.Map.of(PROCESSING.getType(), (float) (1 + tier))));
         this.tier = tier;
     }
 
-    @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        AugmentWrapper.setType(stack, PROCESSING, 1 + tier);
-    }
 
     @Override
     public void registerRecipe(RecipeOutput consumer) {
@@ -80,8 +77,9 @@ public class ProcessingAddonItem extends AddonItem implements ISpecialCreativeTa
     }
 
     @Override
-    public String getDescriptionId() {
-        return Component.translatable("item.industrialforegoing.addon").getString() + Component.translatable("item.industrialforegoing.processing").getString() + Component.translatable("item.industrialforegoing.tier").getString() + tier + " ";
+    public Component getName(ItemStack stack) {
+        // 26.3: getDescriptionId is final
+        return Component.translatable("item.industrialforegoing.addon").append(Component.translatable("item.industrialforegoing.processing")).append(Component.translatable("item.industrialforegoing.tier")).append(String.valueOf(tier));
     }
 
     @Override

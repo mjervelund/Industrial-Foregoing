@@ -63,10 +63,11 @@ public class ItemConveyorUpgrade extends IFCustomItem {
     }
 
     @Override
-    public String getDescriptionId(ItemStack stack) {
+    public net.minecraft.network.chat.Component getName(ItemStack stack) {
+        // 26.3: getDescriptionId(ItemStack) is gone
         if (factory == null)
-            return "conveyor.upgrade.error";
-        return String.format("conveyor.upgrade.%s.%s", BuiltInRegistries.ITEM.getKey(factory.getUpgradeItem()).getNamespace(), BuiltInRegistries.ITEM.getKey(factory.getUpgradeItem()).getPath());
+            return net.minecraft.network.chat.Component.translatable("conveyor.upgrade.error");
+        return net.minecraft.network.chat.Component.translatable(String.format("conveyor.upgrade.%s.%s", BuiltInRegistries.ITEM.getKey(factory.getUpgradeItem()).getNamespace(), BuiltInRegistries.ITEM.getKey(factory.getUpgradeItem()).getPath()));
     }
 
 

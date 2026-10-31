@@ -47,7 +47,7 @@ public abstract class IFCustomItem extends BasicItem implements IRecipeProvider 
 
     @Nullable
     @Override
-    public String getCreatorModId(ItemStack itemStack) {
-        return Component.translatable("itemGroup.industrialforegoing_" + this.tab.getResourceLocation().getPath()).getString();
+    public String getCreatorModId(net.minecraft.core.HolderLookup.Provider registries, ItemStack itemStack) {
+        return Component.translatable("itemGroup.industrialforegoing_" + this.tab.getIdentifier().getPath()).getString();
     }
 }

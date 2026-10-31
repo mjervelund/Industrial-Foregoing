@@ -53,7 +53,7 @@ public class MovementUtils {
         //DIRECTION MOVEMENT
         double speed = 0.2;
         if (type.isFast()) speed *= 2;
-        Vec3 vec3d = new Vec3(speed * direction.getNormal().getX(), speed * direction.getNormal().getY(), speed * direction.getNormal().getZ());
+        Vec3 vec3d = new Vec3(speed * direction.getUnitVec3i().getX(), speed * direction.getUnitVec3i().getY(), speed * direction.getUnitVec3i().getZ());
         if (type.isVertical()) {
             vec3d = vec3d.add(0, type.isUp() ? 0.258 : -0.05, 0);
             //entity.onGround = false;

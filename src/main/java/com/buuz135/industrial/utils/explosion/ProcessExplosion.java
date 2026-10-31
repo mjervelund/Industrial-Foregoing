@@ -27,7 +27,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.feline.Cat;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -161,7 +162,7 @@ public class ProcessExplosion {
                     double coreHeight = coreFalloff * maxCoreHeight;
                     double edgeNoise = Math.max(0, (-radialPos + 0.2) * 5);
                     double edgeScatter = edgeNoise * world.getRandom().nextInt(10);
-                    double sim = noise.getValue(x / 50D, z / 50D);
+                    double sim = noise.get(x / 50D, z / 50D);
                     edgeNoise = 1 + (Math.abs(sim) * edgeNoise * 8);
 
                     double power = (10000 * radialPos * radialPos * radialPos * angularLoad * edgeNoise) + edgeScatter;
@@ -259,7 +260,7 @@ public class ProcessExplosion {
         if (dist > 100) {
             dist = 100;
         }
-        if (dist <= 0 || power <= 0 || posVec.y() < world.getMinBuildHeight() || posVec.y() > world.getMaxBuildHeight()) {
+        if (dist <= 0 || power <= 0 || posVec.y() < world.getMinY() || posVec.y() > world.getMaxY() + 1) {
             return totalResist;
         }
 

@@ -27,7 +27,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -44,22 +44,22 @@ public class ColorUtils {
 
     public static int getColorFrom(TextureAtlasSprite sprite) {
         if (sprite == null) return -1;
-        if (sprite.contents().getUniqueFrames().count() == 0) return -1;
+        if (sprite.contents().getUniqueFrames().isEmpty()) return -1;
         float total = 0, red = 0, blue = 0, green = 0;
         for (int x = 0; x < sprite.contents().width(); x++) {
             for (int y = 0; y < sprite.contents().height(); y++) {
-                int color = sprite.getPixelRGBA(0, x, y);
+                int color = sprite.getPixelARGB(0, x, y); // 26.3: ARGB (1.21's getPixelRGBA was ABGR)
                 int alpha = color >> 24 & 0xFF;
                 // if (alpha != 255) continue; // this creates problems for translucent textures
                 total += alpha;
-                red += (color & 0xFF) * alpha;
+                red += (color >> 16 & 0xFF) * alpha;
                 green += (color >> 8 & 0xFF) * alpha;
-                blue += (color >> 16 & 0xFF) * alpha;
+                blue += (color & 0xFF) * alpha;
             }
         }
 
         if (total > 0)
-            return FastColor.ARGB32.color(255, (int) (red / total), (int) (green / total), (int) (blue / total));
+            return ARGB.color(255, (int) (red / total), (int) (green / total), (int) (blue / total));
         return -1;
     }
 }

@@ -26,7 +26,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.common.EffectCures;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -39,6 +38,6 @@ public class MilkStrawHandler extends StrawHandlerBase {
 
     @Override
     public void onDrink(Level world, BlockPos pos, Fluid stack, Player player, boolean fromFluidContainer) {
-        player.removeEffectsCuredBy(EffectCures.MILK);
+        player.removeAllEffects(); // 26.3: EffectCures gone, vanilla milk clears every effect
     }
 }

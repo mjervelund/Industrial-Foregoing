@@ -23,7 +23,7 @@ package com.buuz135.industrial.utils.explosion;
 
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.utils.BlockUtils;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
@@ -98,7 +98,7 @@ public class ExplosionHelper {
     }
 
     private LevelChunk getChunk(BlockPos pos) {
-        ChunkPos cp = new ChunkPos(pos);
+        ChunkPos cp = ChunkPos.containing(pos);
         if (!chunkCache.containsKey(cp)) {
             chunkCache.put(cp, serverWorld.getChunk(pos.getX() >> 4, pos.getZ() >> 4));
         }
@@ -108,7 +108,7 @@ public class ExplosionHelper {
     private LevelChunkSection getBlockStorage(BlockPos pos) {
         LevelChunk chunk = getChunk(pos);
         //return chunk.getSection(chunk.getSectionIndexFromSectionY(pos.getY()));
-        return chunk.getSections()[(pos.getY() - serverWorld.getMinBuildHeight()) >> 4];
+        return chunk.getSections()[(pos.getY() - serverWorld.getMinY()) >> 4];
     }
 
     /**
@@ -182,7 +182,7 @@ public class ExplosionHelper {
 
         public void finishChunks(HashSet<LevelChunk> chunks) {
             for (LevelChunk chunk : chunks) {
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
                 ThreadedLevelLightEngine lightManager = (ThreadedLevelLightEngine) helper.serverWorld.getLightEngine();
                 lightManager.lightChunk(chunk, false)
                         .thenRun(() -> helper.serverWorld.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false)

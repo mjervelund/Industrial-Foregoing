@@ -58,7 +58,7 @@ public class OreTitaniumFluidType extends FluidType {
 
     public static boolean isValid(Identifier resourceLocation) {
         TagKey<Item> key = TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "dusts/" + resourceLocation.toString().replace("c:raw_materials/", "")));
-        return BuiltInRegistries.ITEM.getTag(key).isPresent() && !TagUtil.getAllEntries(BuiltInRegistries.ITEM, key).isEmpty();
+        return BuiltInRegistries.ITEM.get(key).isPresent() && !TagUtil.getAllEntries(BuiltInRegistries.ITEM, key).isEmpty();
     }
 
     public static ItemStack getOutputDust(FluidStack stack) {

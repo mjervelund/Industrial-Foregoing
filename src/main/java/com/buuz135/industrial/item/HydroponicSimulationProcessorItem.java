@@ -8,6 +8,7 @@ import com.hrznstudio.titanium.tab.TitaniumTab;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -27,14 +28,6 @@ public class HydroponicSimulationProcessorItem extends IFCustomItem {
 
     public static double calculateEfficiency(long executions) {
         return Math.log(executions) / Math.log(200);
-    }
-
-    @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        if (!stack.has(IFAttachments.HYDROPONIC_SIMULATION_PROCESSOR)) {
-            stack.set(IFAttachments.HYDROPONIC_SIMULATION_PROCESSOR, new CompoundTag());
-        }
     }
 
     @Override
@@ -58,7 +51,7 @@ public class HydroponicSimulationProcessorItem extends IFCustomItem {
         tooltip.add(Component.translatable("tooltip.industrialforegoing.hydroponic.simulating").withStyle(ChatFormatting.GRAY)
                 .append(Component.translatable(simulation.crop.isEmpty() ?
                         "tooltip.industrialforegoing.hydroponic.nothing" :
-                        simulation.crop.getDescriptionId()).withStyle(ChatFormatting.GOLD)));
+                        simulation.crop.getItem().getDescriptionId()).withStyle(ChatFormatting.GOLD)));
         tooltip.add(Component.translatable("tooltip.industrialforegoing.hydroponic.executions").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(new DecimalFormat().format(simulation.executions)).withStyle(ChatFormatting.GOLD)));
         tooltip.add(Component.translatable("tooltip.industrialforegoing.hydroponic.efficiency").withStyle(ChatFormatting.GRAY)
@@ -67,7 +60,7 @@ public class HydroponicSimulationProcessorItem extends IFCustomItem {
                 .append(Component.literal(getProgressBar(simulation.executions) + "").withStyle(ChatFormatting.GOLD)));
         tooltip.add(Component.translatable("tooltip.industrialforegoing.hydroponic.potential_drops").withStyle(ChatFormatting.GRAY));
         for (CountedStack stat : simulation.stats) {
-            tooltip.add(Component.literal(ChatFormatting.GRAY + " - " + ChatFormatting.WHITE + new DecimalFormat("0.00").format(((stat.amount / (double) simulation.executions) * effi)) + ChatFormatting.GRAY + "x " + ChatFormatting.GOLD + Component.translatable(stat.stack.getDescriptionId()).getString()));
+            tooltip.add(Component.literal(ChatFormatting.GRAY + " - " + ChatFormatting.WHITE + new DecimalFormat("0.00").format(((stat.amount / (double) simulation.executions) * effi)) + ChatFormatting.GRAY + "x " + ChatFormatting.GOLD + Component.translatable(stat.stack.getItem().getDescriptionId()).getString()));
         }
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("tooltip.industrialforegoing.hydroponic.function_1").withStyle(ChatFormatting.DARK_GRAY));
@@ -106,26 +99,28 @@ public class HydroponicSimulationProcessorItem extends IFCustomItem {
             this.stats = new ArrayList<>();
         }
 
-        public Simulation(CompoundTag nbt) {
-            this.crop = ItemStack.parseOptional(IFAttachments.registryAccess(), nbt.getCompoundOrEmpty("Crop"));
+        public Simulation(@Nullable CompoundTag nbt) {
+            // 26.3: verifyComponentsAfterLoad is gone, a processor without the component reads as a fresh simulation
+            if (nbt == null) nbt = new CompoundTag();
+            this.crop = ItemStackSerialization.load(IFAttachments.registryAccess(), nbt.getCompoundOrEmpty("Crop"));
             this.executions = nbt.getLongOr("Executions", 0L);
             this.stats = new ArrayList<>();
             var statsCompound = nbt.getCompoundOrEmpty("Stats");
             for (String allKey : statsCompound.keySet()) {
                 var stat = statsCompound.getCompoundOrEmpty(allKey);
-                this.stats.add(new CountedStack(ItemStack.parseOptional(IFAttachments.registryAccess(), stat.getCompoundOrEmpty("Stack")), stat.getLongOr("Count", 0L)));
+                this.stats.add(new CountedStack(ItemStackSerialization.load(IFAttachments.registryAccess(), stat.getCompoundOrEmpty("Stack")), stat.getLongOr("Count", 0L)));
             }
         }
 
         public CompoundTag toNBT(HolderLookup.Provider levelRegistryAccess) {
             CompoundTag nbt = new CompoundTag();
-            nbt.put("Crop", crop.saveOptional(levelRegistryAccess));
+            nbt.put("Crop", ItemStackSerialization.save(levelRegistryAccess, crop));
             nbt.putLong("Executions", executions);
             var allStats = new CompoundTag();
             int key = 0;
             for (CountedStack stat : this.stats) {
                 var statCompound = new CompoundTag();
-                statCompound.put("Stack", stat.stack.saveOptional(levelRegistryAccess));
+                statCompound.put("Stack", ItemStackSerialization.save(levelRegistryAccess, stat.stack));
                 statCompound.putLong("Count", stat.amount);
                 allStats.put(key + "", statCompound);
                 ++key;

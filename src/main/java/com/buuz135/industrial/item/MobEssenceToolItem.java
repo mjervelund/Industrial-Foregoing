@@ -39,8 +39,8 @@ public class MobEssenceToolItem extends IFCustomItem {
 
 
     @Override
-    public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
-        super.onCraftedBy(stack, worldIn, playerIn);
+    public void onCraftedBy(ItemStack stack, Player playerIn) {
+        super.onCraftedBy(stack, playerIn);
         addNBT(stack);
     }
 

@@ -27,6 +27,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -64,12 +65,12 @@ public class OreFluid extends FlowingFluid {
     }
 
     @Override
-    public boolean canConvertToSource(FluidState state, Level level, BlockPos pos) {
+    public boolean canConvertToSource(FluidState state, ServerLevel level, BlockPos pos) {
         return false;
     }
 
     @Override
-    protected boolean canConvertToSource(Level p_256009_) {
+    protected boolean canConvertToSource(ServerLevel p_256009_) {
         return false;
     }
 

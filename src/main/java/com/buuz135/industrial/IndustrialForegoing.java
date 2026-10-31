@@ -227,6 +227,8 @@ public class IndustrialForegoing extends ModuleController {
         }).subscribe();
         KeyMapping.Category category = new KeyMapping.Category(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "industrialforegoing"));
         ClientProxy.OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", -1, category);
+        EventManager.mod(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent.class).process(com.buuz135.industrial.proxy.client.OreFluidClientRegistrar::registerClientExtensions).subscribe();
+        EventManager.mod(net.neoforged.neoforge.client.event.RegisterFluidModelsEvent.class).process(com.buuz135.industrial.proxy.client.OreFluidClientRegistrar::registerModels).subscribe();
         EventManager.mod(RegisterKeyMappingsEvent.class).process(event -> {
             event.registerCategory(category);
             event.register(ClientProxy.OPEN_BACKPACK);
