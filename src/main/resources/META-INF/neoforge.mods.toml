@@ -40,10 +40,6 @@ enumExtensions = "META-INF/enumextensions.json"
 config = "META-INF/industrialforegoing.mixins.json"
 
 
-# The [[accessTransformers]] block allows you to declare where your AT file is.
-# If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
-[[accessTransformers]]
-file = "META-INF/accesstransformer.cfg"
 
 # The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
 
@@ -76,12 +72,12 @@ side = "BOTH"
 [[dependencies."${mod_id}"]] #optional
 modId = "titanium" #mandatory
 type = "required"
-versionRange = "[3.2.8,)" #mandatory
+versionRange = "[26.3-4.0,)" #mandatory
 ordering = "NONE"
 side = "BOTH"
 [[dependencies."${mod_id}"]] #optional
 modId = "jei" #mandatory
 type = "optional"
-versionRange = "[19.11.0,)" #mandatory
+versionRange = "[31.0,)" #mandatory
 ordering = "NONE"
 side = "CLIENT"

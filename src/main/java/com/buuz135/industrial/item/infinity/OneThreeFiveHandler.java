@@ -33,6 +33,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -78,7 +79,7 @@ public class OneThreeFiveHandler {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (event.getEntity().level().getGameTime() % 20 == 0) {
-            for (ItemStack stack : event.getEntity().getInventory().items) {
+            for (ItemStack stack : event.getEntity().getInventory().getNonEquipmentItems()) {
                 if (stack.getItem() instanceof ItemInfinity && ((ItemInfinity) stack.getItem()).isSpecial(stack) && ((ItemInfinity) stack.getItem()).isSpecialEnabled(stack)) {
                     IndustrialForegoing.NETWORK.sendToNearby(event.getEntity().level(), new BlockPos(event.getEntity().blockPosition().getX(), event.getEntity().blockPosition().getY(), event.getEntity().blockPosition().getZ()), 64, new SpecialParticleMessage(event.getEntity().getUUID()));
                     return;

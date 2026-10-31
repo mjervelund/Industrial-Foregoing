@@ -247,7 +247,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                 stack.set(IFAttachments.INFINITY_BACKPACK_ID, id.toString());
             }
             String id = stack.get(IFAttachments.INFINITY_BACKPACK_ID);
-            IndustrialForegoing.NETWORK.sendTo(new BackpackOpenedMessage(player.getInventory().selected, PlayerInventoryFinder.MAIN), serverPlayer);
+            IndustrialForegoing.NETWORK.sendTo(new BackpackOpenedMessage(player.getInventory().getSelectedSlot(), PlayerInventoryFinder.MAIN), serverPlayer);
             sync(worldIn, id, serverPlayer);
             serverPlayer.openMenu(this, buffer ->
                     LocatorFactory.writePacketBuffer(buffer, new HeldStackLocatorInstance(handIn == InteractionHand.MAIN_HAND)));

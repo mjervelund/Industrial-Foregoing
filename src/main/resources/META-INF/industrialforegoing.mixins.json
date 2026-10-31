@@ -6,6 +6,6 @@
   "mixins": [
     "FungusBlockMixin",
     "HugeFungusFeatureMixin",
-    "IBushBlockMixin"
+    "IVegetationBlockMixin"
   ]
 }

@@ -28,7 +28,7 @@ import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.PlantSowerConfig;
 import com.buuz135.industrial.item.addon.RangeAddonItem;
-import com.buuz135.industrial.mixin.IBushBlockMixin;
+import com.buuz135.industrial.mixin.IVegetationBlockMixin;
 import com.buuz135.industrial.module.ModuleAgricultureHusbandry;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.api.filter.FilterSlot;
@@ -82,7 +82,7 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
         }
         addBundle(this.input = new LockableInventoryBundle<>(this, new SidedInventoryComponent<PlantSowerTile>("input", 54 + 18 * 3, 22, 9, 0).
                 setColor(DyeColor.CYAN).
-                setInputFilter((itemStack, integer) -> itemStack.getItem() instanceof SpecialPlantable || (itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof BushBlock)).
+                setInputFilter((itemStack, integer) -> itemStack.getItem() instanceof SpecialPlantable || (itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof VegetationBlock)).
                 setRange(3, 3).
                 setComponentHarness(this), 100, 84, false));
         this.maxProgress = PlantSowerConfig.maxProgress;
@@ -108,8 +108,8 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
             if (
                 !stack.isEmpty() &&
                 stack.getItem() instanceof BlockItem blockItem &&
-                blockItem.getBlock() instanceof BushBlock bushBlock &&
-                ((IBushBlockMixin) bushBlock).invokeMayPlaceOn(this.level.getBlockState(pos.below()), level, pos.below())
+                blockItem.getBlock() instanceof VegetationBlock vegetationBlock &&
+                ((IVegetationBlockMixin) vegetationBlock).invokeMayPlaceOn(this.level.getBlockState(pos.below()), level, pos.below())
             ) {
                 BlockState blockstate1 = blockItem.getBlock().defaultBlockState();
                 level.setBlockAndUpdate(pos, blockstate1);

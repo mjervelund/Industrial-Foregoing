@@ -340,7 +340,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     public InteractionResult use(Level worldIn, Player player, InteractionHand handIn) {
         if (player.isCrouching()) {
             if (player instanceof ServerPlayer) {
-                IndustrialForegoing.NETWORK.sendTo(new BackpackOpenedMessage(player.getInventory().selected, PlayerInventoryFinder.MAIN), ((ServerPlayer) player));
+                IndustrialForegoing.NETWORK.sendTo(new BackpackOpenedMessage(player.getInventory().getSelectedSlot(), PlayerInventoryFinder.MAIN), ((ServerPlayer) player));
                 player.openMenu(this, buffer ->
                         LocatorFactory.writePacketBuffer(buffer, new HeldStackLocatorInstance(handIn == InteractionHand.MAIN_HAND)));
             }
