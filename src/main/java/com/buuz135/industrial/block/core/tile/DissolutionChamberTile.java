@@ -121,7 +121,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
 
     @Override
     public boolean canIncrease() {
-        return currentRecipe != null && ItemUtil.insertItemReturnRemaining(output, currentRecipe.getOutput().orElse(ItemStack.EMPTY), true, null).isEmpty() && (currentRecipe.outputFluid.isEmpty() || TankUtils.fillForced(outputFluid, currentRecipe.getOutputFluid().orElse(FluidStack.EMPTY), true) == currentRecipe.outputFluid.map(FluidStackTemplate::amount).orElse(0));
+        return currentRecipe != null && ItemStackUtils.insertInternal(output, currentRecipe.getOutput().orElse(ItemStack.EMPTY), true).isEmpty() && (currentRecipe.outputFluid.isEmpty() || TankUtils.fillForced(outputFluid, currentRecipe.getOutputFluid().orElse(FluidStack.EMPTY), true) == currentRecipe.outputFluid.map(FluidStackTemplate::amount).orElse(0));
     }
 
     @Override
@@ -140,7 +140,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
                         TankUtils.fillForced(outputFluid, dissolutionChamberRecipe.outputFluid.get().create(), false);
                     ItemStack outputStack = dissolutionChamberRecipe.getOutput().orElse(ItemStack.EMPTY);
                     outputStack.onCraftedBySystem(this.level);
-                    ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
+                    ItemStackUtils.insertInternal(output, outputStack, false);
                     checkForRecipe();
                 }
             }

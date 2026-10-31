@@ -83,7 +83,7 @@ public class SporesRecreatorTile extends IndustrialProcessingTile<SporesRecreato
     public boolean canIncrease() {
         return !ItemHandlerUtil.getFirstItem(input).isEmpty() && tank.getFluidAmount() >= 100
                 && (ItemHandlerUtil.getFirstItem(input).is(Tags.Items.MUSHROOMS) ? tank.getFluid().getFluid().isSame(Fluids.WATER) : tank.getFluid().getFluid().isSame(Fluids.LAVA))
-                && ItemUtil.insertItemReturnRemaining(output, new ItemStack(ItemHandlerUtil.getFirstItem(input).getItem(), 2), true, null).isEmpty();
+                && ItemStackUtils.insertInternal(output, new ItemStack(ItemHandlerUtil.getFirstItem(input).getItem(), 2), true).isEmpty();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class SporesRecreatorTile extends IndustrialProcessingTile<SporesRecreato
                     break;
                 }
             }
-            ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
+            ItemStackUtils.insertInternal(output, outputStack, false);
         };
     }
 

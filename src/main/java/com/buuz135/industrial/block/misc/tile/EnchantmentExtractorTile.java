@@ -154,12 +154,12 @@ public class EnchantmentExtractorTile extends IndustrialProcessingTile<Enchantme
                     if (map.keySet().stream().allMatch(enchantmentHolder -> enchantmentHolder.is(EnchantmentTags.CURSE))) {
                         ItemStack output = input.copy();
                         ItemStackUtils.shrink(this.inputEnchantedItem, 0, 1);
-                        ItemUtil.insertItemReturnRemaining(this.outputNoEnchantedItem, output, false, null);
+                        ItemStackUtils.insertInternal(this.outputNoEnchantedItem, output, false);
                     } else if (map.keySet().size() == 1) {
                         ItemStack output = removeEnchantments(input, input.getDamageValue(), input.getCount());
                         ItemStackUtils.shrink(this.inputEnchantedItem, 0, 1);
-                        ItemUtil.insertItemReturnRemaining(this.outputNoEnchantedItem, output, false, null);
-                        ItemUtil.insertItemReturnRemaining(this.outputEnchantedBook, book, false, null);
+                        ItemStackUtils.insertInternal(this.outputNoEnchantedItem, output, false);
+                        ItemStackUtils.insertInternal(this.outputEnchantedBook, book, false);
                         ItemStackUtils.shrink(this.inputBook, 0, 1);
                     } else {
                         ItemEnchantments.Mutable cleanMap = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(input));
@@ -170,7 +170,7 @@ public class EnchantmentExtractorTile extends IndustrialProcessingTile<Enchantme
                         }
                         EnchantmentHelper.setEnchantments(input, cleanMap.toImmutable());
                         this.inputEnchantedItem.setStackInSlot(0, input); // getStackInSlot returns a copy
-                        ItemUtil.insertItemReturnRemaining(this.outputEnchantedBook, book, false, null);
+                        ItemStackUtils.insertInternal(this.outputEnchantedBook, book, false);
                         ItemStackUtils.shrink(this.inputBook, 0, 1);
                     }
                 }
@@ -178,7 +178,7 @@ public class EnchantmentExtractorTile extends IndustrialProcessingTile<Enchantme
                 int essence = getEnchantmentXp(input) * 20;
                 ItemStack output = removeEnchantments(input, input.getDamageValue(), input.getCount());
                 ItemStackUtils.shrink(this.inputEnchantedItem, 0, 1);
-                ItemUtil.insertItemReturnRemaining(this.outputNoEnchantedItem, output, false, null);
+                ItemStackUtils.insertInternal(this.outputNoEnchantedItem, output, false);
                 TankUtils.fillForced(this.tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), essence), false);
             }
         };

@@ -30,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 
 public class ItemStackUtils {
@@ -55,6 +56,22 @@ public class ItemStackUtils {
     public static void shrink(InventoryComponent<?> handler, int slot, int amount) {
         ItemStack stack = handler.getStackInSlot(slot);
         handler.setStackInSlot(slot, stack.getCount() > amount ? stack.copyWithCount(stack.getCount() - amount) : ItemStack.EMPTY);
+    }
+
+    /**
+     * Machine-internal insert into one of the machine's own inventories (a work result going into its output).
+     * Titanium's {@code InventoryComponent.isValid} applies the slot input filter to every insert, and the
+     * outputs use {@code setInputFilter(false)} to keep neighbours from inserting, so a plain
+     * {@code ItemUtil.insertItemReturnRemaining(output, ...)} always fails. The filter is lifted for this call only.
+     */
+    public static ItemStack insertInternal(InventoryComponent<?> inventory, ItemStack stack, boolean simulate) {
+        var filter = inventory.getInsertPredicate();
+        inventory.setInputFilter((s, slot) -> true);
+        try {
+            return ItemUtil.insertItemReturnRemaining(inventory, stack, simulate, null);
+        } finally {
+            inventory.setInputFilter(filter);
+        }
     }
 
     public static boolean isChorusFlower(ItemStack stack) {

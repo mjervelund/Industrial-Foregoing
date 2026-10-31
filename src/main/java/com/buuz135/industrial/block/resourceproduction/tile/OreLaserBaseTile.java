@@ -180,7 +180,7 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 .toList();
             if (!items.isEmpty()) {
                 ItemStack stack = WeightedRandom.getRandomItem(this.level.getRandom(), items, ItemStackWeightedItem::getWeight).get().getStack();
-                ItemUtil.insertItemReturnRemaining(output, stack, false, null);
+                ItemStackUtils.insertInternal(output, stack, false);
             }
         }
     }

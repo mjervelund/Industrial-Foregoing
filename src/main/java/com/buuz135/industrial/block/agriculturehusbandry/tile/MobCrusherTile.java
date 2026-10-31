@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
@@ -171,7 +172,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
                 .withParameter(LootContextParams.ATTACKING_ENTITY, player)
                 .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                 .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, player);
-        table.getRandomItems(context.create(LootContextParamSets.ENTITY)).forEach(stack -> ItemUtil.insertItemReturnRemaining(this.output, stack, false, null));
+        table.getRandomItems(context.create(LootContextParamSets.ENTITY)).forEach(stack -> ItemStackUtils.insertInternal(this.output, stack, false));
         List<ItemEntity> extra = new ArrayList<>();
         //Drop special items
         try {
@@ -185,7 +186,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
         }
         CommonHooks.onLivingDrops(entity, source, extra, true);
         extra.forEach(itemEntity -> {
-            ItemUtil.insertItemReturnRemaining(this.output, itemEntity.getItem(), false, null);
+            ItemStackUtils.insertInternal(this.output, itemEntity.getItem(), false);
             itemEntity.remove(Entity.RemovalReason.KILLED);
         });
         if (dropXP)

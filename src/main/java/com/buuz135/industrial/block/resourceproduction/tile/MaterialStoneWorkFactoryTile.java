@@ -317,7 +317,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
 
     @Override
     public boolean canIncrease() {
-        return getRecipe().map(recipe -> recipe.canIncrease(water, lava) && ItemUtil.insertItemReturnRemaining(inventoryGenerator, recipe.getOutput(), true, null).isEmpty()).orElse(false)
+        return getRecipe().map(recipe -> recipe.canIncrease(water, lava) && ItemStackUtils.insertInternal(inventoryGenerator, recipe.getOutput(), true).isEmpty()).orElse(false)
                 || process(inventoryThird, inventoryFourth, ACTION_RECIPES[fourthRecipeId], true)
                 || process(inventorySecond, inventoryThird, ACTION_RECIPES[thirdRecipeId], true)
                 || process(inventoryFirst, inventorySecond, ACTION_RECIPES[secondRecipeId], true)
@@ -376,7 +376,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             if (!process(inventoryThird, inventoryFourth, ACTION_RECIPES[fourthRecipeId], false) && !process(inventorySecond, inventoryThird, ACTION_RECIPES[thirdRecipeId], false) && !process(inventoryFirst, inventorySecond, ACTION_RECIPES[secondRecipeId], false) && !process(inventoryGenerator, inventoryFirst, ACTION_RECIPES[firstRecipeId], false)) {
                 getRecipe().ifPresent(recipe -> {
                     ItemStack output = recipe.getOutput();
-                    if (ItemUtil.insertItemReturnRemaining(inventoryGenerator, output, false, null).isEmpty()) {
+                    if (ItemStackUtils.insertInternal(inventoryGenerator, output, false).isEmpty()) {
                         recipe.consume(water, lava);
                     }
                 });
@@ -401,9 +401,9 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             if (inputStack.isEmpty()) continue;
             ItemStack outputStack = action.work.apply(this.level, inputStack.copy()).copy();
             if (outputStack.isEmpty()) continue;
-            if (ItemUtil.insertItemReturnRemaining(output, outputStack, true, null).isEmpty()) {
+            if (ItemStackUtils.insertInternal(output, outputStack, true).isEmpty()) {
                 if (!simulate) {
-                    ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
+                    ItemStackUtils.insertInternal(output, outputStack, false);
                     ItemStackUtils.shrink(input, slot, action.getShrinkAmount());
                 }
                 return true;

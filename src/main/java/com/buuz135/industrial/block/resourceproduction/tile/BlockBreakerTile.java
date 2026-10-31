@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
@@ -69,7 +70,7 @@ public class BlockBreakerTile extends IndustrialAreaWorkingTile<BlockBreakerTile
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.NETHERITE_PICKAXE));
                 if (this.level.getBlockState(pointed).getDestroySpeed(this.level, pointed) >= 0 && this.level.getBlockState(pointed).canHarvestBlock(this.level, pointed, fakePlayer)) {
                     for (ItemStack blockDrop : BlockUtils.getBlockDrops(this.level, pointed)) {
-                        ItemStack result = ItemUtil.insertItemReturnRemaining(output, blockDrop, false, null);
+                        ItemStack result = ItemStackUtils.insertInternal(output, blockDrop, false);
                         if (!result.isEmpty()) {
                             BlockUtils.spawnItemStack(result, this.level, pointed);
                         }

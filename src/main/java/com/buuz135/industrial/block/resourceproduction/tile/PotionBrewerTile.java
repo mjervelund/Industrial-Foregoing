@@ -179,7 +179,7 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
                 for (int i = 0; i < bottleAmount; i++) {
                     var stack = new ItemStack(Items.POTION);
                     stack.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY.withPotion(Potions.WATER));
-                    ItemUtil.insertItemReturnRemaining(this.output, stack, false, null);
+                    ItemStackUtils.insertInternal(this.output, stack, false);
                     ItemStackUtils.shrink(this.bottleInput, 0, 1);
                 }
                 ++this.state;

@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.SewageComposterConfig;
@@ -68,14 +69,14 @@ public class SewageComposterTile extends IndustrialProcessingTile<SewageComposte
 
     @Override
     public boolean canIncrease() {
-        return sewage.getFluidAmount() >= 1000 && ItemUtil.insertItemReturnRemaining(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), true, null).isEmpty();
+        return sewage.getFluidAmount() >= 1000 && ItemStackUtils.insertInternal(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), true).isEmpty();
     }
 
     @Override
     public Runnable onFinish() {
         return () -> {
             TankUtils.drainForced(sewage, 1000, false);
-            ItemUtil.insertItemReturnRemaining(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), false, null);
+            ItemStackUtils.insertInternal(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), false);
         };
     }
 

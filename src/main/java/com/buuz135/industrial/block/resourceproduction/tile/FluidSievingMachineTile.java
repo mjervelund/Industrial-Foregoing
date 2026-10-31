@@ -93,7 +93,7 @@ public class FluidSievingMachineTile extends IndustrialProcessingTile<FluidSievi
 
     @Override
     public boolean canIncrease() {
-        return this.input.getFluidAmount() >= 100 && !InventoryUtil.getStacks(this.sand).isEmpty() && ItemUtil.insertItemReturnRemaining(this.output, OreTitaniumFluidType.getOutputDust(this.input.getFluid()), true, null).isEmpty();
+        return this.input.getFluidAmount() >= 100 && !InventoryUtil.getStacks(this.sand).isEmpty() && ItemStackUtils.insertInternal(this.output, OreTitaniumFluidType.getOutputDust(this.input.getFluid()), true).isEmpty();
     }
 
     @Override
@@ -106,7 +106,7 @@ public class FluidSievingMachineTile extends IndustrialProcessingTile<FluidSievi
                 }
             }
             ItemStack output = OreTitaniumFluidType.getOutputDust(this.input.getFluid());
-            ItemUtil.insertItemReturnRemaining(this.output, output, false, null);
+            ItemStackUtils.insertInternal(this.output, output, false);
             TankUtils.drainForced(this.input, 100, false);
         };
     }

@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
@@ -103,7 +104,7 @@ public class ResourcefulFurnaceTile extends IndustrialProcessingTile<Resourceful
     public boolean canIncrease() {
         for (int i = 0; i < this.recipes.length; i++) {
             SmeltingRecipe recipe = this.recipes[i];
-            if (recipe != null && ItemUtil.insertItemReturnRemaining(output, recipe.assemble(new SingleRecipeInput(input.getStackInSlot(i))), true, null).isEmpty())
+            if (recipe != null && ItemStackUtils.insertInternal(output, recipe.assemble(new SingleRecipeInput(input.getStackInSlot(i))), true).isEmpty())
                 return true;
         }
         return false;
@@ -115,10 +116,10 @@ public class ResourcefulFurnaceTile extends IndustrialProcessingTile<Resourceful
             for (int i = 0; i < this.recipes.length; i++) {
                 SmeltingRecipe recipe = this.recipes[i];
                 ItemStack result = recipe == null ? ItemStack.EMPTY : recipe.assemble(new SingleRecipeInput(input.getStackInSlot(i)));
-                if (recipe != null && ItemUtil.insertItemReturnRemaining(output, result.copy(), true, null).isEmpty()) {
-                    if (ItemUtil.insertItemReturnRemaining(output, result.copy(), true, null).isEmpty()) {
+                if (recipe != null && ItemStackUtils.insertInternal(output, result.copy(), true).isEmpty()) {
+                    if (ItemStackUtils.insertInternal(output, result.copy(), true).isEmpty()) {
                         input.setStackInSlot(i, ItemStack.EMPTY);
-                        ItemUtil.insertItemReturnRemaining(output, result, false, null);
+                        ItemStackUtils.insertInternal(output, result, false);
                         TankUtils.fillForced(tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), (int) (recipe.experience() * 20)), false);
                     }
                 }

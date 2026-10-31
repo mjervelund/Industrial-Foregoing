@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
@@ -81,9 +82,9 @@ public class SludgeRefinerTile extends IndustrialProcessingTile<SludgeRefinerTil
         return () -> {
             Optional<Holder<Item>> optionalItem = BuiltInRegistries.ITEM.getRandomElementOf(IndustrialTags.Items.SLUDGE_OUTPUT, this.level.getRandom());
             optionalItem.ifPresent(item -> {
-                if (ItemUtil.insertItemReturnRemaining(output, new ItemStack(item), true, null).isEmpty()) {
+                if (ItemStackUtils.insertInternal(output, new ItemStack(item), true).isEmpty()) {
                     TankUtils.drainForced(sludge, 500, false);
-                    ItemUtil.insertItemReturnRemaining(output, new ItemStack(item), false, null);
+                    ItemStackUtils.insertInternal(output, new ItemStack(item), false);
                 }
             });
         };

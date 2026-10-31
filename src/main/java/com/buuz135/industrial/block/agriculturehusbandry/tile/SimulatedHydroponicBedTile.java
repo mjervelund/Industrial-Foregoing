@@ -1,5 +1,6 @@
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialWorkingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.SimulatedHydroponicBedConfig;
 import com.buuz135.industrial.item.HydroponicSimulationProcessorItem;
@@ -135,7 +136,7 @@ public class SimulatedHydroponicBedTile extends IndustrialWorkingTile<SimulatedH
                     }
 
                     // Add drops to output
-                    generatedDrops.forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
+                    generatedDrops.forEach(stack -> ItemStackUtils.insertInternal(output, stack, false));
                     return new WorkAction(1, SimulatedHydroponicBedConfig.powerPerOperation);
 
                 }

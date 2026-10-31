@@ -115,7 +115,7 @@ public class PlantGathererTile extends IndustrialAreaWorkingTile<PlantGathererTi
                         if (optional.isPresent()) {
                             List<ItemStack> drops = optional.get().doHarvestOperation(this.level, pointed, this.level.getBlockState(pointed));
                             TankUtils.fillForced(tank, new FluidStack(ModuleCore.SLUDGE.getSourceFluid().get(), 10 * drops.size()), false);
-                            drops.forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
+                            drops.forEach(stack -> ItemStackUtils.insertInternal(output, stack, false));
                             if (optional.get().shouldCheckNextPlant(this.level, pointed, this.level.getBlockState(pointed))) {
                                 increasePointer();
                             }

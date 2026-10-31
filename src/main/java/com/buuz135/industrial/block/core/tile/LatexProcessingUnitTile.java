@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.core.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.core.LatexProcessingUnitConfig;
@@ -69,7 +70,7 @@ public class LatexProcessingUnitTile extends IndustrialProcessingTile<LatexProce
 
     @Override
     public boolean canIncrease() {
-        return latex.getFluidAmount() >= AMOUNT_LATEX && water.getFluidAmount() >= AMOUNT_WATER && ItemUtil.insertItemReturnRemaining(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), true, null).isEmpty();
+        return latex.getFluidAmount() >= AMOUNT_LATEX && water.getFluidAmount() >= AMOUNT_WATER && ItemStackUtils.insertInternal(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), true).isEmpty();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class LatexProcessingUnitTile extends IndustrialProcessingTile<LatexProce
         return () -> {
             TankUtils.drain(latex, AMOUNT_LATEX, false);
             TankUtils.drain(water, AMOUNT_WATER, false);
-            ItemUtil.insertItemReturnRemaining(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), false, null);
+            ItemStackUtils.insertInternal(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), false);
         };
     }
 

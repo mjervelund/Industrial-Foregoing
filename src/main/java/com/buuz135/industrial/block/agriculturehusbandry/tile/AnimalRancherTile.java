@@ -87,13 +87,13 @@ public class AnimalRancherTile extends IndustrialAreaWorkingTile<AnimalRancherTi
                     ItemStack shears = new ItemStack(Items.SHEARS);
                     if (mob instanceof IShearable shearable && shearable.isShearable(player, shears, this.level, mob.blockPosition())) { //getPosition
                         List<ItemStack> items = shearable.onSheared(player, shears, this.level, mob.blockPosition()); //getPosition
-                        items.forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
+                        items.forEach(stack -> ItemStackUtils.insertInternal(output, stack, false));
                         if (items.size() > 0) {
                             return new WorkAction(0.35f, powerPerOperation);
                         }
                     }
                     if (mob instanceof Squid && !ItemStackUtils.isInventoryFull(output) && level.getRandom().nextBoolean() && level.getRandom().nextBoolean() && level.getRandom().nextBoolean() && level.getRandom().nextBoolean()) {
-                        ItemUtil.insertItemReturnRemaining(output, new ItemStack(Items.DYE.pick(DyeColor.BLACK)), false, null);
+                        ItemStackUtils.insertInternal(output, new ItemStack(Items.DYE.pick(DyeColor.BLACK)), false);
                         return new WorkAction(0.35f, powerPerOperation);
                     }
                     //BUCKET INTERACTION

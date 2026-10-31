@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.misc.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.misc.EnchantmentSorterConfig;
 import com.buuz135.industrial.module.ModuleMisc;
@@ -70,14 +71,14 @@ public class EnchantmentSorterTile extends IndustrialProcessingTile<EnchantmentS
 
     @Override
     public boolean canIncrease() {
-        return !input.getStackInSlot(0).isEmpty() && ((isEnchanted(input.getStackInSlot(0)) && ItemUtil.insertItemReturnRemaining(enchantedItems, input.getStackInSlot(0).copy(), true, null).isEmpty()) || (!isEnchanted(input.getStackInSlot(0)) && ItemUtil.insertItemReturnRemaining(noEnchanted, input.getStackInSlot(0).copy(), true, null).isEmpty()));
+        return !input.getStackInSlot(0).isEmpty() && ((isEnchanted(input.getStackInSlot(0)) && ItemStackUtils.insertInternal(enchantedItems, input.getStackInSlot(0).copy(), true).isEmpty()) || (!isEnchanted(input.getStackInSlot(0)) && ItemStackUtils.insertInternal(noEnchanted, input.getStackInSlot(0).copy(), true).isEmpty()));
     }
 
     @Override
     public Runnable onFinish() {
         return () -> {
             ItemStack stack = input.getStackInSlot(0).copy();
-            ItemUtil.insertItemReturnRemaining(isEnchanted(stack) ? enchantedItems : noEnchanted, stack, false, null);
+            ItemStackUtils.insertInternal(isEnchanted(stack) ? enchantedItems : noEnchanted, stack, false);
             input.setStackInSlot(0, ItemStack.EMPTY);
         };
     }

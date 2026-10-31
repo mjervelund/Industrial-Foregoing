@@ -201,7 +201,7 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
         increaseBar(inputBlue, blue);
         ColorUsage color = colorUsages[dye];
         ItemStack dye = new ItemStack(Items.DYE.pick(DyeColor.byId(this.dye)));
-        return red.getProgress() >= color.r && green.getProgress() >= color.g && blue.getProgress() >= color.b && ItemUtil.insertItemReturnRemaining(output, dye, true, null).isEmpty();
+        return red.getProgress() >= color.r && green.getProgress() >= color.g && blue.getProgress() >= color.b && ItemStackUtils.insertInternal(output, dye, true).isEmpty();
     }
 
     private void increaseBar(SidedInventoryComponent<DyeMixerTile> input, ProgressBarComponent bar) {
@@ -216,12 +216,12 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
     public Runnable onFinish() {
         return () -> {
             ItemStack dye = new ItemStack(Items.DYE.pick(DyeColor.byId(this.dye)));
-            if (ItemUtil.insertItemReturnRemaining(output, dye, true, null).isEmpty()) {
+            if (ItemStackUtils.insertInternal(output, dye, true).isEmpty()) {
                 ColorUsage color = colorUsages[this.dye];
                 red.setProgress(red.getProgress() - color.r);
                 green.setProgress(green.getProgress() - color.g);
                 blue.setProgress(blue.getProgress() - color.b);
-                ItemUtil.insertItemReturnRemaining(output, dye, false, null);
+                ItemStackUtils.insertInternal(output, dye, false);
                 markForUpdate();
             }
         };

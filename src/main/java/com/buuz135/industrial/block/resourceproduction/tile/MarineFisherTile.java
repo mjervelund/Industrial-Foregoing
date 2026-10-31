@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
@@ -75,7 +76,7 @@ public class MarineFisherTile extends IndustrialAreaWorkingTile<MarineFisherTile
                 fishingTable = this.level.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_TREASURE);
             }
             var lootParams = new LootParams.Builder((ServerLevel) this.level).withParameter(LootContextParams.ORIGIN, new Vec3(this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ())).withParameter(LootContextParams.TOOL, new ItemStack(Items.FISHING_ROD)).create(LootContextParamSets.FISHING);
-            fishingTable.getRandomItems(lootParams).forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
+            fishingTable.getRandomItems(lootParams).forEach(stack -> ItemStackUtils.insertInternal(output, stack, false));
             return new WorkAction(1f, powerPerOperation);
         }
         return new WorkAction(1f, 0);
