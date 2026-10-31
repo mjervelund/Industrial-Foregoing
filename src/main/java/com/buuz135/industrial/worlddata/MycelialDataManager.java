@@ -33,7 +33,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -144,7 +143,7 @@ public class MycelialDataManager extends SavedData {
         return compound;
     }
 
-    public static class GeneratorInfo implements INBTSerializable<CompoundTag> {
+    public static class GeneratorInfo {
 
         private long lastRun;
         private long lastTracked;
@@ -161,7 +160,6 @@ public class MycelialDataManager extends SavedData {
         public GeneratorInfo() {
         }
 
-        @Override
         public CompoundTag serializeNBT(HolderLookup.Provider provider) {
             CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.putLong("Run", lastRun);
@@ -171,7 +169,6 @@ public class MycelialDataManager extends SavedData {
             return compoundNBT;
         }
 
-        @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
             lastRun = nbt.getLongOr("Run", 0L);
             lastTracked = nbt.getLongOr("Track", 0L);

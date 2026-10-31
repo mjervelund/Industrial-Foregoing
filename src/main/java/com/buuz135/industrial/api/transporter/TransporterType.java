@@ -43,14 +43,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class TransporterType implements INBTSerializable<CompoundTag> {
+public class TransporterType {
 
     private IBlockContainer container;
     private TransporterTypeFactory factory;
@@ -203,14 +202,12 @@ public class TransporterType implements INBTSerializable<CompoundTag> {
             this.getLevel().getModelDataManager().requestRefresh((BlockEntity) getContainer());
     }
 
-    @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putBoolean("Insert", action == TransporterTypeFactory.TransporterAction.INSERT);
         return compoundNBT;
     }
 
-    @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         action = nbt.getBooleanOr("Insert", false) ? TransporterTypeFactory.TransporterAction.INSERT : TransporterTypeFactory.TransporterAction.EXTRACT;
     }

@@ -26,12 +26,11 @@ import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -54,9 +53,9 @@ public interface IMycelialGeneratorType {
 
     List<Predicate<FluidStack>> getTankInputPredicates();
 
-    boolean canStart(INBTSerializable<CompoundTag>[] inputs);
+    boolean canStart(ResourceHandler<?>[] inputs);
 
-    Pair<Integer, Integer> getTimeAndPowerGeneration(INBTSerializable<CompoundTag>[] inputs);
+    Pair<Integer, Integer> getTimeAndPowerGeneration(ResourceHandler<?>[] inputs);
 
     DyeColor[] getInputColors();
 

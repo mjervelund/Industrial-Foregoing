@@ -35,13 +35,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ConveyorUpgrade implements INBTSerializable<CompoundTag> {
+public abstract class ConveyorUpgrade {
 
     private IBlockContainer container;
     private ConveyorUpgradeFactory factory;
@@ -53,12 +52,10 @@ public abstract class ConveyorUpgrade implements INBTSerializable<CompoundTag> {
         this.side = side;
     }
 
-    @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         return null;
     }
 
-    @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 
     }

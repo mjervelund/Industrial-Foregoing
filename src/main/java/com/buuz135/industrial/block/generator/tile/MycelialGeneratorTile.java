@@ -32,11 +32,13 @@ import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.client.screen.addon.ProgressBarScreenAddon;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
+import com.hrznstudio.titanium.component.inventory.InventoryComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
@@ -46,7 +48,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -60,7 +62,7 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     @Save
     private int powerGeneration;
     private IMycelialGeneratorType type;
-    private INBTSerializable<CompoundTag>[] inputs;
+    private ResourceHandler<?>[] inputs;
     private ProgressBarComponent<MycelialGeneratorTile> bar;
     @Save
     private String owner;
@@ -69,7 +71,7 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
         super(basicTileBlock, blockPos, blockState);
         this.type = type;
         this.powerGeneration = 10;
-        this.inputs = new INBTSerializable[this.type.getInputs().length];
+        this.inputs = new ResourceHandler<?>[this.type.getInputs().length];
         for (int i = 0; i < this.type.getInputs().length; i++) {
             if (this.type.getInputs()[i] == IMycelialGeneratorType.Input.SLOT) {
                 SidedInventoryComponent<MycelialGeneratorTile> slot = (SidedInventoryComponent<MycelialGeneratorTile>) new SidedInventoryComponent<MycelialGeneratorTile>(this.type.getName() + ".input_" + i, 44 + i * 21, 22, 1, i)
@@ -153,16 +155,28 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         for (int i = 0; i < this.inputs.length; i++) {
-            output.store("input_" + i, CompoundTag.CODEC, this.inputs[i].serializeNBT(this.level.registryAccess()));
+            output.store("input_" + i, CompoundTag.CODEC, serializeInput(this.inputs[i], this.level.registryAccess()));
         }
     }
 
     @Override
     public void loadAdditional(ValueInput input) {
         for (int i = 0; i < this.inputs.length; i++) {
-            this.inputs[i].deserializeNBT(input.lookup(), input.read("input_" + i, CompoundTag.CODEC).orElseGet(CompoundTag::new));
+            deserializeInput(this.inputs[i], input.lookup(), input.read("input_" + i, CompoundTag.CODEC).orElseGet(CompoundTag::new));
         }
         super.loadAdditional(input);
+    }
+
+    // The inputs are Titanium inventory or tank components (NeoForge's INBTSerializable is gone in 26.3)
+    private static CompoundTag serializeInput(ResourceHandler<?> input, HolderLookup.Provider provider) {
+        if (input instanceof InventoryComponent<?> inventory) return inventory.serializeNBT(provider);
+        if (input instanceof FluidTankComponent<?> tank) return tank.serializeNBT(provider);
+        return new CompoundTag();
+    }
+
+    private static void deserializeInput(ResourceHandler<?> input, HolderLookup.Provider provider, CompoundTag tag) {
+        if (input instanceof InventoryComponent<?> inventory) inventory.deserializeNBT(provider, tag);
+        else if (input instanceof FluidTankComponent<?> tank) tank.deserializeNBT(provider, tag);
     }
 
     // MycelialGeneratorBlock#onRemove on 1.21; the block entity is already gone in affectNeighborsAfterRemoval

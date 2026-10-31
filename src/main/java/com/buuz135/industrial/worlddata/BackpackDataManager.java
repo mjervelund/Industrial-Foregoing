@@ -29,7 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
@@ -95,7 +94,7 @@ public class BackpackDataManager extends SavedData {
         return compound;
     }
 
-    public static class BackpackItemHandler implements IItemHandler, INBTSerializable<CompoundTag> {
+    public static class BackpackItemHandler implements IItemHandler {
 
         private List<SlotDefinition> definitionList;
         private int maxAmount;
@@ -110,7 +109,6 @@ public class BackpackDataManager extends SavedData {
             this.dataManager = manager;
         }
 
-        @Override
         public CompoundTag serializeNBT(HolderLookup.Provider provider) {
             CompoundTag slots = new CompoundTag();
             for (int i = 0; i < definitionList.size(); i++) {
@@ -122,7 +120,6 @@ public class BackpackDataManager extends SavedData {
             return output;
         }
 
-        @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
             CompoundTag slots = nbt.getCompoundOrEmpty("Slots");
             for (String s : slots.keySet()) {
@@ -209,7 +206,7 @@ public class BackpackDataManager extends SavedData {
         }
     }
 
-    public static class SlotDefinition implements INBTSerializable<CompoundTag> {
+    public static class SlotDefinition {
 
         private ItemStack stack;
         private int amount;
@@ -243,7 +240,6 @@ public class BackpackDataManager extends SavedData {
             parent.markDirty();
         }
 
-        @Override
         public CompoundTag serializeNBT(HolderLookup.Provider provider) {
             CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.put("Stack", stack.saveOptional(provider));
@@ -253,7 +249,6 @@ public class BackpackDataManager extends SavedData {
             return compoundNBT;
         }
 
-        @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
             this.stack = ItemStack.parseOptional(provider, nbt.getCompoundOrEmpty("Stack"));
             this.amount = nbt.getIntOr("Amount", 0);
