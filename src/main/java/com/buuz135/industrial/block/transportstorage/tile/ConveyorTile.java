@@ -27,6 +27,7 @@ import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
 import com.buuz135.industrial.block.transportstorage.ConveyorBlock;
 import com.buuz135.industrial.block.transportstorage.ConveyorBlock.EnumType;
+import com.buuz135.industrial.utils.TransferUtils;
 import com.buuz135.industrial.gui.conveyor.ContainerConveyor;
 import com.buuz135.industrial.module.ModuleTransportStorage;
 import com.buuz135.industrial.proxy.client.model.ConveyorModelData;
@@ -36,8 +37,13 @@ import com.hrznstudio.titanium.block.tile.ActiveTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -52,8 +58,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,7 +79,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
     private Map<Direction, ConveyorUpgrade> upgradeMap = new HashMap<>();
     private List<Integer> filter;
     private boolean sticky;
-    private FluidTank tank;
+    private ConveyorTank tank;
     private boolean needsFluidSync;
 
     public ConveyorTile(BlockPos blockPos, BlockState blockState) {
@@ -83,7 +89,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
         this.color = DyeColor.WHITE.getMapColor().col;
         this.filter = new ArrayList<>();
         this.sticky = false;
-        this.tank = new FluidTank(250);
+        this.tank = new ConveyorTank(250);
     }
 
     @Override
@@ -196,12 +202,12 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.saveAdditional(compound, provider);
-        compound.putString("Facing", facing.getSerializedName()); //getName
-        compound.putString("Type", type.getName());
-        compound.putInt("Color", color);
-        compound.putBoolean("Sticky", sticky);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putString("Facing", facing.getSerializedName()); //getName
+        output.putString("Type", type.getName());
+        output.putInt("Color", color);
+        output.putBoolean("Sticky", sticky);
         CompoundTag upgrades = new CompoundTag();
         for (Direction facing : Direction.values()) {
             if (!hasUpgrade(facing)) {
@@ -215,19 +221,19 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
                 upgradeTag.put("customNBT", customNBT);
             upgrades.put(facing.getSerializedName(), upgradeTag);
         }
-        compound.put("Upgrades", upgrades);
-        compound.put("Tank", tank.writeToNBT(provider, new CompoundTag()));
+        output.store("Upgrades", CompoundTag.CODEC, upgrades);
+        tank.serialize(output.child("Tank"));
     }
 
     @Override //read
-    public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.loadAdditional(compound, provider);
-        this.facing = Direction.byName(compound.getStringOr("Facing", ""));
-        this.type = ConveyorBlock.EnumType.getFromName(compound.getStringOr("Type", ""));
-        this.color = compound.getIntOr("Color", 0);
-        this.sticky = compound.getBooleanOr("Sticky", false);
-        if (compound.contains("Upgrades")) {
-            CompoundTag upgradesTag = compound.getCompoundOrEmpty("Upgrades");
+    public void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.facing = Direction.byName(input.getStringOr("Facing", ""));
+        this.type = ConveyorBlock.EnumType.getFromName(input.getStringOr("Type", ""));
+        this.color = input.getIntOr("Color", 0);
+        this.sticky = input.getBooleanOr("Sticky", false);
+        HolderLookup.Provider provider = input.lookup();
+        input.read("Upgrades", CompoundTag.CODEC).ifPresent(upgradesTag -> {
             //upgradeMap.clear();
             for (Direction facing : Direction.values()) {
                 if (!upgradesTag.contains(facing.getSerializedName()))
@@ -249,18 +255,16 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
                     upgradeMap.put(facing, upgrade);
                 }
             }
-        }
-        if (compound.contains("Tank")) {
-            this.tank = this.tank.readFromNBT(provider, compound.getCompoundOrEmpty("Tank"));
-        }
+        });
+        input.child("Tank").ifPresent(tank::deserialize);
     }
 
     public void markForUpdate() {
         super.markForUpdate();
         this.level.setBlockAndUpdate(worldPosition, this.level.getBlockState(worldPosition).setValue(FACING, facing).setValue(TYPE, type));
-        CompoundTag compoundTag = new CompoundTag();
-        saveAdditional(compoundTag, this.level.registryAccess());
-        this.loadAdditional(compoundTag, this.level.registryAccess()); //read
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, this.level.registryAccess());
+        saveAdditional(output);
+        this.loadAdditional(TagValueInput.create(ProblemReporter.DISCARDING, this.level.registryAccess(), output.buildResult())); //read
     }
 
     public List<AABB> getCollisionBoxes() {
@@ -297,7 +301,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
         return upgradeMap;
     }
 
-    public FluidTank getTank() {
+    public ConveyorTank getTank() {
         return tank;
     }
 
@@ -308,7 +312,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
             if (!state1.getValue(ConveyorBlock.TYPE).isVertical()) {
                 int amount = Math.max(tank.getFluidAmount() - 1, 1);
                 ConveyorTile conveyorTile = (ConveyorTile) level.getBlockEntity(this.worldPosition.relative(facing));
-                FluidStack drained = tank.drain(conveyorTile.getTank().fill(tank.drain(amount, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                FluidStack drained = TransferUtils.drain(tank, TransferUtils.fill(conveyorTile.getTank(), TransferUtils.drain(tank, amount, true), false), false);
                 if (!drained.isEmpty() && drained.getAmount() > 0) {
                     this.requestFluidSync();
                     conveyorTile.requestFluidSync();
@@ -362,4 +366,19 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
         return ModelData.builder().with(ConveyorModelData.UPGRADE_PROPERTY, new ConveyorModelData(new HashMap<>(upgradeMap))).build();
     }
 
+    // 1.21 FluidTank(250) replacement; keeps the getFluid/getFluidAmount accessors the upgrades and TESR use
+    public static class ConveyorTank extends FluidStacksResourceHandler {
+
+        public ConveyorTank(int capacity) {
+            super(1, capacity);
+        }
+
+        public FluidStack getFluid() {
+            return FluidUtil.getStack(this, 0);
+        }
+
+        public int getFluidAmount() {
+            return getAmountAsInt(0);
+        }
+    }
 }

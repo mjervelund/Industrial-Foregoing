@@ -3,10 +3,11 @@ package com.buuz135.industrial.block.transportstorage.transporter.filter;
 import com.buuz135.industrial.proxy.block.filter.IFilter;
 import com.buuz135.industrial.proxy.block.filter.RegulatorFilter;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemFilter extends RegulatorFilter<ItemStack, IItemHandler> {
+public class ItemFilter extends RegulatorFilter<ItemStack, ResourceHandler<ItemResource>> {
     public ItemFilter(int locX, int locY, int sizeX, int sizeY, int smallMultiplier, int bigMultiplier, int maxAmount, String label) {
         super(locX, locY, sizeX, sizeY, smallMultiplier, bigMultiplier, maxAmount, label);
     }
@@ -19,7 +20,7 @@ public class ItemFilter extends RegulatorFilter<ItemStack, IItemHandler> {
      * @return True if provided TYPE matches, false otherwise.
      */
     @Override
-    public boolean matches(ItemStack stack, IItemHandler handler) {
+    public boolean matches(ItemStack stack, ResourceHandler<ItemResource> handler) {
         if (isEmpty()) return !isWhitelisted();
 
         for (IFilter.GhostSlot slot : this.getFilterSlots())
@@ -36,7 +37,7 @@ public class ItemFilter extends RegulatorFilter<ItemStack, IItemHandler> {
      * @return Amount to extract, complying to the regulation rule.
      */
     @Override
-    public int getExtractAmount(ItemStack stack, IItemHandler handler) {
+    public int getExtractAmount(ItemStack stack, ResourceHandler<ItemResource> handler) {
         if (!matches(stack, handler)) return 0;
         if (isEmpty() || !isRegulated() || !isWhitelisted()) return stack.getCount();
 
@@ -49,10 +50,10 @@ public class ItemFilter extends RegulatorFilter<ItemStack, IItemHandler> {
      * @param stack ItemStack to check.
      * @param handler Capability of this filter.
      * @return Possible amount to insert, complying to the regulation rule.
-     * @implNote This method does not check for available space in the provided IItemHandler.
+     * @implNote This method does not check for available space in the provided item handler.
      */
     @Override
-    public int getInsertAmount(ItemStack stack, IItemHandler handler) {
+    public int getInsertAmount(ItemStack stack, ResourceHandler<ItemResource> handler) {
         if (!matches(stack, handler)) return 0;
         if (isEmpty() || !isRegulated() || !isWhitelisted()) return stack.getCount();
 
@@ -80,16 +81,16 @@ public class ItemFilter extends RegulatorFilter<ItemStack, IItemHandler> {
     }
 
     /**
-     * Used to get the amount of the item in the provided IItemHandler.
+     * Used to get the amount of the item in the provided item handler.
      * @param stack Item to look for.
      * @return Amount of the item.
      */
-    public int getStorageAmount(ItemStack stack, @NotNull IItemHandler handler) {
+    public int getStorageAmount(ItemStack stack, @NotNull ResourceHandler<ItemResource> handler) {
         int amount = 0;
 
-        for (int i = 0; i < handler.getSlots(); i++) {
-            if (ItemStack.isSameItem(handler.getStackInSlot(i), stack))
-                amount += handler.getStackInSlot(i).getCount();
+        for (int i = 0; i < handler.size(); i++) {
+            if (!stack.isEmpty() && handler.getResource(i).is(stack.getItem()))
+                amount += handler.getAmountAsInt(i);
         }
 
         return amount;

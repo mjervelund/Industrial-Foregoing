@@ -30,6 +30,7 @@ import com.buuz135.industrial.block.transportstorage.transporter.filter.ItemFilt
 import com.buuz135.industrial.proxy.block.filter.RegulatorFilter;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.buuz135.industrial.utils.Reference;
+import com.buuz135.industrial.utils.TransferUtils;
 import com.google.common.collect.Sets;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -48,8 +49,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -57,7 +59,7 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Set;
 
-public class TransporterWorldType extends FilteredTransporterType<ItemStack, IItemHandler> {
+public class TransporterWorldType extends FilteredTransporterType<ItemStack, ResourceHandler<ItemResource>> {
 
     private int extractSlot;
 
@@ -67,7 +69,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
     }
 
     @Override
-    public RegulatorFilter<ItemStack, IItemHandler> createFilter() {
+    public RegulatorFilter<ItemStack, ResourceHandler<ItemResource>> createFilter() {
         return new ItemFilter(20, 20, 5, 3, 16, 64, 1024 * 8, "");
     }
 
@@ -80,7 +82,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
 
         if (!(container instanceof TransporterTile)) return;
 
-        var origin = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, getPos().relative(this.getSide()), getSide().getOpposite());
+        var origin = getLevel().getCapability(Capabilities.Item.BLOCK, getPos().relative(this.getSide()), getSide().getOpposite());
         if (origin == null) return;
 
         if (getAction() == TransporterTypeFactory.TransporterAction.EXTRACT) {
@@ -90,19 +92,19 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
         }
     }
 
-    private void handleExtract(@NotNull IItemHandler origin) {
-        if (origin.getSlots() <= 0) return;
+    private void handleExtract(@NotNull ResourceHandler<ItemResource> origin) {
+        if (origin.size() <= 0) return;
 
-        if (extractSlot >= origin.getSlots()
-            || origin.getStackInSlot(extractSlot).isEmpty()
-            || !this.getFilter().canExtract(origin.getStackInSlot(extractSlot), origin)
+        if (extractSlot >= origin.size()
+            || ItemUtil.getStack(origin, extractSlot).isEmpty()
+            || !this.getFilter().canExtract(ItemUtil.getStack(origin, extractSlot), origin)
         ) findSlot(origin);
 
-        ItemStack extractSlotStack = origin.getStackInSlot(extractSlot);
+        ItemStack extractSlotStack = ItemUtil.getStack(origin, extractSlot);
         if (extractSlotStack.isEmpty() || !this.getFilter().canExtract(extractSlotStack, origin)) return;
 
         int amount = Math.min((int) Math.ceil(1 * getEfficiency()), this.getFilter().getExtractAmount(extractSlotStack, origin));
-        ItemStack extracted = origin.extractItem(extractSlot, amount, false);
+        ItemStack extracted = TransferUtils.extractItem(origin, extractSlot, amount, false);
         if (extracted.isEmpty()) return;
 
         ItemEntity item = new ItemEntity(getLevel(), getPos().getX() + 0.5, getPos().getY() + 0.2, getPos().getZ() + 0.5, extracted);
@@ -112,7 +114,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
         getLevel().addFreshEntity(item);
     }
 
-    private void handleInsert(IItemHandler origin)  {
+    private void handleInsert(ResourceHandler<ItemResource> origin)  {
         AABB aabb = new AABB(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), this.getPos().getX() + 1, this.getPos().getY() + 1, this.getPos().getZ() + 1);
         for (ItemEntity item : this.getLevel().getEntitiesOfClass(ItemEntity.class, aabb, EntitySelector.ENTITY_STILL_ALIVE)) {
             ItemStack stack = item.getItem().copy();
@@ -123,7 +125,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
             stack.setCount(Math.min(stack.getCount(), possibleAmount));
 
             int preInsertionCount = stack.getCount();
-            ItemStack insertItem = ItemHandlerHelper.insertItem(origin, stack, false);
+            ItemStack insertItem = ItemUtil.insertItemReturnRemaining(origin, stack, false, null);
             originStack.shrink(preInsertionCount - insertItem.getCount());
             if (originStack.isEmpty()) {
                 item.setItem(ItemStack.EMPTY);
@@ -134,9 +136,9 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
         }
     }
 
-    private void findSlot(@NotNull IItemHandler itemHandler) {
-        for (int i = this.extractSlot; i < itemHandler.getSlots(); i++) {
-            if (!itemHandler.getStackInSlot(i).isEmpty() && getFilter().canExtract(itemHandler.getStackInSlot(i), itemHandler)) {
+    private void findSlot(@NotNull ResourceHandler<ItemResource> itemHandler) {
+        for (int i = this.extractSlot; i < itemHandler.size(); i++) {
+            if (!ItemUtil.getStack(itemHandler, i).isEmpty() && getFilter().canExtract(ItemUtil.getStack(itemHandler, i), itemHandler)) {
                 this.extractSlot = i;
                 return;
             }
@@ -179,7 +181,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
 
         @Override
         public boolean canBeAttachedAgainst(Level world, BlockPos pos, Direction face) {
-            return world.getCapability(Capabilities.ItemHandler.BLOCK, pos, face) != null;
+            return world.getCapability(Capabilities.Item.BLOCK, pos, face) != null;
         }
 
         @Nonnull

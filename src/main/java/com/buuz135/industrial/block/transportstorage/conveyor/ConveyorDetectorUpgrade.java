@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.transportstorage.conveyor;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.api.IBlockContainer;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
@@ -135,7 +136,7 @@ public class ConveyorDetectorUpgrade extends ConveyorUpgrade {
     public void handleButtonInteraction(int buttonId, CompoundTag compound) {
         super.handleButtonInteraction(buttonId, compound);
         if (buttonId >= 0 && buttonId < filter.getFilter().length) {
-            this.filter.setFilter(buttonId, ItemStack.parseOptional(IFAttachments.registryAccess(), compound));
+            this.filter.setFilter(buttonId, ItemStackSerialization.load(IFAttachments.registryAccess(), compound));
             this.getContainer().requestSync();
         }
         if (buttonId == 16) {

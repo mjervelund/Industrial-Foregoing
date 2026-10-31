@@ -35,7 +35,9 @@ import com.buuz135.industrial.proxy.block.filter.IFilter;
 import com.buuz135.industrial.proxy.block.filter.ItemStackFilter;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.buuz135.industrial.utils.Reference;
+import com.buuz135.industrial.utils.TransferUtils;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -55,8 +57,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.IFluidTank;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -91,12 +92,12 @@ public class ConveyorInsertionUpgrade extends ConveyorUpgrade {
         if (getWorld().isClientSide())
             return;
         if (entity instanceof ItemEntity) {
-            getHandlerCapability(Capabilities.ItemHandler.BLOCK, Capabilities.ItemHandler.ENTITY_AUTOMATION).ifPresent(handler -> {
+            getHandlerCapability(Capabilities.Item.BLOCK, Capabilities.Item.ENTITY_AUTOMATION).ifPresent(handler -> {
                 if (getWorkingBox().bounds().move(getPos()).inflate(0.01).intersects(entity.getBoundingBox())) {
                     if (whitelist != filter.matches((ItemEntity) entity)) return;
                     ItemStack stack = ((ItemEntity) entity).getItem();
-                    for (int i = 0; i < handler.getSlots(); i++) {
-                        stack = handler.insertItem(i, stack, false);
+                    for (int i = 0; i < handler.size(); i++) {
+                        stack = ItemUtil.insertItemReturnRemaining(handler, i, stack, false, null);
                         if (stack.isEmpty()) {
                             ((ItemEntity) entity).setItem(ItemStack.EMPTY);
                             entity.remove(Entity.RemovalReason.KILLED);
@@ -116,10 +117,11 @@ public class ConveyorInsertionUpgrade extends ConveyorUpgrade {
         if (getWorld().isClientSide())
             return;
         if (getWorld().getGameTime() % 2 == 0 && getContainer() instanceof ConveyorTile) {
-            IFluidTank tank = ((ConveyorTile) getContainer()).getTank();
-            getHandlerCapability(Capabilities.FluidHandler.BLOCK, Capabilities.FluidHandler.ENTITY).ifPresent(fluidHandler -> {
-                if (!tank.drain(50, IFluidHandler.FluidAction.SIMULATE).isEmpty() && fluidHandler.fill(tank.drain(50, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.SIMULATE) > 0 && whitelist == filter.matches(tank.drain(50, IFluidHandler.FluidAction.SIMULATE))) {
-                    FluidStack drain = tank.drain(fluidHandler.fill(tank.drain(50, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+            ConveyorTile.ConveyorTank tank = ((ConveyorTile) getContainer()).getTank();
+            getHandlerCapability(Capabilities.Fluid.BLOCK, Capabilities.Fluid.ENTITY).ifPresent(fluidHandler -> {
+                FluidStack simulated = TransferUtils.drain(tank, 50, true);
+                if (!simulated.isEmpty() && TransferUtils.fill(fluidHandler, simulated, true) > 0 && whitelist == filter.matches(simulated)) {
+                    FluidStack drain = TransferUtils.drain(tank, TransferUtils.fill(fluidHandler, simulated, false), false);
                     if (!drain.isEmpty() && drain.getAmount() > 0) getContainer().requestFluidSync();
                 }
             });
@@ -195,7 +197,7 @@ public class ConveyorInsertionUpgrade extends ConveyorUpgrade {
     public void handleButtonInteraction(int buttonId, CompoundTag compound) {
         super.handleButtonInteraction(buttonId, compound);
         if (buttonId >= 0 && buttonId < filter.getFilter().length) {
-            this.filter.setFilter(buttonId, ItemStack.parseOptional(getWorld().registryAccess(), compound));
+            this.filter.setFilter(buttonId, ItemStackSerialization.load(getWorld().registryAccess(), compound));
             this.getContainer().requestSync();
         }
         if (buttonId == 16) {

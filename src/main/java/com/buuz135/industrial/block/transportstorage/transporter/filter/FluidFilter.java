@@ -3,11 +3,12 @@ package com.buuz135.industrial.block.transportstorage.transporter.filter;
 import com.buuz135.industrial.proxy.block.filter.IFilter;
 import com.buuz135.industrial.proxy.block.filter.RegulatorFilter;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class FluidFilter extends RegulatorFilter<FluidStack, IFluidHandler> {
+public class FluidFilter extends RegulatorFilter<FluidStack, ResourceHandler<FluidResource>> {
     public FluidFilter(int locX, int locY, int sizeX, int sizeY, int smallMultiplier, int bigMultiplier, int maxAmount, String label) {
         super(locX, locY, sizeX, sizeY, smallMultiplier, bigMultiplier, maxAmount, label);
     }
@@ -20,12 +21,12 @@ public class FluidFilter extends RegulatorFilter<FluidStack, IFluidHandler> {
      * @return True if provided FluidStack matches, false otherwise.
      */
     @Override
-    public boolean matches(FluidStack stack, IFluidHandler handler) {
+    public boolean matches(FluidStack stack, ResourceHandler<FluidResource> handler) {
         if (isEmpty()) return !isWhitelisted();
 
         for (IFilter.GhostSlot slot : this.getFilterSlots()) {
-            FluidStack original = FluidUtil.getFluidContained(slot.getStack()).orElse(null);
-            if (original != null && FluidStack.isSameFluidSameComponents(original, stack)) return isWhitelisted();
+            FluidStack original = FluidUtil.getFirstStackContained(slot.getStack());
+            if (!original.isEmpty() && FluidStack.isSameFluidSameComponents(original, stack)) return isWhitelisted();
         }
 
         return !isWhitelisted();
@@ -39,7 +40,7 @@ public class FluidFilter extends RegulatorFilter<FluidStack, IFluidHandler> {
      * @return Amount to extract, complying to the regulation rule.
      */
     @Override
-    public int getExtractAmount(FluidStack stack, IFluidHandler handler) {
+    public int getExtractAmount(FluidStack stack, ResourceHandler<FluidResource> handler) {
         if (!matches(stack, handler)) return 0;
         if (isEmpty() || !isRegulated() || !isWhitelisted()) return stack.getAmount();
 
@@ -55,7 +56,7 @@ public class FluidFilter extends RegulatorFilter<FluidStack, IFluidHandler> {
      * @return Possible amount to insert, complying to the regulation rule.
      */
     @Override
-    public int getInsertAmount(FluidStack stack, IFluidHandler handler) {
+    public int getInsertAmount(FluidStack stack, ResourceHandler<FluidResource> handler) {
         if (!matches(stack, handler)) return 0;
         if (isEmpty() || !isRegulated() || !isWhitelisted()) return stack.getAmount();
 
@@ -73,8 +74,8 @@ public class FluidFilter extends RegulatorFilter<FluidStack, IFluidHandler> {
         int amount = 0;
 
         for (IFilter.GhostSlot slot : this.getFilterSlots()) {
-            FluidStack original = FluidUtil.getFluidContained(slot.getStack()).orElse(null);
-            if (original != null && FluidStack.isSameFluidSameComponents(original, stack)) {
+            FluidStack original = FluidUtil.getFirstStackContained(slot.getStack());
+            if (!original.isEmpty() && FluidStack.isSameFluidSameComponents(original, stack)) {
                 if (!isRegulated()) return 1;
                 amount += slot.getAmount();
             }
@@ -84,16 +85,18 @@ public class FluidFilter extends RegulatorFilter<FluidStack, IFluidHandler> {
     }
 
     /**
-     * Used to get the amount of the item in the provided IFluidHandler.
+     * Used to get the amount of the item in the provided fluid handler.
      * @param stack Fluid to look for.
      * @return Amount of the item.
      */
-    public int getStorageAmount(FluidStack stack, @NotNull IFluidHandler handler) {
+    public int getStorageAmount(FluidStack stack, @NotNull ResourceHandler<FluidResource> handler) {
         int amount = 0;
 
-        for (int i = 0; i < handler.getTanks(); i++) {
-            if (handler.isFluidValid(i, stack) && FluidStack.isSameFluidSameComponents(handler.getFluidInTank(i), stack)) {
-                amount += handler.getFluidInTank(i).getAmount();
+        if (stack.isEmpty()) return amount;
+        FluidResource resource = FluidResource.of(stack);
+        for (int i = 0; i < handler.size(); i++) {
+            if (handler.isValid(i, resource) && handler.getResource(i).equals(resource)) {
+                amount += handler.getAmountAsInt(i);
             }
         }
 

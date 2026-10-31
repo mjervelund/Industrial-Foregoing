@@ -48,6 +48,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -202,8 +204,8 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         CompoundTag upgrades = new CompoundTag();
         for (Direction facing : Direction.values()) {
             if (!hasUpgrade(facing)) {
@@ -212,19 +214,19 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
             CompoundTag upgradeTag = new CompoundTag();
             TransporterType upgrade = getTransporterTypeMap().get(facing);
             upgradeTag.putString("factory", BuiltInRegistries.ITEM.getKey(upgrade.getFactory().getUpgradeItem()).toString());
-            CompoundTag customNBT = upgrade.serializeNBT(provider);
+            CompoundTag customNBT = upgrade.serializeNBT(this.level.registryAccess());
             if (customNBT != null)
                 upgradeTag.put("customNBT", customNBT);
             upgrades.put(facing.getSerializedName(), upgradeTag);
         }
-        compoundTag.put("Transporters", upgrades);
+        output.store("Transporters", CompoundTag.CODEC, upgrades);
     }
 
     @Override
-    public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.loadAdditional(compound, provider);
-        if (compound.contains("Transporters")) {
-            CompoundTag upgradesTag = compound.getCompoundOrEmpty("Transporters");
+    public void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        HolderLookup.Provider provider = input.lookup();
+        input.read("Transporters", CompoundTag.CODEC).ifPresent(upgradesTag -> {
             //upgradeMap.clear();
             for (Direction facing : Direction.values()) {
                 if (!upgradesTag.contains(facing.getSerializedName()))
@@ -246,7 +248,7 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
                     transporterTypeMap.put(facing, upgrade);
                 }
             }
-        }
+        });
     }
 
     public List<ItemStack> getInstalledAugments() {

@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.transportstorage.conveyor;
 
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.api.IBlockContainer;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
@@ -86,7 +87,7 @@ public class ConveyorBouncingUpgrade extends ConveyorUpgrade {
         super.handleEntity(entity);
         if (whitelist != filter.matches(entity)) return;
         Direction direction = this.getContainer().getBlockWorld().getBlockState(this.getContainer().getBlockPosition()).getValue(ConveyorBlock.FACING);
-        Vec3 vec3d = new Vec3(velocityHorizontal * direction.getNormal().getX(), velocityVertical, velocityHorizontal * direction.getNormal().getZ());
+        Vec3 vec3d = new Vec3(velocityHorizontal * direction.getUnitVec3i().getX(), velocityVertical, velocityHorizontal * direction.getUnitVec3i().getZ());
         double x = vec3d.x;
         double y = vec3d.y;
         double z = vec3d.z;
@@ -138,7 +139,7 @@ public class ConveyorBouncingUpgrade extends ConveyorUpgrade {
     public void handleButtonInteraction(int buttonId, CompoundTag compound) {
         super.handleButtonInteraction(buttonId, compound);
         if (buttonId >= 0 && buttonId < filter.getFilter().length) {
-            this.filter.setFilter(buttonId, ItemStack.parseOptional(IFAttachments.registryAccess(), compound));
+            this.filter.setFilter(buttonId, ItemStackSerialization.load(IFAttachments.registryAccess(), compound));
             this.getContainer().requestSync();
         }
         if (buttonId == 10) {

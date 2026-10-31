@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.transportstorage.conveyor;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.buuz135.industrial.api.IBlockContainer;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
@@ -76,12 +78,12 @@ public class ConveyorDroppingUpgrade extends ConveyorUpgrade {
         if (entity instanceof Player) return;
         if (whitelist != filter.matches(entity)) return;
         if (entity instanceof ItemEntity) {
-            var handler = getWorld().getCapability(Capabilities.ItemHandler.BLOCK, getPos().relative(Direction.DOWN), Direction.UP);
+            var handler = getWorld().getCapability(Capabilities.Item.BLOCK, getPos().relative(Direction.DOWN), Direction.UP);
             if (handler != null) {
                 if (getBoundingBox().bounds().move(getPos()).inflate(0.01).intersects(entity.getBoundingBox())) {
                     ItemStack stack = ((ItemEntity) entity).getItem();
-                    for (int i = 0; i < handler.getSlots(); i++) {
-                        stack = handler.insertItem(i, stack, false);
+                    for (int i = 0; i < handler.size(); i++) {
+                        stack = ItemUtil.insertItemReturnRemaining(handler, i, stack, false, null);
                         if (stack.isEmpty()) {
                             entity.remove(Entity.RemovalReason.KILLED);
                             break;
@@ -143,7 +145,7 @@ public class ConveyorDroppingUpgrade extends ConveyorUpgrade {
     public void handleButtonInteraction(int buttonId, CompoundTag compound) {
         super.handleButtonInteraction(buttonId, compound);
         if (buttonId >= 0 && buttonId < filter.getFilter().length) {
-            this.filter.setFilter(buttonId, ItemStack.parseOptional(IFAttachments.registryAccess(), compound));
+            this.filter.setFilter(buttonId, ItemStackSerialization.load(IFAttachments.registryAccess(), compound));
             this.getContainer().requestSync();
         }
         if (buttonId == 16) {

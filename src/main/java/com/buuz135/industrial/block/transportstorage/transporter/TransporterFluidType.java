@@ -32,6 +32,7 @@ import com.buuz135.industrial.proxy.client.render.TransporterTESR;
 import com.buuz135.industrial.utils.FluidUtils;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.buuz135.industrial.utils.Reference;
+import com.buuz135.industrial.utils.TransferUtils;
 import com.google.common.collect.Sets;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,6 +44,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -51,7 +53,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -61,7 +64,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class TransporterFluidType extends FilteredTransporterType<FluidStack, IFluidHandler> {
+public class TransporterFluidType extends FilteredTransporterType<FluidStack, ResourceHandler<FluidResource>> {
 
     public static final int QUEUE_SIZE = 6;
 
@@ -80,7 +83,7 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, IF
     }
 
     @Override
-    public RegulatorFilter<FluidStack, IFluidHandler> createFilter() {
+    public RegulatorFilter<FluidStack, ResourceHandler<FluidResource>> createFilter() {
         // Max 8192 Buckets - 8 192 000 mb.
         return new FluidFilter(20, 20, 5, 3, 50, 200, 8192000, "mb");
     }
@@ -98,14 +101,14 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, IF
         for (Direction direction : transporterTile.getTransporterTypeMap().keySet()) {
             TransporterType transporterType = transporterTile.getTransporterTypeMap().get(direction);
             if (transporterType instanceof TransporterFluidType fluidTransporter && transporterType.getAction() == TransporterTypeFactory.TransporterAction.INSERT) {
-                var origin = getLevel().getCapability(Capabilities.FluidHandler.BLOCK, getPos().relative(this.getSide()), getSide().getOpposite());
+                var origin = getLevel().getCapability(Capabilities.Fluid.BLOCK, getPos().relative(this.getSide()), getSide().getOpposite());
                 if (origin == null) continue;
 
-                var destination = getLevel().getCapability(Capabilities.FluidHandler.BLOCK, getPos().relative(direction), direction.getOpposite());
+                var destination = getLevel().getCapability(Capabilities.Fluid.BLOCK, getPos().relative(direction), direction.getOpposite());
                 if (destination == null) continue;
 
                 int possibleAmount = (int) Math.ceil(1000 * getEfficiency());
-                FluidStack simulatedStack = origin.drain(possibleAmount, IFluidHandler.FluidAction.SIMULATE);
+                FluidStack simulatedStack = TransferUtils.drain(origin, possibleAmount, true);
                 int filteredAmount = Math.min(
                     this.getFilter().getExtractAmount(simulatedStack, origin),
                     fluidTransporter.getFilter().getInsertAmount(simulatedStack, destination)
@@ -115,9 +118,9 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, IF
                 if (amount <= 0) continue;
                 simulatedStack.setAmount(amount);
 
-                int simulatedInserted = destination.fill(simulatedStack, IFluidHandler.FluidAction.SIMULATE);
+                int simulatedInserted = TransferUtils.fill(destination, simulatedStack, true);
                 if (simulatedInserted > 0) {
-                    destination.fill(origin.drain(simulatedInserted, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                    TransferUtils.fill(destination, TransferUtils.drain(origin, simulatedStack.copyWithAmount(simulatedInserted), false), false);
                     fluidTransporter.addTransferredStack(getSide(), simulatedStack);
                 }
             }
@@ -139,12 +142,12 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, IF
     }
 
     public void addTransferredStack(Direction direction, @NotNull FluidStack stack) {
-        syncRender(direction, (CompoundTag) stack.saveOptional(getLevel().registryAccess()));
+        syncRender(direction, (CompoundTag) FluidStack.OPTIONAL_CODEC.encodeStart(getLevel().registryAccess().createSerializationContext(NbtOps.INSTANCE), stack).result().orElseGet(CompoundTag::new));
     }
 
     @Override
     public void handleRenderSync(Direction origin, CompoundTag compoundNBT) {
-        this.queue.computeIfAbsent(origin, direction -> new ArrayList<>()).addFirst(FluidStack.parseOptional(getLevel().registryAccess(), compoundNBT));
+        this.queue.computeIfAbsent(origin, direction -> new ArrayList<>()).addFirst(FluidStack.OPTIONAL_CODEC.parse(getLevel().registryAccess().createSerializationContext(NbtOps.INSTANCE), compoundNBT).result().orElse(FluidStack.EMPTY));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -220,7 +223,7 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, IF
 
         @Override
         public boolean canBeAttachedAgainst(Level world, BlockPos pos, Direction face) {
-            return world.getCapability(Capabilities.FluidHandler.BLOCK, pos, face) != null;
+            return world.getCapability(Capabilities.Fluid.BLOCK, pos, face) != null;
         }
 
         @Nonnull
