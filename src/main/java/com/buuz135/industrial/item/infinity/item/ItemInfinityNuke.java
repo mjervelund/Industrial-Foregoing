@@ -60,7 +60,7 @@ public class ItemInfinityNuke extends ItemInfinity {
     public InteractionResult useOn(UseOnContext context) {
         InfinityNukeEntity entity = new InfinityNukeEntity(context.getLevel(), context.getPlayer(), context.getItemInHand().copy());
         BlockPos blockPos = context.getClickedPos().relative(context.getClickedFace());
-        entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
+        entity.snapTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         context.getPlayer().setItemInHand(context.getHand(), ItemStack.EMPTY);
         context.getLevel().addFreshEntity(entity);
         IndustrialForegoing.LOGGER.info(context.getPlayer().getUUID() + " (" + context.getPlayer().getDisplayName().toString() + ") placed an Infinity Nuke");

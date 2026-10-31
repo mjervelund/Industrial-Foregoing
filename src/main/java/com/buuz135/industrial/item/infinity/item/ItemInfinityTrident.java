@@ -57,10 +57,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -101,17 +101,8 @@ public class ItemInfinityTrident extends ItemInfinity {
     }
 
     @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        if (!stack.has(IFAttachments.INFINITY_TRIDENT_LOYALTY)) stack.set(IFAttachments.INFINITY_TRIDENT_LOYALTY, 0);
-        if (!stack.has(IFAttachments.INFINITY_TRIDENT_RIPTIDE)) stack.set(IFAttachments.INFINITY_TRIDENT_RIPTIDE, 0);
-        if (!stack.has(IFAttachments.INFINITY_TRIDENT_CHANNELING))
-            stack.set(IFAttachments.INFINITY_TRIDENT_CHANNELING, false);
-    }
-
-    @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.SPEAR;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.TRIDENT;
     }
 
 
@@ -141,7 +132,7 @@ public class ItemInfinityTrident extends ItemInfinity {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+    public boolean releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof Player) {
             Player playerentity = (Player) entityLiving;
             int i = this.getUseDuration(stack, entityLiving) - timeLeft;
@@ -196,8 +187,10 @@ public class ItemInfinityTrident extends ItemInfinity {
                     worldIn.playSound((Player) null, playerentity, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                     consumeFuel(stack);
                 }
+                return true;
             }
         }
+        return false;
     }
 
     //Trident stuff

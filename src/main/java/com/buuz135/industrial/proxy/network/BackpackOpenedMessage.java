@@ -41,7 +41,12 @@ public class BackpackOpenedMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(IPayloadContext context) {
+    protected void handleServerMessage(IPayloadContext context) {
+
+    }
+
+    @Override
+    public void handleClientMessage(IPayloadContext context) {
         context.enqueueWork(() -> {
             InfinityStackHolder.TARGET = new PlayerInventoryFinder.Target(finder, PlayerInventoryFinder.get(finder).get(), slot);
         });

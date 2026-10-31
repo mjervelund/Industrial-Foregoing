@@ -31,7 +31,7 @@ public class ItemStackInsideTileLocator extends LocatorInstance {
     }
 
     public Optional<?> locale(Player playerEntity) {
-        var tile = playerEntity.getCommandSenderWorld().getBlockEntity(blockPos);
+        var tile = playerEntity.level().getBlockEntity(blockPos);
         if (tile instanceof InfinityBackpackTile infinityBackpackTile) {
             return ItemStackHarnessRegistry.createItemStackHarness(infinityBackpackTile.getBackpack());
         }

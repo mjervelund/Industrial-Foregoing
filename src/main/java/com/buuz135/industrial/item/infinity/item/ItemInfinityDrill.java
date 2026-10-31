@@ -51,6 +51,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -97,7 +98,7 @@ public class ItemInfinityDrill extends ItemInfinity {
                         if (!tempState.is(BlockTags.MINEABLE_WITH_PICKAXE) && !tempState.is(BlockTags.MINEABLE_WITH_SHOVEL)) return;
                         if (tempState.getDestroySpeed(worldIn, blockPos) < 0) return;
                         var xp = EnchantmentHelper.processBlockExperience(serverLevel, stack, block.getExpDrop(tempState, worldIn, blockPos, worldIn.getBlockEntity(blockPos), entityLiving, stack));
-                        if (block.onDestroyedByPlayer(tempState, worldIn, blockPos, (Player) entityLiving, true, tempState.getFluidState())) {
+                        if (block.onDestroyedByPlayer(tempState, worldIn, blockPos, (Player) entityLiving, stack, true, tempState.getFluidState())) {
 
                             block.destroy(worldIn, blockPos, tempState);
                             //block.harvestBlock(worldIn, (PlayerEntity) entityLiving, blockPos, tempState, null, stack);

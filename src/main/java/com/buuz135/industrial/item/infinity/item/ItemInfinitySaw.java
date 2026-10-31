@@ -46,7 +46,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.minecraft.util.Prediction;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class ItemInfinitySaw extends ItemInfinity {
                             }
                             consumeFuel(stack);
                         }
-                        itemStacks.forEach(itemStack -> ItemHandlerHelper.giveItemToPlayer((Player) entityLiving, itemStack));
+                        itemStacks.forEach(itemStack -> ((Player) entityLiving).getInventory().placeItemBackInInventory(itemStack, Prediction.SERVER_ONLY));
                         return false;
                     }
                 } catch (ExecutionException e) {

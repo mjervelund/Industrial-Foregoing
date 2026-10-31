@@ -50,10 +50,10 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -98,12 +98,6 @@ public class ItemInfinityLauncher extends ItemInfinity {
     }
 
     @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        if (!stack.has(IFAttachments.PLUNGER_ACTION)) stack.set(IFAttachments.PLUNGER_ACTION, PlungerAction.RELEASE);
-    }
-
-    @Override
     public void addTooltipDetails(BasicItem.Key key, ItemStack stack, List<Component> tooltip, boolean advanced) {
         super.addTooltipDetails(key, stack, tooltip, advanced);
         PlungerAction action = getPlungerAction(stack);
@@ -111,7 +105,7 @@ public class ItemInfinityLauncher extends ItemInfinity {
     }
 
     public PlungerAction getPlungerAction(ItemStack stack) {
-        return stack.get(IFAttachments.PLUNGER_ACTION);
+        return stack.getOrDefault(IFAttachments.PLUNGER_ACTION, PlungerAction.RELEASE);
     }
 
     public void setPlungerAction(ItemStack stack, PlungerAction plungerAction) {
@@ -119,8 +113,8 @@ public class ItemInfinityLauncher extends ItemInfinity {
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.BOW;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.BOW;
     }
 
 
@@ -145,13 +139,13 @@ public class ItemInfinityLauncher extends ItemInfinity {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+    public boolean releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof Player) {
             int time = this.getUseDuration(stack, entityLiving) - timeLeft;
             float velo = getArrowVelocity(time);
             if (!((double) velo < 0.1D) && enoughFuel(stack)) {
                 Player playerentity = (Player) entityLiving;
-                playerentity.getCooldowns().addCooldown(this, 20);
+                playerentity.getCooldowns().addCooldown(stack, 20);
                 if (!worldIn.isClientSide()) {
                     InfinityLauncherProjectileEntity abstractarrowentity = new InfinityLauncherProjectileEntity(worldIn, playerentity, getPlungerAction(stack), getSelectedTier(stack).getRadius(), stack);
                     abstractarrowentity.shootFromRotation(playerentity, playerentity.xRotO, playerentity.yRotO, 0.0F, velo * 3.0F, 1.0F);
@@ -167,8 +161,10 @@ public class ItemInfinityLauncher extends ItemInfinity {
                 }
                 worldIn.playSound((Player) null, playerentity.getX(), playerentity.getY(), playerentity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (worldIn.getRandom().nextFloat() * 0.4F + 1.2F) + velo * 0.5F);
                 playerentity.awardStat(Stats.ITEM_USED.get(this));
+                return true;
             }
         }
+        return false;
     }
 
     @Override

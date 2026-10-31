@@ -37,7 +37,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 
 import javax.annotation.Nonnull;
@@ -92,13 +93,15 @@ public class InfinityBackpackTile extends BasicTile<InfinityBackpackTile> implem
             }
         }
         if (level.getGameTime() % 2 == 0 && (ItemInfinityBackpack.getPickUpMode(getBackpack()) == 2 || ItemInfinityBackpack.getPickUpMode(getBackpack()) == 0)) {
-            var handlerItem = getBackpack().getCapability(Capabilities.FluidHandler.ITEM);
+            var handlerItem = getBackpack().isEmpty() ? null : ItemAccess.forStack(getBackpack()).getCapability(Capabilities.Fluid.ITEM);
             if (handlerItem != null) {
                 for (ExperienceOrb entity : level.getEntitiesOfClass(ExperienceOrb.class, new AABB(getBlockPos()).inflate(5))) {
                     if (((ItemInfinityBackpack) ModuleTool.INFINITY_BACKPACK.get()).enoughFuel(getBackpack())) {
-                        if (handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), entity.getValue() * 20), IFluidHandler.FluidAction.SIMULATE) > 0) {
-                            handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), entity.getValue() * 20), IFluidHandler.FluidAction.EXECUTE);
-                            entity.remove(Entity.RemovalReason.KILLED);
+                        try (var transaction = Transaction.open(null)) {
+                            if (handlerItem.insert(FluidResource.of(ModuleCore.ESSENCE.getSourceFluid().get()), entity.getValue() * 20, transaction) > 0) {
+                                transaction.commit();
+                                entity.remove(Entity.RemovalReason.KILLED);
+                            }
                         }
                     }
                 }
@@ -158,7 +161,7 @@ public class InfinityBackpackTile extends BasicTile<InfinityBackpackTile> implem
         if (energy instanceof IScreenAddonProvider addonProvider) {
             addons.addAll(addonProvider.getScreenAddons());
         }
-        var fluidHandlerItem = this.backpack.getCapability(Capabilities.FluidHandler.ITEM);
+        var fluidHandlerItem = this.backpack.isEmpty() ? null : ItemAccess.forStack(this.backpack).getCapability(Capabilities.Fluid.ITEM);
         if (fluidHandlerItem instanceof IScreenAddonProvider addonProvider) {
             addons.addAll(addonProvider.getScreenAddons());
         }

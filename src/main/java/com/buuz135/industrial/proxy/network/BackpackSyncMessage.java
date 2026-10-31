@@ -42,7 +42,12 @@ public class BackpackSyncMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(IPayloadContext context) {
+    protected void handleServerMessage(IPayloadContext context) {
+
+    }
+
+    @Override
+    public void handleClientMessage(IPayloadContext context) {
         context.enqueueWork(() -> {
             BackpackDataManager.BackpackItemHandler handler = new BackpackDataManager.BackpackItemHandler(null);
             handler.deserializeNBT(context.player().level().registryAccess(), backpack);

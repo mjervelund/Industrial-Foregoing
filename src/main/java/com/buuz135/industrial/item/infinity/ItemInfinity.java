@@ -67,7 +67,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -82,7 +82,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -102,7 +103,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     private boolean usesArea;
 
     public ItemInfinity(String name, TitaniumTab group, Properties builder, int powerConsumption, int biofuelConsumption, boolean usesDepth) {
-        super(name, group, builder);
+        super(name, group, builder.enchantable(50));
         this.powerConsumption = powerConsumption;
         this.biofuelConsumption = biofuelConsumption;
         this.usesDepth = usesDepth;
@@ -127,7 +128,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     }
 
     public static boolean canCharge(ItemStack stack) {
-        return stack.getOrDefault(IFAttachments.INFINITY_ITEM_CAN_CHARGE, false);
+        return stack.getOrDefault(IFAttachments.INFINITY_ITEM_CAN_CHARGE, true);
     }
 
     public void addNbt(ItemStack stack, long power, int fuel, boolean special) {
@@ -135,16 +136,6 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
         stack.set(IFAttachments.INFINITY_ITEM_SPECIAL, special);
         stack.set(IFAttachments.INFINITY_ITEM_SELECTED_TIER, InfinityTier.getTierBraquet(power).getLeft());
         stack.set(IFAttachments.INFINITY_ITEM_CAN_CHARGE, true);
-    }
-
-    @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        if (!stack.has(IFAttachments.INFINITY_ITEM_POWER)) stack.set(IFAttachments.INFINITY_ITEM_POWER, 0L);
-        if (!stack.has(IFAttachments.INFINITY_ITEM_SPECIAL)) stack.set(IFAttachments.INFINITY_ITEM_SPECIAL, false);
-        if (!stack.has(IFAttachments.INFINITY_ITEM_SELECTED_TIER))
-            stack.set(IFAttachments.INFINITY_ITEM_SELECTED_TIER, InfinityTier.getTierBraquet(0).getLeft());
-        if (!stack.has(IFAttachments.INFINITY_ITEM_CAN_CHARGE)) stack.set(IFAttachments.INFINITY_ITEM_CAN_CHARGE, true);
     }
 
     @Override
@@ -162,22 +153,12 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return true;
+    public ItemUseAnimation getUseAnimation(ItemStack p_77661_1_) {
+        return ItemUseAnimation.BOW;
     }
 
     @Override
-    public int getEnchantmentValue() {
-        return 50;
-    }
-
-    @Override
-    public UseAnim getUseAnimation(ItemStack p_77661_1_) {
-        return UseAnim.BOW;
-    }
-
-    @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
         return true;
     }
 
@@ -223,11 +204,12 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
 
     public int getFuelFromStack(ItemStack stack) {
         int fuelAmount = 0;
-        var capability = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        if (stack.isEmpty()) return fuelAmount;
+        var capability = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
         if (capability != null) {
-            for (int i = 0; i < capability.getTanks(); i++) {
-                if (capability.getFluidInTank(i).is(ModuleCore.BIOFUEL.getSourceFluid())) {
-                    return capability.getFluidInTank(i).getAmount();
+            for (int i = 0; i < capability.size(); i++) {
+                if (capability.getResource(i).is(ModuleCore.BIOFUEL.getSourceFluid().get())) {
+                    return capability.getAmountAsInt(i);
                 }
             }
         }
@@ -254,11 +236,14 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     public void consumeFuel(ItemStack stack) {
         int level = EnchantmentHelper.getItemEnchantmentLevel(IFAttachments.registryAccess().holderOrThrow(Enchantments.UNBREAKING), stack);
         if (getFuelFromStack(stack) >= biofuelConsumption * (1D / (level + 1))) {
-            var capability = stack.getCapability(Capabilities.FluidHandler.ITEM);
+            var capability = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
             if (capability != null) {
-                for (int i = 0; i < capability.getTanks(); i++) {
-                    if (capability.getFluidInTank(i).is(ModuleCore.BIOFUEL.getSourceFluid())) {
-                        capability.drain(new FluidStack(ModuleCore.BIOFUEL.getSourceFluid(), biofuelConsumption * (1 / (level + 1))), IFluidHandler.FluidAction.EXECUTE);
+                for (int i = 0; i < capability.size(); i++) {
+                    if (capability.getResource(i).is(ModuleCore.BIOFUEL.getSourceFluid().get())) {
+                        try (var transaction = Transaction.open(null)) {
+                            capability.extract(FluidResource.of(ModuleCore.BIOFUEL.getSourceFluid().get()), biofuelConsumption * (1 / (level + 1)), transaction);
+                            transaction.commit();
+                        }
                         return;
                     }
                 }
@@ -322,7 +307,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
 
     @Override
     public Component getDisplayName() {
-        return getDescription().copy().withStyle(ChatFormatting.DARK_GRAY);
+        return Component.translatable(getDescriptionId()).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     @Nullable
@@ -421,8 +406,8 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
         return factory;
     }
 
-    public IFactory<InfinityTankStorage> getTankConstructor(ItemStack stack) {
-        return () -> new InfinityTankStorage(stack, new InfinityTankStorage.TankDefinition("biofuel", 1_000_000, 30, 20, fluidStack -> fluidStack.getFluid().isSame(ModuleCore.BIOFUEL.getSourceFluid().get()), true, true, FluidTankComponent.Type.NORMAL, new FluidStack(ModuleCore.BIOFUEL.getSourceFluid().get(), 1000)));
+    public IFactory<InfinityTankStorage> getTankConstructor(ItemAccess access) {
+        return () -> new InfinityTankStorage(access, new InfinityTankStorage.TankDefinition("biofuel", 1_000_000, 30, 20, fluidStack -> fluidStack.getFluid().isSame(ModuleCore.BIOFUEL.getSourceFluid().get()), true, true, FluidTankComponent.Type.NORMAL, new FluidStack(ModuleCore.BIOFUEL.getSourceFluid().get(), 1000)));
     }
 
     public IFactory<InfinityEnergyStorage> getEnergyConstructor(ItemAccess access) {
@@ -448,7 +433,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
 
             @Override
             public boolean canReceive() {
-                return access.getResource().getOrDefault(IFAttachments.INFINITY_ITEM_CAN_CHARGE.get(), false);
+                return access.getResource().getOrDefault(IFAttachments.INFINITY_ITEM_CAN_CHARGE.get(), true);
             }
         };
     }

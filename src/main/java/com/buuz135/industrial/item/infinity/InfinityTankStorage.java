@@ -7,120 +7,89 @@ import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.api.client.IScreenAddonProvider;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.transfer.ItemAccessResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class InfinityTankStorage implements IFluidHandlerItem, IScreenAddonProvider {
+/**
+ * Fluid tanks stored in the {@link IFAttachments#INFINITY_TANKS} component of an item, one compound per tank keyed by
+ * its name, holding the fluid under "Fluid" (the 1.21 FluidTank NBT layout, so existing items keep their contents).
+ * Reads and writes go through the capability's {@link ItemAccess}.
+ */
+public class InfinityTankStorage extends ItemAccessResourceHandler<FluidResource> implements IScreenAddonProvider {
 
+    private final List<TankDefinition> tanks;
 
-    private final ItemStack stack;
-    private List<TankDefinition> tanks;
-    private HashMap<String, FluidTank> tankMap;
-
-    public InfinityTankStorage(ItemStack stack, TankDefinition... tanks) {
-        this.stack = stack;
+    public InfinityTankStorage(ItemAccess access, TankDefinition... tanks) {
+        super(access, tanks.length);
         this.tanks = List.of(tanks);
-        this.tankMap = new HashMap<>();
-        var component = stack.getOrDefault(IFAttachments.INFINITY_TANKS, new CompoundTag());
-        for (TankDefinition tankDefinition : this.tanks) {
-            var tank = new FluidTank(tankDefinition.capacity(), tankDefinition.filter());
-            if (component.contains(tankDefinition.name())) {
-                tank = tank.readFromNBT(IFAttachments.registryAccess(), component.getCompoundOrEmpty(tankDefinition.name()));
-            }
-            tankMap.put(tankDefinition.name(), tank);
+    }
+
+    private static RegistryOps<Tag> ops() {
+        return IFAttachments.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+    }
+
+    private FluidStack getStored(ItemResource accessResource, int index) {
+        CompoundTag component = accessResource.get(IFAttachments.INFINITY_TANKS.get());
+        if (component == null) return FluidStack.EMPTY;
+        return component.getCompoundOrEmpty(tanks.get(index).name()).read("Fluid", FluidStack.OPTIONAL_CODEC, ops()).orElse(FluidStack.EMPTY);
+    }
+
+    @Override
+    protected FluidResource getResourceFrom(ItemResource accessResource, int index) {
+        return FluidResource.of(getStored(accessResource, index));
+    }
+
+    @Override
+    protected int getAmountFrom(ItemResource accessResource, int index) {
+        return getStored(accessResource, index).getAmount();
+    }
+
+    @Override
+    protected @Nullable ItemResource update(ItemResource accessResource, int index, FluidResource newResource, int newAmount) {
+        CompoundTag component = accessResource.getOrDefault(IFAttachments.INFINITY_TANKS.get(), new CompoundTag()).copy();
+        CompoundTag tank = new CompoundTag();
+        if (newAmount > 0 && !newResource.isEmpty()) {
+            tank.store("Fluid", FluidStack.OPTIONAL_CODEC, ops(), newResource.toStack(newAmount));
         }
+        component.put(tanks.get(index).name(), tank);
+        return accessResource.with(IFAttachments.INFINITY_TANKS.get(), component);
     }
 
     @Override
-    public ItemStack getContainer() {
-        return stack;
+    public boolean isValid(int index, FluidResource resource) {
+        return resource.isEmpty() || tanks.get(index).filter().test(resource.toStack(1));
     }
 
     @Override
-    public int getTanks() {
-        return this.tanks.size();
+    protected int getCapacity(int index, FluidResource resource) {
+        return tanks.get(index).capacity();
     }
 
     @Override
-    public FluidStack getFluidInTank(int i) {
-        return this.tankMap.get(this.tanks.get(i).name()).getFluid();
+    public int insert(int index, FluidResource resource, int amount, TransactionContext transaction) {
+        if (!tanks.get(index).insert()) return 0;
+        return super.insert(index, resource, amount, transaction);
     }
 
     @Override
-    public int getTankCapacity(int i) {
-        return tanks.get(i).capacity();
-    }
-
-    @Override
-    public boolean isFluidValid(int i, FluidStack fluidStack) {
-        return this.tankMap.get(this.tanks.get(i).name()).isFluidValid(fluidStack);
-    }
-
-    @Override
-    public int fill(FluidStack fluidStack, FluidAction fluidAction) {
-        for (TankDefinition tankDefinition : this.tanks) {
-            if (!tankDefinition.insert()) continue;
-            var tank = tankMap.get(tankDefinition.name());
-            var filled = tank.fill(fluidStack, fluidAction);
-            if (filled > 0) {
-                if (fluidAction.execute()) {
-                    save();
-                }
-                return filled;
-            }
-        }
-        return 0;
-    }
-
-    @Override
-    public FluidStack drain(FluidStack fluidStack, FluidAction fluidAction) {
-        for (TankDefinition tankDefinition : this.tanks) {
-            if (!tankDefinition.extract()) continue;
-            var tank = tankMap.get(tankDefinition.name());
-            var drained = tank.drain(fluidStack, fluidAction);
-            if (!drained.isEmpty()) {
-                if (fluidAction.execute()) {
-                    save();
-                }
-                return drained;
-            }
-        }
-        return FluidStack.EMPTY;
-    }
-
-    @Override
-    public FluidStack drain(int i, FluidAction fluidAction) {
-        for (TankDefinition tankDefinition : this.tanks) {
-            if (!tankDefinition.extract()) continue;
-            var tank = tankMap.get(tankDefinition.name());
-            var drained = tank.drain(i, fluidAction);
-            if (!drained.isEmpty()) {
-                if (fluidAction.execute()) {
-                    save();
-                }
-                return drained;
-            }
-        }
-        return FluidStack.EMPTY;
-    }
-
-    public void save() {
-        var component = new CompoundTag();
-        for (TankDefinition tankDefinition : this.tanks) {
-            var tank = tankMap.get(tankDefinition.name());
-            component.put(tankDefinition.name(), tank.writeToNBT(IFAttachments.registryAccess(), component.getCompoundOrEmpty(tankDefinition.name())));
-        }
-        this.stack.set(IFAttachments.INFINITY_TANKS, component);
+    public int extract(int index, FluidResource resource, int amount, TransactionContext transaction) {
+        if (!tanks.get(index).extract()) return 0;
+        return super.extract(index, resource, amount, transaction);
     }
 
     @OnlyIn(Dist.CLIENT)

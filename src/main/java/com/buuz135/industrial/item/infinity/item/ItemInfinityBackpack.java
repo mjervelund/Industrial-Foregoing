@@ -53,7 +53,7 @@ import com.hrznstudio.titanium.network.locator.instance.HeldStackLocatorInstance
 import com.hrznstudio.titanium.network.locator.instance.InventoryStackLocatorInstance;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -61,7 +61,9 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.util.Prediction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -76,7 +78,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -95,11 +97,12 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.util.TriState;
+import net.minecraft.util.TriState;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -150,13 +153,15 @@ public class ItemInfinityBackpack extends ItemInfinity {
                 ItemStack stack = target.getFinder().getStackGetter().apply(pickupXp.getEntity(), target.getSlot());
                 if (!stack.isEmpty()) {
                     if (stack.getItem() instanceof ItemInfinityBackpack && (getPickUpMode(stack) == 2 || getPickUpMode(stack) == 0)) {
-                        var handlerItem = stack.getCapability(Capabilities.FluidHandler.ITEM);
+                        var handlerItem = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
                         if (handlerItem != null) {
                             ExperienceOrb entity = pickupXp.getOrb();
-                            if (handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), entity.getValue() * 20), IFluidHandler.FluidAction.SIMULATE) > 0) {
-                                handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), entity.getValue() * 20), IFluidHandler.FluidAction.EXECUTE);
-                                entity.remove(Entity.RemovalReason.KILLED);
-                                pickupXp.setCanceled(true);
+                            try (var transaction = Transaction.open(null)) {
+                                if (handlerItem.insert(FluidResource.of(ModuleCore.ESSENCE.getSourceFluid().get()), entity.getValue() * 20, transaction) > 0) {
+                                    transaction.commit();
+                                    entity.remove(Entity.RemovalReason.KILLED);
+                                    pickupXp.setCanceled(true);
+                                }
                             }
                         }
                     }
@@ -260,28 +265,28 @@ public class ItemInfinityBackpack extends ItemInfinity {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, ServerLevel worldIn, Entity entityIn, @Nullable EquipmentSlot slot) {
         if (isMagnetEnabled(stack)) {
             for (ItemEntity itemEntity : entityIn.level().getEntitiesOfClass(ItemEntity.class, new AABB(entityIn.getX(), entityIn.getY(), entityIn.getY(), entityIn.getX(), entityIn.getY(), entityIn.getZ()).inflate(5))) {
-                if (entityIn.level().isClientSide() && enoughFuel(stack)) {
-                    if (itemEntity.onGround() && worldIn.getRandom().nextInt(5) < 1)
-                        itemEntity.level().addParticle(ParticleTypes.PORTAL, itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(), 0, -0.5, 0);
-                } else {
-                    if (!itemEntity.hasPickUpDelay() && enoughFuel(stack)) {
-                        itemEntity.teleportTo(entityIn.getX(), entityIn.getY(), entityIn.getZ());
-                        consumeFuel(stack);
-                    }
+                // inventoryTick is server-only in 26.3: the portal particles 1.21 spawned client side are sent from here
+                if (enoughFuel(stack) && itemEntity.onGround() && worldIn.getRandom().nextInt(5) < 1)
+                    worldIn.sendParticles(ParticleTypes.PORTAL, itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(), 0, 0, -0.5, 0, 1);
+                if (!itemEntity.hasPickUpDelay() && enoughFuel(stack)) {
+                    itemEntity.teleportTo(entityIn.getX(), entityIn.getY(), entityIn.getZ());
+                    consumeFuel(stack);
                 }
             }
         }
         if (!entityIn.level().isClientSide() && entityIn instanceof Player) {
             if (enoughFuel(stack)) {
-                var handlerItem = stack.getCapability(Capabilities.FluidHandler.ITEM);
+                var handlerItem = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
                 if ((((Player) entityIn).getFoodData().needsFood() || ((Player) entityIn).getFoodData().getSaturationLevel() < 10) && handlerItem != null) {
-                    for (int i = 0; i < handlerItem.getTanks(); i++) {
-                        FluidStack fluidStack = handlerItem.getFluidInTank(i);
-                        if (!fluidStack.isEmpty() && fluidStack.getAmount() >= 400) {
-                            handlerItem.drain(new FluidStack(ModuleCore.MEAT.getSourceFluid(), 400), IFluidHandler.FluidAction.EXECUTE);
+                    for (int i = 0; i < handlerItem.size(); i++) {
+                        if (!handlerItem.getResource(i).isEmpty() && handlerItem.getAmountAsInt(i) >= 400) {
+                            try (var transaction = Transaction.open(null)) {
+                                handlerItem.extract(FluidResource.of(ModuleCore.MEAT.getSourceFluid().get()), 400, transaction);
+                                transaction.commit();
+                            }
                             ((Player) entityIn).getFoodData().eat(1, 1);
                             consumeFuel(stack);
                         }
@@ -319,13 +324,13 @@ public class ItemInfinityBackpack extends ItemInfinity {
                 }
             }
         }
-        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+        super.inventoryTick(stack, worldIn, entityIn, slot);
     }
 
     @Override
-    public IFactory<InfinityTankStorage> getTankConstructor(ItemStack stack) {
+    public IFactory<InfinityTankStorage> getTankConstructor(ItemAccess access) {
         int y = 88;
-        return () -> new InfinityTankStorage(stack,
+        return () -> new InfinityTankStorage(access,
                 new InfinityTankStorage.TankDefinition("biofuel", 1_000_000, -21, y + 25 * 0, fluidStack -> fluidStack.getFluid().isSame(ModuleCore.BIOFUEL.getSourceFluid().get()), true, true, FluidTankComponent.Type.SMALL, new FluidStack(ModuleCore.BIOFUEL.getSourceFluid().get(), 1000)),
                 new InfinityTankStorage.TankDefinition("essence", 1_000_000, -21, y + 25 * 1, fluidStack -> fluidStack.is(IndustrialTags.Fluids.EXPERIENCE), true, true, FluidTankComponent.Type.SMALL, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), 1000)),
                 new InfinityTankStorage.TankDefinition("meat", 1_000_000, -21, y + 25 * 2, fluidStack -> fluidStack.getFluid().isSame(ModuleCore.MEAT.getSourceFluid().get()), false, true, FluidTankComponent.Type.SMALL, new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 1000))
@@ -439,11 +444,6 @@ public class ItemInfinityBackpack extends ItemInfinity {
     }
 
     @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-    }
-
-    @Override
     public boolean enoughFuel(ItemStack stack) {
         int i = EnchantmentHelper.getItemEnchantmentLevel(IFAttachments.registryAccess().holderOrThrow(Enchantments.UNBREAKING), stack);
         return getFuelFromStack(stack) >= FUEL_CONSUMPTION * (1 / (i + 1));
@@ -453,21 +453,19 @@ public class ItemInfinityBackpack extends ItemInfinity {
     public void consumeFuel(ItemStack stack) {
         int level = EnchantmentHelper.getItemEnchantmentLevel(IFAttachments.registryAccess().holderOrThrow(Enchantments.UNBREAKING), stack);
         if (getFuelFromStack(stack) >= FUEL_CONSUMPTION * (1 / (level + 1))) {
-            var capability = stack.getCapability(Capabilities.FluidHandler.ITEM);
+            var capability = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
             if (capability != null) {
-                for (int i = 0; i < capability.getTanks(); i++) {
-                    if (capability.getFluidInTank(i).is(ModuleCore.BIOFUEL.getSourceFluid())) {
-                        capability.drain(new FluidStack(ModuleCore.BIOFUEL.getSourceFluid(), FUEL_CONSUMPTION * (1 / (level + 1))), IFluidHandler.FluidAction.EXECUTE);
+                for (int i = 0; i < capability.size(); i++) {
+                    if (capability.getResource(i).is(ModuleCore.BIOFUEL.getSourceFluid().get())) {
+                        try (var transaction = Transaction.open(null)) {
+                            capability.extract(FluidResource.of(ModuleCore.BIOFUEL.getSourceFluid().get()), FUEL_CONSUMPTION * (1 / (level + 1)), transaction);
+                            transaction.commit();
+                        }
                         return;
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return true;
     }
 
     @Override
@@ -585,7 +583,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
     public InteractionResult useOn(UseOnContext context) {
         InteractionResult interactionresult = this.place(new BlockPlaceContext(context));
         if (!interactionresult.consumesAction() && context.getItemInHand().has(DataComponents.FOOD)) {
-            InteractionResult interactionresult1 = super.use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
+            InteractionResult interactionresult1 = super.use(context.getLevel(), context.getPlayer(), context.getHand());
             return interactionresult1 == InteractionResult.CONSUME ? InteractionResult.CONSUME : interactionresult1;
         } else {
             return interactionresult;
@@ -627,7 +625,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                     level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, context.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                     level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
                     itemstack.consume(1, player);
-                    return InteractionResult.sidedSuccess(level.isClientSide());
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
@@ -680,19 +678,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
             if (blockentity instanceof InfinityBackpackTile infinityBackpackTile) {
                 infinityBackpackTile.setBackpack(stack.copy());
             }
-            CustomData customdata = (CustomData) stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
-            if (!customdata.isEmpty()) {
-
-                if (blockentity != null) {
-                    if (!level.isClientSide() && blockentity.onlyOpCanSetNbt() && (player == null || !player.canUseGameMasterBlocks())) {
-                        return false;
-                    }
-
-                    return customdata.loadInto(blockentity, level.registryAccess());
-                }
-            }
-
-            return false;
+            return BlockItem.updateCustomBlockEntityTag(level, player, pos, stack);
         }
     }
 }

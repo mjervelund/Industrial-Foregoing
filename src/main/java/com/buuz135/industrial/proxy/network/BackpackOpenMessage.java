@@ -51,7 +51,7 @@ public class BackpackOpenMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(IPayloadContext context) {
+    protected void handleServerMessage(IPayloadContext context) {
         context.enqueueWork(() -> {
             Player entity = context.player();
             ItemInfinityBackpack.findFirstBackpack(entity).ifPresent(target -> {
@@ -65,22 +65,22 @@ public class BackpackOpenMessage extends Message {
                     String id = stack.get(IFAttachments.INFINITY_BACKPACK_ID);
                     if (forceDisable) {
                         ItemInfinityBackpack.setPickUpMode(stack, 3);
-                        entity.displayClientMessage(Component.translatable("tooltip.industrialforegoing.backpack.pickup_disabled").withStyle(ChatFormatting.RED), true);
+                        entity.sendOverlayMessage(Component.translatable("tooltip.industrialforegoing.backpack.pickup_disabled").withStyle(ChatFormatting.RED));
                     } else if (entity.isShiftKeyDown()) {
                         int mode = (ItemInfinityBackpack.getPickUpMode(stack) + 1) % 4;
                         ItemInfinityBackpack.setPickUpMode(stack, mode);
                         switch (mode) {
                             case 0:
-                                entity.displayClientMessage(Component.translatable("tooltip.industrialforegoing.backpack.pickup_all").withStyle(ChatFormatting.GREEN), true);
+                                entity.sendOverlayMessage(Component.translatable("tooltip.industrialforegoing.backpack.pickup_all").withStyle(ChatFormatting.GREEN));
                                 return;
                             case 1:
-                                entity.displayClientMessage(Component.translatable("tooltip.industrialforegoing.backpack.item_pickup_enabled").withStyle(ChatFormatting.GREEN), true);
+                                entity.sendOverlayMessage(Component.translatable("tooltip.industrialforegoing.backpack.item_pickup_enabled").withStyle(ChatFormatting.GREEN));
                                 return;
                             case 2:
-                                entity.displayClientMessage(Component.translatable("tooltip.industrialforegoing.backpack.xp_pickup_enabled").withStyle(ChatFormatting.GREEN), true);
+                                entity.sendOverlayMessage(Component.translatable("tooltip.industrialforegoing.backpack.xp_pickup_enabled").withStyle(ChatFormatting.GREEN));
                                 return;
                             default:
-                                entity.displayClientMessage(Component.translatable("tooltip.industrialforegoing.backpack.pickup_disabled").withStyle(ChatFormatting.RED), true);
+                                entity.sendOverlayMessage(Component.translatable("tooltip.industrialforegoing.backpack.pickup_disabled").withStyle(ChatFormatting.RED));
                         }
                     } else {
                         ItemInfinityBackpack.sync(entity.level(), id, serverPlayer);
