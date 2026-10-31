@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.AnimalFeederConfig;
@@ -33,7 +34,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -63,21 +64,20 @@ public class AnimalFeederTile extends IndustrialAreaWorkingTile<AnimalFeederTile
         if (hasEnergy(powerPerOperation)) {
             List<Animal> mobs = this.level.getEntitiesOfClass(Animal.class, getWorkingArea().bounds());
             if (mobs.size() == 0 || mobs.size() > AnimalFeederConfig.maxAnimalInTheArea) return new WorkAction(1, 0);
-            mobs.removeIf(animalEntity -> animalEntity.getAge() != 0 || !animalEntity.canFallInLove() || getFeedingItem(animalEntity).isEmpty());
+            mobs.removeIf(animalEntity -> animalEntity.getAge() != 0 || !animalEntity.canFallInLove() || getFeedingSlot(animalEntity) < 0);
             for (Animal firstParent : mobs) {
                 for (Animal secondParent : mobs) {
                     if (firstParent.equals(secondParent) || !firstParent.getClass().equals(secondParent.getClass()))
                         continue;
-                    ItemStack stack = getFeedingItem(firstParent);
-                    ItemStack original = stack.copy();
-                    stack.shrink(1);
-                    stack = getFeedingItem(secondParent);
-                    if (stack.isEmpty()) {
-                        original.setCount(1);
-                        ItemHandlerHelper.insertItem(input, original, false);
+                    int firstSlot = getFeedingSlot(firstParent);
+                    ItemStack original = input.getStackInSlot(firstSlot).copyWithCount(1);
+                    ItemStackUtils.shrink(input, firstSlot, 1);
+                    int secondSlot = getFeedingSlot(secondParent);
+                    if (secondSlot < 0) {
+                        ItemUtil.insertItemReturnRemaining(input, original, false, null);
                         continue;
                     }
-                    stack.shrink(1);
+                    ItemStackUtils.shrink(input, secondSlot, 1);
                     firstParent.setInLove(null);
                     secondParent.setInLove(null);
                     return new WorkAction(0.5f, powerPerOperation);
@@ -87,11 +87,11 @@ public class AnimalFeederTile extends IndustrialAreaWorkingTile<AnimalFeederTile
         return new WorkAction(1, 0);
     }
 
-    private ItemStack getFeedingItem(Animal entity) {
+    private int getFeedingSlot(Animal entity) {
         for (int i = 0; i < input.getSlots(); i++) {
-            if (entity.isFood(input.getStackInSlot(i))) return input.getStackInSlot(i);
+            if (entity.isFood(input.getStackInSlot(i))) return i;
         }
-        return ItemStack.EMPTY;
+        return -1;
     }
 
     @Override

@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.SlaughterFactoryConfig;
@@ -43,7 +44,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -84,8 +84,8 @@ public class SlaughterFactoryTile extends IndustrialAreaWorkingTile<SlaughterFac
                 float currentHealth = entity.getHealth();
                 entity.remove(Entity.RemovalReason.KILLED);
                 if (!entity.isAlive()) {
-                    meat.fillForced(new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), entity instanceof Animal ? (int) (currentHealth) : (int) currentHealth * 20), IFluidHandler.FluidAction.EXECUTE);
-                    pinkSlime.fillForced(new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), entity instanceof Animal ? (int) (currentHealth * 20) : (int) currentHealth), IFluidHandler.FluidAction.EXECUTE);
+                    TankUtils.fillForced(meat, new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), entity instanceof Animal ? (int) (currentHealth) : (int) currentHealth * 20), false);
+                    TankUtils.fillForced(pinkSlime, new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), entity instanceof Animal ? (int) (currentHealth * 20) : (int) currentHealth), false);
                     return new WorkAction(0.2f, powerPerOperation);
                 }
             }

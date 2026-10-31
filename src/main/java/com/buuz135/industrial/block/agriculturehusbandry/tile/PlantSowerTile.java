@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.PlantSowerConfig;
@@ -93,10 +94,12 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
         if (isLoaded(pos) && (this.level.isEmptyBlock(pos) || this.level.getBlockState(pos).is(Blocks.WATER)) && hasEnergy(powerPerOperation)) {
             int slot = getFilteredSlot(pos);
             ItemStack stack = ItemStack.EMPTY;
+            int stackSlot = -1;
             for (int i = 0; i < input.getInventory().getSlots(); i++) {
                 if (input.getInventory().getStackInSlot(i).isEmpty()) continue;
                 if (filter.getFilterSlots()[slot].getFilter().isEmpty() || ItemStack.isSameItem(filter.getFilterSlots()[slot].getFilter(), input.getInventory().getStackInSlot(i))) {
                     stack = input.getInventory().getStackInSlot(i);
+                    stackSlot = i;
                     break;
                 }
             }
@@ -109,14 +112,14 @@ public class PlantSowerTile extends IndustrialAreaWorkingTile<PlantSowerTile> {
             ) {
                 BlockState blockstate1 = blockItem.getBlock().defaultBlockState();
                 level.setBlockAndUpdate(pos, blockstate1);
-                stack.shrink(1);
+                ItemStackUtils.shrink(input.getInventory(), stackSlot, 1);
                 increasePointer();
                 return new WorkAction(0.2f, powerPerOperation);
             }
             
             if (!stack.isEmpty() && stack.getItem() instanceof SpecialPlantable specialPlantable && specialPlantable.canPlacePlantAtPosition(stack, level, pos.below(), Direction.UP)) {
                 specialPlantable.spawnPlantAtPosition(stack, level, pos.below(), Direction.UP);
-                stack.shrink(1);
+                ItemStackUtils.shrink(input.getInventory(), stackSlot, 1);
                 increasePointer();
                 return new WorkAction(0.2f, powerPerOperation);
             }

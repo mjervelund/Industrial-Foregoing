@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
@@ -36,17 +37,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Squid;
+import net.minecraft.world.entity.animal.squid.Squid;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -87,13 +87,13 @@ public class AnimalRancherTile extends IndustrialAreaWorkingTile<AnimalRancherTi
                     ItemStack shears = new ItemStack(Items.SHEARS);
                     if (mob instanceof IShearable shearable && shearable.isShearable(player, shears, this.level, mob.blockPosition())) { //getPosition
                         List<ItemStack> items = shearable.onSheared(player, shears, this.level, mob.blockPosition()); //getPosition
-                        items.forEach(stack -> ItemHandlerHelper.insertItem(output, stack, false));
+                        items.forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
                         if (items.size() > 0) {
                             return new WorkAction(0.35f, powerPerOperation);
                         }
                     }
                     if (mob instanceof Squid && !ItemStackUtils.isInventoryFull(output) && level.getRandom().nextBoolean() && level.getRandom().nextBoolean() && level.getRandom().nextBoolean() && level.getRandom().nextBoolean()) {
-                        ItemHandlerHelper.insertItem(output, new ItemStack(Items.BLACK_DYE), false);
+                        ItemUtil.insertItemReturnRemaining(output, new ItemStack(Items.DYE.pick(DyeColor.BLACK)), false, null);
                         return new WorkAction(0.35f, powerPerOperation);
                     }
                     //BUCKET INTERACTION
@@ -101,9 +101,9 @@ public class AnimalRancherTile extends IndustrialAreaWorkingTile<AnimalRancherTi
                         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
                         if (((Animal) mob).mobInteract(player, InteractionHand.MAIN_HAND).consumesAction()) { //ProcessInteract
                             ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-                            IFluidHandlerItem fluidHandlerItem = stack.getCapability(Capabilities.FluidHandler.ITEM);
-                            if (fluidHandlerItem != null) {
-                                tank.fillForced(fluidHandlerItem.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                            FluidStack contained = FluidUtil.getFirstStackContained(stack);
+                            if (!contained.isEmpty()) {
+                                TankUtils.fillForced(tank, contained, false);
                                 player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                                 return new WorkAction(0.35f, powerPerOperation);
                             }

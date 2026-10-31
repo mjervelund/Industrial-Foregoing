@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
@@ -75,8 +76,7 @@ import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -171,7 +171,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
                 .withParameter(LootContextParams.ATTACKING_ENTITY, player)
                 .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                 .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, player);
-        table.getRandomItems(context.create(LootContextParamSets.ENTITY)).forEach(stack -> ItemHandlerHelper.insertItem(this.output, stack, false));
+        table.getRandomItems(context.create(LootContextParamSets.ENTITY)).forEach(stack -> ItemUtil.insertItemReturnRemaining(this.output, stack, false, null));
         List<ItemEntity> extra = new ArrayList<>();
         //Drop special items
         try {
@@ -185,11 +185,11 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
         }
         CommonHooks.onLivingDrops(entity, source, extra, true);
         extra.forEach(itemEntity -> {
-            ItemHandlerHelper.insertItem(this.output, itemEntity.getItem(), false);
+            ItemUtil.insertItemReturnRemaining(this.output, itemEntity.getItem(), false, null);
             itemEntity.remove(Entity.RemovalReason.KILLED);
         });
         if (dropXP)
-            this.tank.fillForced(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), experience * 20), IFluidHandler.FluidAction.EXECUTE);
+            TankUtils.fillForced(this.tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), experience * 20), false);
         entity.setHealth(0);
         entity.remove(Entity.RemovalReason.KILLED);
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

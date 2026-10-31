@@ -1,5 +1,6 @@
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.capability.tile.BigEnergyHandler;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -112,7 +112,7 @@ public class MobDuplicatorTile extends IndustrialAreaWorkingTile<MobDuplicatorTi
 
                 this.level.addFreshEntity(entity);
 
-                tank.drainForced(essenceNeeded, IFluidHandler.FluidAction.EXECUTE);
+                TankUtils.drainForced(tank, essenceNeeded, false);
             }
             --spawnAmount;
         }

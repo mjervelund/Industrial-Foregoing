@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -135,7 +135,7 @@ public class SimulatedHydroponicBedTile extends IndustrialWorkingTile<SimulatedH
                     }
 
                     // Add drops to output
-                    generatedDrops.forEach(stack -> ItemHandlerHelper.insertItem(output, stack, false));
+                    generatedDrops.forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
                     return new WorkAction(1, SimulatedHydroponicBedConfig.powerPerOperation);
 
                 }

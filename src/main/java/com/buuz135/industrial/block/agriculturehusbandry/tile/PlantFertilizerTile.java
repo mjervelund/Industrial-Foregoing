@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.PlantFertilizerConfig;
@@ -30,7 +31,6 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
-import com.hrznstudio.titanium.util.ItemHandlerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.DyeColor;
@@ -64,15 +64,16 @@ public class PlantFertilizerTile extends IndustrialAreaWorkingTile<PlantFertiliz
 
     @Override
     public WorkAction work() {
-        ItemStack stack = ItemHandlerUtil.getFirstItem(fertilizer);
-        if (!stack.isEmpty() && hasEnergy(powerPerOperation)) {
+        int slot = 0;
+        while (slot < fertilizer.getSlots() && fertilizer.getStackInSlot(slot).isEmpty()) ++slot;
+        if (slot < fertilizer.getSlots() && hasEnergy(powerPerOperation)) {
             BlockPos pointer = getPointedBlockPos();
             if (isLoaded(pointer)) {
                 BlockState state = this.level.getBlockState(pointer);
                 Block block = state.getBlock();
                 if (block instanceof BonemealableBlock) {
                     if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state) && ((BonemealableBlock) block).isBonemealSuccess(level, level.getRandom(), pointer, state)) {
-                        stack.shrink(1);
+                        ItemStackUtils.shrink(fertilizer, slot, 1);
                         ((BonemealableBlock) block).performBonemeal((ServerLevel) level, level.getRandom(), pointer, state);
                         if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state)) {
                             return new WorkAction(0.25f, powerPerOperation);

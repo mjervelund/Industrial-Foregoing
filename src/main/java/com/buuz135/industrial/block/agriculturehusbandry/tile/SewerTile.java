@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.SewerConfig;
@@ -39,7 +40,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -73,13 +73,13 @@ public class SewerTile extends IndustrialAreaWorkingTile<SewerTile> {
         List<Animal> entities = this.level.getEntitiesOfClass(Animal.class, getWorkingArea().bounds());
         int amount = entities.size();
         if (amount > 0 && hasEnergy(powerPerOperation * amount)) {
-            sewage.fillForced(new FluidStack(ModuleCore.SEWAGE.getSourceFluid().get(), 50 * amount), IFluidHandler.FluidAction.EXECUTE);
+            TankUtils.fillForced(sewage, new FluidStack(ModuleCore.SEWAGE.getSourceFluid().get(), 50 * amount), false);
             ++amount;
         }
         List<ExperienceOrb> orb = this.level.getEntitiesOfClass(ExperienceOrb.class, getWorkingArea().bounds());
         for (ExperienceOrb experienceOrbEntity : orb) {
-            if (experienceOrbEntity.isAlive() && essence.getFluidAmount() + experienceOrbEntity.value * 20 <= essence.getCapacity()) {
-                essence.fillForced(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), experienceOrbEntity.value * 20), IFluidHandler.FluidAction.EXECUTE);
+            if (experienceOrbEntity.isAlive() && essence.getFluidAmount() + experienceOrbEntity.getValue() * 20 <= essence.getCapacity()) {
+                TankUtils.fillForced(essence, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), experienceOrbEntity.getValue() * 20), false);
                 experienceOrbEntity.remove(Entity.RemovalReason.KILLED);
             }
         }
@@ -88,7 +88,7 @@ public class SewerTile extends IndustrialAreaWorkingTile<SewerTile> {
             var fluidSpace = (this.essence.getCapacity() - this.essence.getFluidAmount());
             var toExtractEssence = Math.min(fluidSpace, player.totalExperience * 20);
             player.giveExperiencePoints(toExtractEssence / -20);
-            this.essence.fillForced(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), toExtractEssence), IFluidHandler.FluidAction.EXECUTE);
+            TankUtils.fillForced(this.essence, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), toExtractEssence), false);
         }
         return new WorkAction(1, powerPerOperation * amount);
     }

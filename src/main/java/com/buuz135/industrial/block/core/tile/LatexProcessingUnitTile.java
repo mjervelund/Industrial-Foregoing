@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.core.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.core.LatexProcessingUnitConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -34,8 +35,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 
@@ -69,15 +69,15 @@ public class LatexProcessingUnitTile extends IndustrialProcessingTile<LatexProce
 
     @Override
     public boolean canIncrease() {
-        return latex.getFluidAmount() >= AMOUNT_LATEX && water.getFluidAmount() >= AMOUNT_WATER && ItemHandlerHelper.insertItem(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), true).isEmpty();
+        return latex.getFluidAmount() >= AMOUNT_LATEX && water.getFluidAmount() >= AMOUNT_WATER && ItemUtil.insertItemReturnRemaining(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), true, null).isEmpty();
     }
 
     @Override
     public Runnable onFinish() {
         return () -> {
-            latex.drain(AMOUNT_LATEX, IFluidHandler.FluidAction.EXECUTE);
-            water.drain(AMOUNT_WATER, IFluidHandler.FluidAction.EXECUTE);
-            ItemHandlerHelper.insertItem(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), false);
+            TankUtils.drain(latex, AMOUNT_LATEX, false);
+            TankUtils.drain(water, AMOUNT_WATER, false);
+            ItemUtil.insertItemReturnRemaining(output, new ItemStack(ModuleCore.DRY_RUBBER.get()), false, null);
         };
     }
 

@@ -57,6 +57,12 @@ public class ItemStackUtils {
         return true;
     }
 
+    // Titanium's 26.3 inventories return copies from getStackInSlot, so shrinking must write the slot back
+    public static void shrink(InventoryComponent<?> handler, int slot, int amount) {
+        ItemStack stack = handler.getStackInSlot(slot);
+        handler.setStackInSlot(slot, stack.getCount() > amount ? stack.copyWithCount(stack.getCount() - amount) : ItemStack.EMPTY);
+    }
+
     public static boolean isChorusFlower(ItemStack stack) {
         return !Block.byItem(stack.getItem()).equals(Blocks.AIR) && Block.byItem(stack.getItem()).equals(Blocks.CHORUS_FLOWER);
     }

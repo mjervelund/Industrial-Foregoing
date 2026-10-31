@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.capability.tile.BigEnergyHandler;
@@ -42,7 +43,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import com.hrznstudio.titanium.component.inventory.InventoryComponent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -93,14 +94,14 @@ public class WitherBuilderTile extends IndustrialAreaWorkingTile<WitherBuilderTi
             }
         }
         //CHECK IF WE HAVE ITEMS
-        for (ItemStackHandler handler : new ItemStackHandler[]{top, middle}) {
+        for (InventoryComponent<?> handler : new InventoryComponent<?>[]{top, middle}) {
             for (int slot = 0; slot < handler.getSlots(); ++slot) {
                 if (handler.getStackInSlot(slot).isEmpty()) return new WorkAction(1, 0);
             }
         }
-        for (ItemStackHandler handler : new ItemStackHandler[]{top, middle}) {
+        for (InventoryComponent<?> handler : new InventoryComponent<?>[]{top, middle}) {
             for (int slot = 0; slot < handler.getSlots(); ++slot) {
-                handler.getStackInSlot(slot).shrink(1);
+                ItemStackUtils.shrink(handler, slot, 1);
             }
         }
         var wither = (WitherBoss) EntityType.WITHER.create(level);
@@ -151,9 +152,9 @@ public class WitherBuilderTile extends IndustrialAreaWorkingTile<WitherBuilderTi
     }
 
 
-    public ItemStack getDefaultOrFind(int i, ItemStackHandler handler, ItemStack filter) {
+    public ItemStack getDefaultOrFind(int i, InventoryComponent<?> handler, ItemStack filter) {
         if (ItemStack.isSameItem(handler.getStackInSlot(i), filter)) return handler.getStackInSlot(i);
-        for (ItemStackHandler h : new ItemStackHandler[]{top, middle}) {
+        for (InventoryComponent<?> h : new InventoryComponent<?>[]{top, middle}) {
             for (int s = 0; s < h.getSlots(); ++s) {
                 if (ItemStack.isSameItem(h.getStackInSlot(s), filter)) return h.getStackInSlot(s);
             }

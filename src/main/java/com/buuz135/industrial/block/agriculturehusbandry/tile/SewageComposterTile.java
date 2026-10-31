@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.agriculturehusbandry.SewageComposterConfig;
 import com.buuz135.industrial.module.ModuleAgricultureHusbandry;
@@ -35,8 +36,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 
@@ -68,14 +68,14 @@ public class SewageComposterTile extends IndustrialProcessingTile<SewageComposte
 
     @Override
     public boolean canIncrease() {
-        return sewage.getFluidAmount() >= 1000 && ItemHandlerHelper.insertItem(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), true).isEmpty();
+        return sewage.getFluidAmount() >= 1000 && ItemUtil.insertItemReturnRemaining(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), true, null).isEmpty();
     }
 
     @Override
     public Runnable onFinish() {
         return () -> {
-            sewage.drainForced(1000, IFluidHandler.FluidAction.EXECUTE);
-            ItemHandlerHelper.insertItem(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), false);
+            TankUtils.drainForced(sewage, 1000, false);
+            ItemUtil.insertItemReturnRemaining(fertilizerOutput, new ItemStack(ModuleCore.FERTILIZER.get()), false, null);
         };
     }
 

@@ -1,5 +1,6 @@
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.api.plant.PlantRecollectable;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.IndustrialWorkingTile;
@@ -34,9 +35,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
 import net.neoforged.neoforge.common.SpecialPlantable;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
     private PlantRecollectable cachedRecollectable = null;
     private int errorAttempts = 0;
 
-    public static boolean tryToHarvestAndReplant(Level level, BlockPos up, BlockState state, IItemHandler output, ProgressBarComponent<?> etherBuffer, IndustrialWorkingTile tile, Supplier<PlantRecollectable> plantSupplier, ItemStack simulationOutput) {
+    public static boolean tryToHarvestAndReplant(Level level, BlockPos up, BlockState state, ResourceHandler<ItemResource> output, ProgressBarComponent<?> etherBuffer, IndustrialWorkingTile tile, Supplier<PlantRecollectable> plantSupplier, ItemStack simulationOutput) {
         var cachedRecollectable = plantSupplier.get();
         if (cachedRecollectable != null) {
             List<ItemStack> drops = new ArrayList<>();
@@ -127,7 +128,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                 sim.acceptExecution(planted, drops);
                 simulationOutput.set(IFAttachments.HYDROPONIC_SIMULATION_PROCESSOR, sim.toNBT(level.registryAccess()));
             }
-            drops.forEach(stack -> ItemHandlerHelper.insertItem(output, stack, false));
+            drops.forEach(stack -> ItemUtil.insertItemReturnRemaining(output, stack, false, null));
             if (tile instanceof IndustrialAreaWorkingTile<?> && cachedRecollectable.shouldCheckNextPlant(level, up, level.getBlockState(up))) {
                 ((IndustrialAreaWorkingTile<?>) tile).increasePointer();
             }
@@ -148,7 +149,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
     @Override
     public WorkAction work() {
         if (this.etherBuffer.getProgress() <= 0 && this.ether.getFluidAmount() > 0) {
-            this.ether.drainForced(1, IFluidHandler.FluidAction.EXECUTE);
+            TankUtils.drainForced(this.ether, 1, false);
             this.etherBuffer.setProgress(this.etherBuffer.getMaxProgress());
         }
         if (hasEnergy(1000)) {
@@ -182,7 +183,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                                 this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.getRandom());
                             }
                         }
-                        this.water.drainForced(10, IFluidHandler.FluidAction.EXECUTE);
+                        TankUtils.drainForced(this.water, 10, false);
                         return new WorkAction(1, HydroponicBedConfig.powerPerOperation);
                     } else if (this.etherBuffer.getProgress() > 0) {
                         tryToHarvestAndReplant(this.level, up, state, this.output, this.etherBuffer, this, plantRecollectableSupplier, this.simulation_slot.getStackInSlot(0));
@@ -200,7 +201,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                                 this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.getRandom());
                             }
                         }
-                        this.water.drainForced(10, IFluidHandler.FluidAction.EXECUTE);
+                        TankUtils.drainForced(this.water, 10, false);
                     }
                     return new WorkAction(1, HydroponicBedConfig.powerPerOperation);
                 }
@@ -225,18 +226,18 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                 BlockEntity tile = level.getBlockEntity(worldPosition.relative(direction));
                 if (tile instanceof HydroponicBedTile) {
                     int difference = water.getFluidAmount() - ((HydroponicBedTile) tile).getWater().getFluidAmount();
-                    if (difference > 0 && (water.getFluid().is(((HydroponicBedTile) tile).getWater().getFluid().getFluid()) || ((HydroponicBedTile) tile).getWater().isEmpty())) {
+                    if (difference > 0 && (water.getFluid().is(((HydroponicBedTile) tile).getWater().getFluid().getFluid()) || ((HydroponicBedTile) tile).getWater().getFluid().isEmpty())) {
                         if (difference <= 25) difference = difference / 2;
                         else difference = 25;
                         if (water.getFluidAmount() >= difference) {
-                            water.drainForced(((HydroponicBedTile) tile).getWater().fill(new FluidStack(Fluids.WATER, water.drainForced(difference, IFluidHandler.FluidAction.SIMULATE).getAmount()), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                            TankUtils.drainForced(water, TankUtils.fill(((HydroponicBedTile) tile).getWater(), new FluidStack(Fluids.WATER, TankUtils.drainForced(water, difference, true).getAmount()), false), false);
                         }
                     }
                     difference = ether.getFluidAmount() - ((HydroponicBedTile) tile).getEther().getFluidAmount();
                     if (difference > 0) {
                         difference = 1;
                         if (ether.getFluidAmount() >= difference) {
-                            ether.drainForced(((HydroponicBedTile) tile).getEther().fill(new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), ether.drainForced(difference, IFluidHandler.FluidAction.SIMULATE).getAmount()), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                            TankUtils.drainForced(ether, TankUtils.fill(((HydroponicBedTile) tile).getEther(), new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), TankUtils.drainForced(ether, difference, true).getAmount()), false), false);
                         }
                     }
                     difference = getEnergyStorage().getEnergyStored() - ((HydroponicBedTile) tile).getEnergyStorage().getEnergyStored();

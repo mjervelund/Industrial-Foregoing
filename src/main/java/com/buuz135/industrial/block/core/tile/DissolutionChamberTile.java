@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.block.core.tile;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import com.buuz135.industrial.utils.TankUtils;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.core.DissolutionChamberConfig;
 import com.buuz135.industrial.module.ModuleCore;
@@ -42,8 +44,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -118,7 +119,7 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
 
     @Override
     public boolean canIncrease() {
-        return currentRecipe != null && ItemHandlerHelper.insertItem(output, currentRecipe.output.orElse(ItemStack.EMPTY).copy(), true).isEmpty() && (currentRecipe.outputFluid.isEmpty() || outputFluid.fillForced(currentRecipe.outputFluid.orElse(FluidStack.EMPTY).copy(), IFluidHandler.FluidAction.SIMULATE) == currentRecipe.outputFluid.orElse(FluidStack.EMPTY).getAmount());
+        return currentRecipe != null && ItemUtil.insertItemReturnRemaining(output, currentRecipe.output.orElse(ItemStack.EMPTY).copy(), true, null).isEmpty() && (currentRecipe.outputFluid.isEmpty() || TankUtils.fillForced(outputFluid, currentRecipe.outputFluid.orElse(FluidStack.EMPTY).copy(), true) == currentRecipe.outputFluid.orElse(FluidStack.EMPTY).getAmount());
     }
 
     @Override
@@ -129,15 +130,15 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
                 // check the tank fluid is in ingredient
                 boolean flag = dissolutionChamberRecipe.inputFluid.test(inputFluid.getFluid());
                 if (flag) {
-                    inputFluid.drainForced(inputFluid.getFluid().copyWithAmount(dissolutionChamberRecipe.inputFluid.amount()), IFluidHandler.FluidAction.EXECUTE);
+                    TankUtils.drainForced(inputFluid, inputFluid.getFluid().copyWithAmount(dissolutionChamberRecipe.inputFluid.amount()), false);
                     for (int i = 0; i < input.getInventory().getSlots(); i++) {
-                        input.getInventory().getStackInSlot(i).shrink(1);
+                        ItemStackUtils.shrink(input.getInventory(), i, 1);
                     }
                     if (dissolutionChamberRecipe.outputFluid.isPresent() && !dissolutionChamberRecipe.outputFluid.get().isEmpty())
-                        outputFluid.fillForced(dissolutionChamberRecipe.outputFluid.get().copy(), IFluidHandler.FluidAction.EXECUTE);
+                        TankUtils.fillForced(outputFluid, dissolutionChamberRecipe.outputFluid.get().copy(), false);
                     ItemStack outputStack = dissolutionChamberRecipe.output.get().copy();
                     outputStack.getItem().onCraftedBy(outputStack, this.level, null);
-                    ItemHandlerHelper.insertItem(output, outputStack, false);
+                    ItemUtil.insertItemReturnRemaining(output, outputStack, false, null);
                     checkForRecipe();
                 }
             }
