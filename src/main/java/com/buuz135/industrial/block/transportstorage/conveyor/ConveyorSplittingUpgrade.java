@@ -78,7 +78,7 @@ public class ConveyorSplittingUpgrade extends ConveyorUpgrade {
     @Override
     public void handleEntity(Entity entity) {
         super.handleEntity(entity);
-        if (!getWorld().isClientSide && !this.getContainer().getEntityFilter().contains(entity.getId())) {
+        if (!getWorld().isClientSide() && !this.getContainer().getEntityFilter().contains(entity.getId())) {
             if (nextFacing == this.getSide()) {
                 this.handlingEntities.add(entity.getId());
                 this.getContainer().getEntityFilter().add(entity.getId());

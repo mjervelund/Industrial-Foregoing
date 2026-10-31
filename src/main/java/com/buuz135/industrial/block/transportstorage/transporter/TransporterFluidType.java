@@ -90,7 +90,7 @@ public class TransporterFluidType extends FilteredTransporterType<FluidStack, IF
         super.update();
         float speed = getSpeed();
 
-        if (getLevel().isClientSide || getLevel().getGameTime() % (Math.max(1, 4 - speed)) != 0) return;
+        if (getLevel().isClientSide() || getLevel().getGameTime() % (Math.max(1, 4 - speed)) != 0) return;
 
         IBlockContainer<?> container = getContainer();
         if (getAction() != TransporterTypeFactory.TransporterAction.EXTRACT || !(container instanceof TransporterTile transporterTile)) return;

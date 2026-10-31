@@ -20,7 +20,7 @@ public class MobImprisonmentTamableEntitiesHandler {
      */
     @SubscribeEvent
     public void onPlayerInteractEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (event.getLevel().isClientSide) return;
+        if (event.getLevel().isClientSide()) return;
 
         if ((!event.getItemStack().isEmpty() && event.getItemStack().getItem() instanceof MobImprisonmentToolItem item)) {
             var player = event.getEntity();

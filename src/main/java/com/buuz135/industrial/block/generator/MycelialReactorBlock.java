@@ -76,7 +76,7 @@ public class MycelialReactorBlock extends IndustrialBlock<MycelialReactorTile> {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
         BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (player.isShiftKeyDown() && !worldIn.isClientSide && tileEntity instanceof MycelialReactorTile) {
+        if (player.isShiftKeyDown() && !worldIn.isClientSide() && tileEntity instanceof MycelialReactorTile) {
             List<String> available = MycelialDataManager.getReactorAvailable(((MycelialReactorTile) tileEntity).getOwner(), worldIn, false);
             if (available.size() != IMycelialGeneratorType.TYPES.size()) {
                 player.sendSystemMessage(Component.literal(Component.translatable("text.industrialforegoing.generators_not_running").getString()).withStyle(ChatFormatting.RED));
@@ -93,7 +93,7 @@ public class MycelialReactorBlock extends IndustrialBlock<MycelialReactorTile> {
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player, BlockHitResult ray) {
         BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (player.isShiftKeyDown() && !worldIn.isClientSide && tileEntity instanceof MycelialReactorTile) {
+        if (player.isShiftKeyDown() && !worldIn.isClientSide() && tileEntity instanceof MycelialReactorTile) {
             List<String> available = MycelialDataManager.getReactorAvailable(((MycelialReactorTile) tileEntity).getOwner(), worldIn, false);
             if (available.size() != IMycelialGeneratorType.TYPES.size()) {
                 player.sendSystemMessage(Component.literal(Component.translatable("text.industrialforegoing.generators_not_running").getString()).withStyle(ChatFormatting.RED));

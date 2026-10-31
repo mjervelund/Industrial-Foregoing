@@ -92,12 +92,12 @@ public class SimulatedHydroponicBedTile extends IndustrialWorkingTile<SimulatedH
 
                             // Handle fractional amounts with probability
                             double fraction = amount - fullAmount;
-                            if (fraction > 0 && this.level.random.nextDouble() < fraction) {
+                            if (fraction > 0 && this.level.getRandom().nextDouble() < fraction) {
                                 ItemStack extraDrop = statStack.copy();
                                 extraDrop.setCount(1);
                                 generatedDrops.add(extraDrop);
                             }
-                        } else if (amount > 0 && this.level.random.nextDouble() < amount) {
+                        } else if (amount > 0 && this.level.getRandom().nextDouble() < amount) {
                             ItemStack drop = statStack.copy();
                             drop.setCount(1);
                             generatedDrops.add(drop);
@@ -105,7 +105,7 @@ public class SimulatedHydroponicBedTile extends IndustrialWorkingTile<SimulatedH
                     }
 
                     //ADD A RANDOM INCREASE CHANCE
-                    if (this.level.random.nextDouble() <= SimulatedHydroponicBedConfig.chanceToIncreaseExecutions) {
+                    if (this.level.getRandom().nextDouble() <= SimulatedHydroponicBedConfig.chanceToIncreaseExecutions) {
                         var boostDrops = new ArrayList<ItemStack>();
                         for (var simulationStack : simulation.getStats()) {
                             ItemStack statStack = simulationStack.stack();
@@ -118,12 +118,12 @@ public class SimulatedHydroponicBedTile extends IndustrialWorkingTile<SimulatedH
                                 boostDrops.add(drop);
 
                                 double fraction = amount - fullAmount;
-                                if (fraction > 0 && this.level.random.nextDouble() < fraction) {
+                                if (fraction > 0 && this.level.getRandom().nextDouble() < fraction) {
                                     ItemStack extraDrop = statStack.copy();
                                     extraDrop.setCount(1);
                                     boostDrops.add(extraDrop);
                                 }
-                            } else if (amount > 0 && this.level.random.nextDouble() < amount) {
+                            } else if (amount > 0 && this.level.getRandom().nextDouble() < amount) {
                                 ItemStack drop = statStack.copy();
                                 drop.setCount(1);
                                 boostDrops.add(drop);

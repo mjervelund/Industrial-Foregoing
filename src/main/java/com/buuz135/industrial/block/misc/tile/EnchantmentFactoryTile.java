@@ -171,7 +171,7 @@ public class EnchantmentFactoryTile extends IndustrialProcessingTile<Enchantment
     @Override
     public Runnable onFinish() {
         return () -> {
-            ItemStack output = EnchantmentHelper.enchantItem(this.level.random, this.inputFirst.getStackInSlot(0).copy(), this.selectedLevel, this.level.registryAccess(), Optional.empty());
+            ItemStack output = EnchantmentHelper.enchantItem(this.level.getRandom(), this.inputFirst.getStackInSlot(0).copy(), this.selectedLevel, this.level.registryAccess(), Optional.empty());
             this.inputFirst.setStackInSlot(0, ItemStack.EMPTY);
             this.output.setStackInSlot(0, output);
             var amount = EnchantmentApplicatorTile.getEssenceConsumed(this.selectedLevel);

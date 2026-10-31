@@ -127,14 +127,14 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
         if (!hasUpgrade(facing)) {
             upgradeMap.put(facing, upgrade.create(this, facing));
             requestSync();
-            if (level.isClientSide) this.getLevel().getModelDataManager().requestRefresh(this);
+            if (level.isClientSide()) this.getLevel().getModelDataManager().requestRefresh(this);
         }
     }
 
     @Override
     public void removeUpgrade(Direction facing, boolean drop) {
         if (hasUpgrade(facing)) {
-            if (!level.isClientSide && drop) {
+            if (!level.isClientSide() && drop) {
                 ConveyorUpgrade upgrade = upgradeMap.get(facing);
                 for (ItemStack stack : upgrade.getDrops()) {
                     ItemEntity item = new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, stack);
@@ -145,7 +145,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
             upgradeMap.get(facing).onUpgradeRemoved();
             upgradeMap.remove(facing);
             requestSync();
-            if (level.isClientSide) this.getLevel().getModelDataManager().requestRefresh(this);
+            if (level.isClientSide()) this.getLevel().getModelDataManager().requestRefresh(this);
         }
     }
 
@@ -303,7 +303,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
 
     @Override
     public void serverTick(Level level, BlockPos pos, BlockState state, ConveyorTile blockEntity) {
-        if (!level.isClientSide && tank.getFluidAmount() > 0 && level.getGameTime() % 3 == 0 && level.getBlockState(this.worldPosition.relative(facing)).getBlock() instanceof ConveyorBlock && level.getBlockEntity(this.worldPosition.relative(facing)) instanceof ConveyorTile) {
+        if (!level.isClientSide() && tank.getFluidAmount() > 0 && level.getGameTime() % 3 == 0 && level.getBlockState(this.worldPosition.relative(facing)).getBlock() instanceof ConveyorBlock && level.getBlockEntity(this.worldPosition.relative(facing)) instanceof ConveyorTile) {
             BlockState state1 = level.getBlockState(this.worldPosition.relative(facing));
             if (!state1.getValue(ConveyorBlock.TYPE).isVertical()) {
                 int amount = Math.max(tank.getFluidAmount() - 1, 1);
@@ -315,7 +315,7 @@ public class ConveyorTile extends ActiveTile<ConveyorTile> implements IBlockCont
                 }
             }
         }
-        if (!level.isClientSide && level.getGameTime() % 6 == 0 && needsFluidSync) {
+        if (!level.isClientSide() && level.getGameTime() % 6 == 0 && needsFluidSync) {
             markForUpdate();
             this.needsFluidSync = false;
         }

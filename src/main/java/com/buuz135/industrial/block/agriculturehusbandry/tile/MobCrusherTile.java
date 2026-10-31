@@ -154,7 +154,7 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
         int experience = entity.getExperienceReward((ServerLevel) this.level, player);
         int looting = 0;
         if (!dropXP) {
-            looting = this.level.random.nextInt(4);
+            looting = this.level.getRandom().nextInt(4);
             ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
             var enchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
             enchants.set(this.level.registryAccess().holderOrThrow(Enchantments.LOOTING), looting);

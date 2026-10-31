@@ -65,7 +65,7 @@ public class ItemStraw extends IFCustomItem {
     @Override
     @Nonnull
     public ItemStack finishUsingItem(@Nonnull ItemStack heldStack, Level world, LivingEntity entity) {
-        if (!world.isClientSide && entity instanceof Player) {
+        if (!world.isClientSide() && entity instanceof Player) {
             Player player = (Player) entity;
             HitResult result = getPlayerPOVHitResult(world, player, ClipContext.Fluid.SOURCE_ONLY);
             if (result != null && result.getType() == HitResult.Type.BLOCK) {

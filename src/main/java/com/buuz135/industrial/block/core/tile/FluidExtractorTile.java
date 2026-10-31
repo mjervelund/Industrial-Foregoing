@@ -84,7 +84,7 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
                 } else {
                     tank.fillForced(currentRecipe.output.copy(), IFluidHandler.FluidAction.EXECUTE);
                 }
-                if (this.level.random.nextDouble() <= currentRecipe.breakChance) {
+                if (this.level.getRandom().nextDouble() <= currentRecipe.breakChance) {
                     extractionProgress.setProgress(extractionProgress.getProgress() + 1);
                 }
                 if (extractionProgress.getProgress() > 7) {
@@ -137,7 +137,7 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
 
         public FluidExtractionProgress(Level world) {
             this.progress = 0;
-            this.breakID = world.random.nextInt();
+            this.breakID = world.getRandom().nextInt();
         }
 
         public int getProgress() {

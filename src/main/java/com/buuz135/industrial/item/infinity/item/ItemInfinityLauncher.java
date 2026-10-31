@@ -151,7 +151,7 @@ public class ItemInfinityLauncher extends ItemInfinity {
             if (!((double) velo < 0.1D) && enoughFuel(stack)) {
                 Player playerentity = (Player) entityLiving;
                 playerentity.getCooldowns().addCooldown(this, 20);
-                if (!worldIn.isClientSide) {
+                if (!worldIn.isClientSide()) {
                     InfinityLauncherProjectileEntity abstractarrowentity = new InfinityLauncherProjectileEntity(worldIn, playerentity, getPlungerAction(stack), getSelectedTier(stack).getRadius(), stack);
                     abstractarrowentity.shootFromRotation(playerentity, playerentity.xRotO, playerentity.yRotO, 0.0F, velo * 3.0F, 1.0F);
                     if (velo == 1.0F) {
@@ -164,7 +164,7 @@ public class ItemInfinityLauncher extends ItemInfinity {
                     abstractarrowentity.pickup = AbstractArrow.Pickup.DISALLOWED;
                     worldIn.addFreshEntity(abstractarrowentity);
                 }
-                worldIn.playSound((Player) null, playerentity.getX(), playerentity.getY(), playerentity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (worldIn.random.nextFloat() * 0.4F + 1.2F) + velo * 0.5F);
+                worldIn.playSound((Player) null, playerentity.getX(), playerentity.getY(), playerentity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (worldIn.getRandom().nextFloat() * 0.4F + 1.2F) + velo * 0.5F);
                 playerentity.awardStat(Stats.ITEM_USED.get(this));
             }
         }

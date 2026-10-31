@@ -55,7 +55,7 @@ public abstract class TexturedStateButtonGuiComponent extends PositionedGuiCompo
         if (conveyor instanceof ICanSendNetworkMessage) {
             ((ICanSendNetworkMessage) conveyor).sendMessage(id, new CompoundTag());
         }
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 1.0F, 0.5F, Minecraft.getInstance().level.random, Minecraft.getInstance().player.blockPosition()));//getPos
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 1.0F, 0.5F, Minecraft.getInstance().level.getRandom(), Minecraft.getInstance().player.blockPosition()));//getPos
         return true;
     }
 

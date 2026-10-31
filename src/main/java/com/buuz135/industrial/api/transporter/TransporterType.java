@@ -199,7 +199,7 @@ public class TransporterType implements INBTSerializable<CompoundTag> {
             action = TransporterTypeFactory.TransporterAction.EXTRACT;
         }
         this.getContainer().requestSync();
-        if (this.getLevel().isClientSide && getContainer() instanceof BlockEntity)
+        if (this.getLevel().isClientSide() && getContainer() instanceof BlockEntity)
             this.getLevel().getModelDataManager().requestRefresh((BlockEntity) getContainer());
     }
 

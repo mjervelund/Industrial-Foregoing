@@ -70,7 +70,7 @@ public class MechanicalDirtTile extends IndustrialWorkingTile<MechanicalDirtTile
 
     @Override
     public WorkAction work() {
-        if (level.random.nextDouble() > 0.1
+        if (level.getRandom().nextDouble() > 0.1
                 || level.getDifficulty() == Difficulty.PEACEFUL
                 || (level.isDay() && level.getBrightness(LightLayer.SKY, worldPosition.above()) > 0.5f && level.canSeeSkyFromBelowWater(worldPosition.above()))
                 || level.getEntitiesOfClass(Mob.class, new AABB(0, 0, 0, 1, 1, 1).move(worldPosition).inflate(3)).size() > 10
@@ -92,8 +92,8 @@ public class MechanicalDirtTile extends IndustrialWorkingTile<MechanicalDirtTile
     private Mob getMobToSpawn() {
         List<MobSpawnSettings.SpawnerData> spawnListEntries = ((ServerLevel) this.level).getChunkSource().getGenerator().getMobsAt(this.level.getBiome(this.worldPosition.above()), ((ServerLevel) this.level).structureManager(), MobCategory.MONSTER, this.worldPosition.above()).unwrap();
         if (spawnListEntries.isEmpty()) return null;
-        MobSpawnSettings.SpawnerData spawnListEntry = spawnListEntries.get(level.random.nextInt(spawnListEntries.size()));
-        if (!SpawnPlacements.checkSpawnRules(spawnListEntry.type, (ServerLevelAccessor) this.level, MobSpawnType.NATURAL, worldPosition.above(), level.random))
+        MobSpawnSettings.SpawnerData spawnListEntry = spawnListEntries.get(level.getRandom().nextInt(spawnListEntries.size()));
+        if (!SpawnPlacements.checkSpawnRules(spawnListEntry.type, (ServerLevelAccessor) this.level, MobSpawnType.NATURAL, worldPosition.above(), level.getRandom()))
             return null;
         Entity entity = spawnListEntry.type.create(level);
         if (entity instanceof Mob) {

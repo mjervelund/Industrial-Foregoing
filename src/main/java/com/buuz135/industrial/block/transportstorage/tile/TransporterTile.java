@@ -146,14 +146,14 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
         if (!hasUpgrade(facing)) {
             transporterTypeMap.put(facing, factory.create(this, facing, TransporterTypeFactory.TransporterAction.EXTRACT));
             requestSync();
-            if (level.isClientSide) this.getLevel().getModelDataManager().requestRefresh(this);
+            if (level.isClientSide()) this.getLevel().getModelDataManager().requestRefresh(this);
         }
     }
 
     @Override
     public void removeUpgrade(Direction facing, boolean drop) {
         if (hasUpgrade(facing)) {
-            if (!level.isClientSide && drop) {
+            if (!level.isClientSide() && drop) {
                 TransporterType upgrade = transporterTypeMap.get(facing);
                 for (ItemStack stack : upgrade.getDrops()) {
                     ItemEntity item = new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, stack);
@@ -164,7 +164,7 @@ public class TransporterTile extends ActiveTile<TransporterTile> implements IBlo
             transporterTypeMap.get(facing).onUpgradeRemoved();
             transporterTypeMap.remove(facing);
             requestSync();
-            if (level.isClientSide) this.getLevel().getModelDataManager().requestRefresh(this);
+            if (level.isClientSide()) this.getLevel().getModelDataManager().requestRefresh(this);
         }
         if (transporterTypeMap.isEmpty()) {
             this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());

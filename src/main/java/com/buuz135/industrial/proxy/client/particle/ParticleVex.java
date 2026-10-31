@@ -66,14 +66,14 @@ public class ParticleVex extends Particle {
     private boolean isDying = false;
 
     public ParticleVex(Entity entity) { //getPosition
-        super((ClientLevel) entity.level(), entity.getX() + entity.level().random.nextDouble() - 0.5, entity.getY() + 1 + entity.level().random.nextDouble() - 0.5, entity.getZ() + entity.level().random.nextDouble() - 0.5);
+        super((ClientLevel) entity.level(), entity.getX() + entity.level().getRandom().nextDouble() - 0.5, entity.getY() + 1 + entity.level().getRandom().nextDouble() - 0.5, entity.getZ() + entity.level().getRandom().nextDouble() - 0.5);
         this.entity = entity;
         directions = new ArrayList<>();
         Direction prev = Direction.NORTH;
         directions.add(0, prev);
         for (int i = 1; i < 50; i++) {
             prev = directions.get(i - 1);
-            directions.add(i, level.random.nextDouble() < 0.05 ? getRandomFacing(level.random, prev) : prev);
+            directions.add(i, level.getRandom().nextDouble() < 0.05 ? getRandomFacing(level.getRandom(), prev) : prev);
         }
         calculateLines();
         this.lifetime = 500;
@@ -86,7 +86,7 @@ public class ParticleVex extends Particle {
             isDying = true;
         }
         if (!isDying && !this.removed) {
-            directions.add(0, level.random.nextDouble() < 0.05 ? getRandomFacing(level.random, directions.get(0)) : directions.get(0));
+            directions.add(0, level.getRandom().nextDouble() < 0.05 ? getRandomFacing(level.getRandom(), directions.get(0)) : directions.get(0));
             directions.remove(50);
             Vec3 directionVector = new Vec3(directions.get(0).getNormal().getX(), directions.get(0).getNormal().getY(), directions.get(0).getNormal().getZ()).scale(0.01);
             this.setPos(x - directionVector.x, y - directionVector.y, z - directionVector.z);

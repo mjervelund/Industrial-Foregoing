@@ -88,7 +88,7 @@ public class ConveyorInsertionUpgrade extends ConveyorUpgrade {
 
     @Override
     public void handleEntity(Entity entity) {
-        if (getWorld().isClientSide)
+        if (getWorld().isClientSide())
             return;
         if (entity instanceof ItemEntity) {
             getHandlerCapability(Capabilities.ItemHandler.BLOCK, Capabilities.ItemHandler.ENTITY_AUTOMATION).ifPresent(handler -> {
@@ -113,7 +113,7 @@ public class ConveyorInsertionUpgrade extends ConveyorUpgrade {
 
     @Override
     public void update() {
-        if (getWorld().isClientSide)
+        if (getWorld().isClientSide())
             return;
         if (getWorld().getGameTime() % 2 == 0 && getContainer() instanceof ConveyorTile) {
             IFluidTank tank = ((ConveyorTile) getContainer()).getTank();

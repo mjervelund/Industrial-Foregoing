@@ -147,7 +147,7 @@ public class ItemInfinityTrident extends ItemInfinity {
             if (i >= 10) {
                 int riptideModifier = getCurrentRiptide(stack);
                 if (riptideModifier <= 0 && enoughFuel(stack)) {
-                    if (!worldIn.isClientSide) {
+                    if (!worldIn.isClientSide()) {
                         stack.hurtAndBreak(1, playerentity, EquipmentSlot.MAINHAND);
                         if (riptideModifier == 0) {
                             consumeFuel(stack);

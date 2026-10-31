@@ -83,7 +83,7 @@ public class MeatFeederItem extends IFCustomItem {
     @Override
     public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-        if (!worldIn.isClientSide && entityIn instanceof Player) {
+        if (!worldIn.isClientSide() && entityIn instanceof Player) {
             Player player = (Player) entityIn;
             if (player.getFoodData().needsFood() || player.getFoodData().getSaturationLevel() < 10) {
                 if (stack.getItem().equals(ModuleTool.MEAT_FEEDER.get())) {

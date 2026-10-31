@@ -174,11 +174,11 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                     BonemealableBlock growable = (BonemealableBlock) this.level.getBlockState(up).getBlock();
                     if (growable.isValidBonemealTarget(this.level, up, this.level.getBlockState(up)) || state.getBlock() instanceof StemBlock) {
                         if (this.etherBuffer.getProgress() > 0) {
-                            growable.performBonemeal((ServerLevel) this.level, this.level.random, up, this.level.getBlockState(up));
+                            growable.performBonemeal((ServerLevel) this.level, this.level.getRandom(), up, this.level.getBlockState(up));
                             this.etherBuffer.setProgress(this.etherBuffer.getProgress() - 1);
                         } else {
                             for (int i = 0; i < 4; i++) {
-                                this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.random);
+                                this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.getRandom());
                             }
                         }
                         this.water.drainForced(10, IFluidHandler.FluidAction.EXECUTE);
@@ -191,12 +191,12 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                     if (!tryToHarvestAndReplant(this.level, up, state, this.output, this.etherBuffer, this, plantRecollectableSupplier, this.simulation_slot.getStackInSlot(0))) {
                         if (this.etherBuffer.getProgress() > 0) {
                             for (int i = 0; i < 10; i++) {
-                                this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.random);
+                                this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.getRandom());
                             }
                             this.etherBuffer.setProgress(this.etherBuffer.getProgress() - 1);
                         } else {
                             for (int i = 0; i < 4; i++) {
-                                this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.random);
+                                this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.getRandom());
                             }
                         }
                         this.water.drainForced(10, IFluidHandler.FluidAction.EXECUTE);

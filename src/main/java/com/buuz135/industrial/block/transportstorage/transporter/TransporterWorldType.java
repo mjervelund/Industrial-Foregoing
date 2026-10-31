@@ -75,7 +75,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
     public void update() {
         super.update();
         float speed = getSpeed();
-        if (getLevel().isClientSide || getLevel().getGameTime() % (Math.max(1, 4 - speed)) != 0) return;
+        if (getLevel().isClientSide() || getLevel().getGameTime() % (Math.max(1, 4 - speed)) != 0) return;
         IBlockContainer<?> container = getContainer();
 
         if (!(container instanceof TransporterTile)) return;

@@ -92,7 +92,7 @@ public class AnimalRancherTile extends IndustrialAreaWorkingTile<AnimalRancherTi
                             return new WorkAction(0.35f, powerPerOperation);
                         }
                     }
-                    if (mob instanceof Squid && !ItemStackUtils.isInventoryFull(output) && level.random.nextBoolean() && level.random.nextBoolean() && level.random.nextBoolean() && level.random.nextBoolean()) {
+                    if (mob instanceof Squid && !ItemStackUtils.isInventoryFull(output) && level.getRandom().nextBoolean() && level.getRandom().nextBoolean() && level.getRandom().nextBoolean() && level.getRandom().nextBoolean()) {
                         ItemHandlerHelper.insertItem(output, new ItemStack(Items.BLACK_DYE), false);
                         return new WorkAction(0.35f, powerPerOperation);
                     }

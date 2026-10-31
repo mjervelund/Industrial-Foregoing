@@ -74,7 +74,7 @@ public class ConveyorDetectorUpgrade extends ConveyorUpgrade {
 
     @Override
     public void update() {
-        if (getWorld().isClientSide)
+        if (getWorld().isClientSide())
             return;
         boolean previous = hasEntity;
         hasEntity = false;

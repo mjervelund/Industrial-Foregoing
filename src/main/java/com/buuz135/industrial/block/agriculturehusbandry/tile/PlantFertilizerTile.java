@@ -71,9 +71,9 @@ public class PlantFertilizerTile extends IndustrialAreaWorkingTile<PlantFertiliz
                 BlockState state = this.level.getBlockState(pointer);
                 Block block = state.getBlock();
                 if (block instanceof BonemealableBlock) {
-                    if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state) && ((BonemealableBlock) block).isBonemealSuccess(level, level.random, pointer, state)) {
+                    if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state) && ((BonemealableBlock) block).isBonemealSuccess(level, level.getRandom(), pointer, state)) {
                         stack.shrink(1);
-                        ((BonemealableBlock) block).performBonemeal((ServerLevel) level, level.random, pointer, state);
+                        ((BonemealableBlock) block).performBonemeal((ServerLevel) level, level.getRandom(), pointer, state);
                         if (((BonemealableBlock) block).isValidBonemealTarget(level, pointer, state)) {
                             return new WorkAction(0.25f, powerPerOperation);
                         } else {

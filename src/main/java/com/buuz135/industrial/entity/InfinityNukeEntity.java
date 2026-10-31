@@ -103,8 +103,8 @@ public class InfinityNukeEntity extends Entity {
             setTicksExploding(this.getTicksExploding() + 1);
             this.updateInWaterStateAndDoFluidPushing();
         }
-        if (this.level().isClientSide && this.getEntityData().get(EXPLODING)) {
-            if (this.level().isClientSide) {
+        if (this.level().isClientSide() && this.getEntityData().get(EXPLODING)) {
+            if (this.level().isClientSide()) {
                 this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 1.1D, this.getZ(), 0.0D, 0.0D, 0.0D);
                 this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, this.level().getBlockState(this.blockPosition().below())), this.getX() + this.level().getRandom().nextDouble() - 0.5, this.getY(), this.getZ() + this.level().getRandom().nextDouble() - 0.5, 0.0D, 0.0D, 0.0D);
             }
@@ -113,7 +113,7 @@ public class InfinityNukeEntity extends Entity {
             this.remove(RemovalReason.KILLED);
             this.onClientRemoval();
         }
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             tickClient();
         }
     }
@@ -121,13 +121,13 @@ public class InfinityNukeEntity extends Entity {
     @OnlyIn(Dist.CLIENT)
     private void tickClient() {
         if (chargingSound == null && this.getEntityData().get(EXPLODING)) {
-            Minecraft.getInstance().getSoundManager().play(chargingSound = new TickeableSound(this.level(), this.blockPosition(), ModuleTool.NUKE_CHARGING.get(), getRadius(), 10, this.level().random));
+            Minecraft.getInstance().getSoundManager().play(chargingSound = new TickeableSound(this.level(), this.blockPosition(), ModuleTool.NUKE_CHARGING.get(), getRadius(), 10, this.level().getRandom()));
         }
         if (chargingSound != null) {
             chargingSound.setDistance(getRadius());
             chargingSound.increase();
             if (!Minecraft.getInstance().getSoundManager().isActive(chargingSound) && explodingSound == null) {
-                explodingSound = new TickeableSound(this.level(), this.blockPosition(), ModuleTool.NUKE_EXPLOSION.get(), getRadius(), 10, this.level().random);
+                explodingSound = new TickeableSound(this.level(), this.blockPosition(), ModuleTool.NUKE_EXPLOSION.get(), getRadius(), 10, this.level().getRandom());
                 explodingSound.setPitch(1);
                 Minecraft.getInstance().getSoundManager().play(explodingSound);
             }
@@ -165,10 +165,10 @@ public class InfinityNukeEntity extends Entity {
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
         if (this.isExploding()) return InteractionResult.SUCCESS;
-        if (player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player.getItemInHand(hand).isEmpty()) {
+        if (player.level().isClientSide() && hand == InteractionHand.MAIN_HAND && player.getItemInHand(hand).isEmpty()) {
             arm();
         }
-        if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND) {
+        if (!player.level().isClientSide() && hand == InteractionHand.MAIN_HAND) {
             if (player.getItemInHand(hand).isEmpty()) {
                 if (player.isShiftKeyDown()) {
                     ItemHandlerHelper.giveItemToPlayer(player, this.original);
@@ -192,7 +192,7 @@ public class InfinityNukeEntity extends Entity {
 
     @OnlyIn(Dist.CLIENT)
     private void arm() {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ModuleTool.NUKE_ARMING.get(), SoundSource.BLOCKS, 1, 1, Minecraft.getInstance().level.random, this.blockPosition()));
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ModuleTool.NUKE_ARMING.get(), SoundSource.BLOCKS, 1, 1, Minecraft.getInstance().level.getRandom(), this.blockPosition()));
     }
 
     @Override

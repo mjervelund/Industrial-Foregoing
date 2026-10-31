@@ -263,8 +263,8 @@ public class ItemInfinityBackpack extends ItemInfinity {
     public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (isMagnetEnabled(stack)) {
             for (ItemEntity itemEntity : entityIn.level().getEntitiesOfClass(ItemEntity.class, new AABB(entityIn.getX(), entityIn.getY(), entityIn.getY(), entityIn.getX(), entityIn.getY(), entityIn.getZ()).inflate(5))) {
-                if (entityIn.level().isClientSide && enoughFuel(stack)) {
-                    if (itemEntity.onGround() && worldIn.random.nextInt(5) < 1)
+                if (entityIn.level().isClientSide() && enoughFuel(stack)) {
+                    if (itemEntity.onGround() && worldIn.getRandom().nextInt(5) < 1)
                         itemEntity.level().addParticle(ParticleTypes.PORTAL, itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(), 0, -0.5, 0);
                 } else {
                     if (!itemEntity.hasPickUpDelay() && enoughFuel(stack)) {
@@ -274,7 +274,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                 }
             }
         }
-        if (!entityIn.level().isClientSide && entityIn instanceof Player) {
+        if (!entityIn.level().isClientSide() && entityIn instanceof Player) {
             if (enoughFuel(stack)) {
                 var handlerItem = stack.getCapability(Capabilities.FluidHandler.ITEM);
                 if ((((Player) entityIn).getFoodData().needsFood() || ((Player) entityIn).getFoodData().getSaturationLevel() < 10) && handlerItem != null) {
@@ -642,7 +642,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                     level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, context.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                     level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
                     itemstack.consume(1, player);
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.sidedSuccess(level.isClientSide());
                 }
             }
         }
@@ -699,7 +699,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
             if (!customdata.isEmpty()) {
 
                 if (blockentity != null) {
-                    if (!level.isClientSide && blockentity.onlyOpCanSetNbt() && (player == null || !player.canUseGameMasterBlocks())) {
+                    if (!level.isClientSide() && blockentity.onlyOpCanSetNbt() && (player == null || !player.canUseGameMasterBlocks())) {
                         return false;
                     }
 

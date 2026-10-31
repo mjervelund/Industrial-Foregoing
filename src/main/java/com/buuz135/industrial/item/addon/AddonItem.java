@@ -17,7 +17,7 @@ public abstract class AddonItem extends IFCustomItem {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (!context.getLevel().isClientSide) {
+        if (!context.getLevel().isClientSide()) {
             var blockpos = context.getClickedPos();
             var entity = context.getLevel().getBlockEntity(blockpos);
             if (entity instanceof MachineTile<?> machineTile) {

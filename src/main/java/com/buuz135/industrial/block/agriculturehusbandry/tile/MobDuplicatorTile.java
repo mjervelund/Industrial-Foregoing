@@ -86,23 +86,23 @@ public class MobDuplicatorTile extends IndustrialAreaWorkingTile<MobDuplicatorTi
         int canSpawn = (int) ((tank.getFluid().isEmpty() ? 0 : tank.getFluid().getAmount()) / Math.max(essenceNeeded, 1));
         if (canSpawn == 0) return new WorkAction(1, 0);
 
-        int spawnAmount = 1 + this.level.random.nextInt(Math.min(canSpawn, 4));
+        int spawnAmount = 1 + this.level.getRandom().nextInt(Math.min(canSpawn, 4));
         List<BlockPos> blocks = BlockUtils.getBlockPosInAABB(getWorkingArea().bounds());
         while (spawnAmount > 0) {
             if (tank.getFluid().getAmount() >= essenceNeeded) {
                 entity = (LivingEntity) ((MobImprisonmentToolItem) stack.getItem()).getEntityFromStack(stack, this.level, MobDuplicatorConfig.exactCopy && exactCopy, true);
                 int tries = 20;
-                Vec3 random = blockPosToVec3d(blocks.get(this.level.random.nextInt(blocks.size())));
+                Vec3 random = blockPosToVec3d(blocks.get(this.level.getRandom().nextInt(blocks.size())));
                 random = random.add(0.5, 0, 0.5);
-                entity.moveTo(random.x, random.y, random.z, level.random.nextFloat() * 360F, 0);
+                entity.moveTo(random.x, random.y, random.z, level.getRandom().nextFloat() * 360F, 0);
                 entity.setUUID(UUID.randomUUID());
                 if (entity instanceof Mob) {
                     ((Mob) entity).finalizeSpawn((ServerLevelAccessor) this.level, this.level.getCurrentDifficultyAt(this.worldPosition), MobSpawnType.MOB_SUMMONED, null);
                 }
                 while (tries > 0 && !canEntitySpawn(entity)) {
-                    random = blockPosToVec3d(blocks.get(this.level.random.nextInt(blocks.size())));
+                    random = blockPosToVec3d(blocks.get(this.level.getRandom().nextInt(blocks.size())));
                     random = random.add(0.5, 0, 0.5);
-                    entity.moveTo(random.x, random.y, random.z, level.random.nextFloat() * 360F, 0);
+                    entity.moveTo(random.x, random.y, random.z, level.getRandom().nextFloat() * 360F, 0);
                     --tries;
                 }
                 if (tries <= 0) {
