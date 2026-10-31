@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -82,11 +81,11 @@ public class MachineSettingCopier extends IFCustomItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level p_41432_, Player player, InteractionHand hand) {
+    public InteractionResult use(Level p_41432_, Player player, InteractionHand hand) {
         if (player.isShiftKeyDown() && player.getItemInHand(hand).has(IFAttachments.SETTINGS_COPIER)) {
             player.getItemInHand(hand).remove(IFAttachments.SETTINGS_COPIER);
             player.playSound(SoundEvents.FIRE_EXTINGUISH, 0.5F, 1.0F);
-            return InteractionResultHolder.pass(player.getItemInHand(hand));
+            return InteractionResult.PASS;
         }
         return super.use(p_41432_, player, hand);
     }

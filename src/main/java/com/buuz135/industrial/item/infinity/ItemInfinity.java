@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.item.infinity;
 
+import net.minecraft.world.InteractionResult;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.item.IFCustomItem;
 import com.buuz135.industrial.module.ModuleCore;
@@ -57,7 +58,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
@@ -335,14 +335,14 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player player, InteractionHand handIn) {
         if (player.isCrouching()) {
             if (player instanceof ServerPlayer) {
                 IndustrialForegoing.NETWORK.sendTo(new BackpackOpenedMessage(player.getInventory().selected, PlayerInventoryFinder.MAIN), ((ServerPlayer) player));
                 player.openMenu(this, buffer ->
                         LocatorFactory.writePacketBuffer(buffer, new HeldStackLocatorInstance(handIn == InteractionHand.MAIN_HAND)));
             }
-            return InteractionResultHolder.success(player.getItemInHand(handIn));
+            return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(handIn));
         }
         if (IndustrialForegoing.CAT_EARS.getPlayers().contains(player.getUUID())) {
             player.getItemInHand(handIn).set(IFAttachments.INFINITY_ITEM_SPECIAL, true);

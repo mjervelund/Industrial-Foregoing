@@ -33,7 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -171,7 +171,7 @@ public class TransporterBlock extends BasicTileBlock<TransporterTile> implements
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack handStack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
+    public InteractionResult useItemOn(ItemStack handStack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
         BlockEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof TransporterTile) {
             Pair<Direction, Boolean> info = getFacingUpgradeHit(state, worldIn, pos, player);
@@ -181,20 +181,20 @@ public class TransporterBlock extends BasicTileBlock<TransporterTile> implements
                 if (player.isShiftKeyDown() && handStack.isEmpty()) {
                     if (((TransporterTile) tileEntity).hasUpgrade(facing)) {
                         ((TransporterTile) tileEntity).removeUpgrade(facing, true);
-                        return ItemInteractionResult.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                 } else {
                     if (isMiddle) {
                         if (((TransporterTile) tileEntity).hasUpgrade(facing)) {
                             ((TransporterTile) tileEntity).getTransporterTypeMap().get(facing).toggleAction();
-                            return ItemInteractionResult.SUCCESS;
+                            return InteractionResult.SUCCESS;
                         }
                     } else {
                         if (((TransporterTile) tileEntity).hasUpgrade(facing)) {
                             TransporterType transporterType = ((TransporterTile) tileEntity).getTransporterTypeMap().get(facing);
                             if (transporterType.hasGui()) {
                                 ((TransporterTile) tileEntity).openGui(player, facing);
-                                return ItemInteractionResult.SUCCESS;
+                                return InteractionResult.SUCCESS;
                             }
                         }
                     }

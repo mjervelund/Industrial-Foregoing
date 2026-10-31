@@ -22,7 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -125,15 +125,15 @@ public class InfinityBackpackTile extends BasicTile<InfinityBackpackTile> implem
     }
 
     @Override
-    public ItemInteractionResult onActivated(Player player, InteractionHand hand, Direction facing, double hitX, double hitY, double hitZ) {
+    public InteractionResult onActivated(Player player, InteractionHand hand, Direction facing, double hitX, double hitY, double hitZ) {
         if (!player.isShiftKeyDown() && player instanceof ServerPlayer serverPlayer && !backpack.isEmpty()) {
             ItemInfinityBackpack.sync(getLevel(), this.backpack.get(IFAttachments.INFINITY_BACKPACK_ID), serverPlayer);
             syncObject(this.backpack);
             serverPlayer.openMenu(this, buffer ->
                     LocatorFactory.writePacketBuffer(buffer, new TileEntityLocatorInstance(this.worldPosition)));
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     public MenuProvider getStackMenuProvider() {

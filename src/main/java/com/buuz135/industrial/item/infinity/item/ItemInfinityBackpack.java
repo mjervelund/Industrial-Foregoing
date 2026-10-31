@@ -66,7 +66,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -238,7 +237,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player player, InteractionHand handIn) {
         ItemStack stack = player.getItemInHand(handIn);
         if (player instanceof ServerPlayer serverPlayer) {
             if (!stack.has(IFAttachments.INFINITY_BACKPACK_ID)) {
@@ -251,7 +250,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
             sync(worldIn, id, serverPlayer);
             serverPlayer.openMenu(this, buffer ->
                     LocatorFactory.writePacketBuffer(buffer, new HeldStackLocatorInstance(handIn == InteractionHand.MAIN_HAND)));
-            return InteractionResultHolder.success(player.getItemInHand(handIn));
+            return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(handIn));
         }
         if (IndustrialForegoing.CAT_EARS.getPlayers().contains(player.getUUID())) {
             player.getItemInHand(handIn).set(IFAttachments.INFINITY_ITEM_SPECIAL, true);
@@ -601,7 +600,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
         InteractionResult interactionresult = this.place(new BlockPlaceContext(context));
         if (!interactionresult.consumesAction() && context.getItemInHand().has(DataComponents.FOOD)) {
             InteractionResult interactionresult1 = super.use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
-            return interactionresult1 == InteractionResult.CONSUME ? InteractionResult.CONSUME_PARTIAL : interactionresult1;
+            return interactionresult1 == InteractionResult.CONSUME ? InteractionResult.CONSUME : interactionresult1;
         } else {
             return interactionresult;
         }

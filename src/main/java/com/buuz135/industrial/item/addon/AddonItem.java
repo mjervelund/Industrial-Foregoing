@@ -28,7 +28,7 @@ public abstract class AddonItem extends IFCustomItem {
                         if (augmentInv.getStackInSlot(i).isEmpty()) {
                             augmentInv.setStackInSlot(i, stack);
                             context.getItemInHand().shrink(1);
-                            return InteractionResult.CONSUME_PARTIAL;
+                            return InteractionResult.CONSUME;
                         }
                     }
                 }

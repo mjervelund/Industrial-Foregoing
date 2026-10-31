@@ -40,7 +40,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -261,44 +261,44 @@ public class ConveyorBlock extends BasicTileBlock<ConveyorTile> implements Simpl
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack handStack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
+    public InteractionResult useItemOn(ItemStack handStack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
         BlockEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof ConveyorTile) {
             Direction facing = getFacingUpgradeHit(state, worldIn, pos, player);
             if (player.isCrouching()) {
                 if (facing != null) {
                     ((ConveyorTile) tileEntity).removeUpgrade(facing, true);
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             } else {
                 if (facing == null) {
                     if (handStack.getItem().equals(Items.GLOWSTONE_DUST) && !((ConveyorTile) tileEntity).getConveyorType().isFast()) {
                         ((ConveyorTile) tileEntity).setType(((ConveyorTile) tileEntity).getConveyorType().getFast());
                         handStack.shrink(1);
-                        return ItemInteractionResult.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                     if (handStack.getItem().equals(ModuleCore.PLASTIC) && !((ConveyorTile) tileEntity).isSticky()) {
                         ((ConveyorTile) tileEntity).setSticky(true);
                         handStack.shrink(1);
-                        return ItemInteractionResult.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                     if (handStack.getItem() instanceof DyeItem) {
                         ((ConveyorTile) tileEntity).setColor(((DyeItem) handStack.getItem()).getDyeColor());
-                        return ItemInteractionResult.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                 } else {
                     if (((ConveyorTile) tileEntity).hasUpgrade(facing)) {
                         ConveyorUpgrade upgrade = ((ConveyorTile) tileEntity).getUpgradeMap().get(facing);
                         if (upgrade.onUpgradeActivated(player, hand)) {
-                            return ItemInteractionResult.SUCCESS;
+                            return InteractionResult.SUCCESS;
                         } else if (upgrade.hasGui()) {
                             ((ConveyorTile) tileEntity).openGui(player, facing);
-                            return ItemInteractionResult.SUCCESS;
+                            return InteractionResult.SUCCESS;
                         }
                     }
                 }
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
         }
         return super.useItemOn(handStack, state, worldIn, pos, player, hand, ray);

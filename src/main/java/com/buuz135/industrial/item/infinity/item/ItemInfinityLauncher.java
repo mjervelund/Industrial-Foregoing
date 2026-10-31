@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.item.infinity.item;
 
+import net.minecraft.world.InteractionResult;
 import com.buuz135.industrial.entity.InfinityLauncherProjectileEntity;
 import com.buuz135.industrial.item.infinity.ItemInfinity;
 import com.buuz135.industrial.module.ModuleCore;
@@ -47,7 +48,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -135,11 +135,11 @@ public class ItemInfinityLauncher extends ItemInfinity {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (!playerIn.isShiftKeyDown()) {
             playerIn.startUsingItem(handIn);
-            return InteractionResultHolder.consume(itemstack);
+            return InteractionResult.CONSUME;
         }
         return super.use(worldIn, playerIn, handIn);
     }

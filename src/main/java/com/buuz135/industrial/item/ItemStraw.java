@@ -31,7 +31,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -110,7 +109,7 @@ public class ItemStraw extends IFCustomItem {
 
     @Override
     @Nonnull
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, @Nonnull InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, @Nonnull InteractionHand handIn) {
         HitResult result = getPlayerPOVHitResult(worldIn, playerIn, ClipContext.Fluid.SOURCE_ONLY);
         if (result != null && result.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockRayTraceResult = (BlockHitResult) result;
@@ -122,7 +121,7 @@ public class ItemStraw extends IFCustomItem {
                 Optional<StrawHandler> handler = StrawUtils.getStrawHandler(fluid.getType());
                 if (handler.isPresent()) {
                     playerIn.startUsingItem(handIn);
-                    return InteractionResultHolder.success(playerIn.getItemInHand(handIn)); //success accepted
+                    return InteractionResult.SUCCESS.heldItemTransformedTo(playerIn.getItemInHand(handIn)); //success accepted
                 }
             }
             BlockEntity tile = worldIn.getBlockEntity(pos);
@@ -139,7 +138,7 @@ public class ItemStraw extends IFCustomItem {
                                 FluidStack out = handler.drain(stack, IFluidHandler.FluidAction.SIMULATE);
                                 if (out != null && out.getAmount() >= 1000) {
                                     playerIn.startUsingItem(handIn);
-                                    return new InteractionResultHolder(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+                                    return InteractionResult.SUCCESS;
                                 }
                             }
                         }

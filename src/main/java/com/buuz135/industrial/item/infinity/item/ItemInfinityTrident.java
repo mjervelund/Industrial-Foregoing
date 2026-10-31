@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.item.infinity.item;
 
+import net.minecraft.world.InteractionResult;
 import com.buuz135.industrial.entity.InfinityTridentEntity;
 import com.buuz135.industrial.item.infinity.InfinityTier;
 import com.buuz135.industrial.item.infinity.ItemInfinity;
@@ -52,7 +53,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -121,14 +121,14 @@ public class ItemInfinityTrident extends ItemInfinity {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (getCurrentRiptide(itemstack) > 0 && !playerIn.isShiftKeyDown()) {
             playerIn.startUsingItem(handIn);
-            return InteractionResultHolder.consume(itemstack);
+            return InteractionResult.CONSUME;
         } else if (!playerIn.isShiftKeyDown()) {
             playerIn.startUsingItem(handIn);
-            return InteractionResultHolder.consume(itemstack);
+            return InteractionResult.CONSUME;
         }
         return super.use(worldIn, playerIn, handIn);
     }
