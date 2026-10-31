@@ -22,29 +22,28 @@
 
 package com.buuz135.industrial.entity.client;
 
-
-import com.buuz135.industrial.entity.InfinityLauncherProjectileEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.Unit;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public class InfinityLauncherProjectileModel extends EntityModel<InfinityLauncherProjectileEntity> {
-
-    private final ModelPart bone;
+public class InfinityLauncherProjectileModel extends Model<Unit> {
 
     public InfinityLauncherProjectileModel(ModelPart model) {
-        this.bone = model;
+        super(model, RenderTypes::entityCutout);
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshDefinition = new MeshDefinition();
-        PartDefinition partDefinition = meshDefinition.getRoot();
+        // The 1.21 renderer turned the model Z+90 and moved it 0.8 down after the entity rotation;
+        // baked in here so the renderer and the stuck-in-player layer share vanilla's arrow transform.
+        PartDefinition partDefinition = meshDefinition.getRoot().addOrReplaceChild("projectile", CubeListBuilder.create(),
+                PartPose.offsetAndRotation(12.8f, 0.0f, 0.0f, 0.0f, 0.0f, (float) (Math.PI / 2)));
 
         partDefinition.addOrReplaceChild("bone", CubeListBuilder.create()
                         .texOffs(28, 3).addBox(-0.5f, -0.5f, -0.5f, 1.0f, 9.0f, 1.0f)
@@ -54,15 +53,4 @@ public class InfinityLauncherProjectileModel extends EntityModel<InfinityLaunche
 
         return LayerDefinition.create(meshDefinition, 32, 32);
     }
-
-    @Override
-    public void setupAnim(InfinityLauncherProjectileEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {
-
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        bone.render(poseStack, buffer, packedLight, packedOverlay);
-    }
-
 }

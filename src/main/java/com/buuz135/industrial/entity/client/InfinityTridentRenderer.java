@@ -25,18 +25,19 @@ package com.buuz135.industrial.entity.client;
 import com.buuz135.industrial.entity.InfinityTridentEntity;
 import com.buuz135.industrial.utils.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
+import net.minecraft.util.Unit;
 
-public class InfinityTridentRenderer extends EntityRenderer<InfinityTridentEntity> {
+public class InfinityTridentRenderer extends EntityRenderer<InfinityTridentEntity, InfinityTridentRenderer.State> {
 
     public static final ModelLayerLocation TRIDENT_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_trident"), "main");
     public static final Identifier TRIDENT = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/item/infinity_trident.png");
@@ -48,19 +49,32 @@ public class InfinityTridentRenderer extends EntityRenderer<InfinityTridentEntit
     }
 
     @Override
-    public void render(InfinityTridentEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void submit(State state, PoseStack matrixStackIn, SubmitNodeCollector collector, CameraRenderState camera) {
         matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
-        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot()) + 90.0F));
+        matrixStackIn.rotateDegrees(Axis.YP, state.yRot - 90.0F);
+        matrixStackIn.rotateDegrees(Axis.ZP, state.xRot + 90.0F);
         matrixStackIn.translate(0.5, -0.5, -0.5);
-        VertexConsumer ivertexbuilder = net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect(bufferIn, RenderType.entityTranslucent(this.getTextureLocation(entityIn)), false, entityIn.isEnchanted());
-        this.tridentModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
+        collector.submitModel(this.tridentModel, Unit.INSTANCE, matrixStackIn, state.isFoil ? RenderTypes.itemTranslucentGlint(TRIDENT) : RenderTypes.entityTranslucent(TRIDENT), state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         matrixStackIn.popPose();
-        super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        super.submit(state, matrixStackIn, collector, camera);
     }
 
     @Override
-    public Identifier getTextureLocation(InfinityTridentEntity entity) {
-        return TRIDENT;
+    public State createRenderState() {
+        return new State();
+    }
+
+    @Override
+    public void extractRenderState(InfinityTridentEntity entity, State state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.yRot = entity.getYRot(partialTicks);
+        state.xRot = entity.getXRot(partialTicks);
+        state.isFoil = entity.isEnchanted();
+    }
+
+    public static class State extends EntityRenderState {
+        public float yRot;
+        public float xRot;
+        public boolean isFoil;
     }
 }

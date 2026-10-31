@@ -25,20 +25,23 @@ package com.buuz135.industrial.entity.client;
 import com.buuz135.industrial.entity.InfinityNukeEntity;
 import com.buuz135.industrial.utils.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Unit;
 
-public class InfinityNukeRenderer extends EntityRenderer<InfinityNukeEntity> {
+public class InfinityNukeRenderer extends EntityRenderer<InfinityNukeEntity, InfinityNukeRenderer.State> {
 
     public static final Identifier NUKE = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/entity/infinity_nuke_entity.png");
+    public static final Identifier MYCELIAL = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/block/mycelial_clean.png");
     private final InfinityNukeModel nukeModel;
     private final InfinityNukeModelArmed nukeModelArmed;
     private final InfinityNukeModelArmed nukeModelArmedBig;
@@ -56,37 +59,54 @@ public class InfinityNukeRenderer extends EntityRenderer<InfinityNukeEntity> {
     }
 
     @Override
-    public void render(InfinityNukeEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void submit(State state, PoseStack matrixStackIn, SubmitNodeCollector collector, CameraRenderState camera) {
         matrixStackIn.pushPose();
-        //matrixStackIn.rotate(Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.prevRotationYaw, entityIn.rotationYaw) - 90.0F));
-        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot()) - 180.0F));
+        matrixStackIn.rotateDegrees(Axis.ZP, state.xRot - 180.0F);
         matrixStackIn.translate(0, -1.35, 0.05);
-        VertexConsumer ivertexbuilder = net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect(bufferIn, RenderType.entityTranslucent(this.getTextureLocation(entityIn)), false, false);
-        if (entityIn.isDataArmed()) {
-            if (entityIn.isDataExploding()) {
-                double time = 7 + entityIn.getCommandSenderWorld().getRandom().nextInt(50);
-                matrixStackIn.translate((entityIn.getCommandSenderWorld().getRandom().nextDouble() - 0.5) / time, 0, (entityIn.getCommandSenderWorld().getRandom().nextDouble() - 0.5) / time);
-
-            }
-            this.nukeModelArmed.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
-            if (entityIn.isDataExploding() && entityIn.level().getRandom().nextDouble() < 0.96) {
-                float f = partialTicks + entityIn.getDataTicksExploding() + 10;
-                ivertexbuilder = net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect(bufferIn, RenderType.energySwirl(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/block/mycelial_clean.png"), f * (entityIn.getDataTicksExploding() / 50000f), f * (entityIn.getDataTicksExploding() / 50000f)), false, false);
-                //matrixStackIn.scale(1.1f,1.1f,1.1f);
-                nukeModelArmedBig.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
+        if (state.armed) {
+            matrixStackIn.translate(state.shakeX, 0, state.shakeZ);
+            collector.submitModel(this.nukeModelArmed, Unit.INSTANCE, matrixStackIn, NUKE, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+            if (state.showSwirl) {
+                float f = state.partialTick + state.ticksExploding + 10;
+                float offset = f * (state.ticksExploding / 50000f);
+                collector.submitModel(this.nukeModelArmedBig, Unit.INSTANCE, matrixStackIn, RenderTypes.energySwirl(MYCELIAL, offset, offset), state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
             }
         } else {
-            this.nukeModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
+            collector.submitModel(this.nukeModel, Unit.INSTANCE, matrixStackIn, NUKE, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         }
-
         matrixStackIn.popPose();
-        super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        super.submit(state, matrixStackIn, collector, camera);
     }
 
     @Override
-    public Identifier getTextureLocation(InfinityNukeEntity entity) {
-        return NUKE;
+    public State createRenderState() {
+        return new State();
     }
 
+    @Override
+    public void extractRenderState(InfinityNukeEntity entity, State state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.xRot = entity.getXRot(partialTicks);
+        state.armed = entity.isDataArmed();
+        state.ticksExploding = entity.getDataTicksExploding();
+        state.shakeX = 0;
+        state.shakeZ = 0;
+        state.showSwirl = false;
+        if (state.armed && entity.isDataExploding()) {
+            RandomSource random = entity.level().getRandom();
+            double time = 7 + random.nextInt(50);
+            state.shakeX = (float) ((random.nextDouble() - 0.5) / time);
+            state.shakeZ = (float) ((random.nextDouble() - 0.5) / time);
+            state.showSwirl = random.nextDouble() < 0.96;
+        }
+    }
 
+    public static class State extends EntityRenderState {
+        public float xRot;
+        public boolean armed;
+        public boolean showSwirl;
+        public int ticksExploding;
+        public float shakeX;
+        public float shakeZ;
+    }
 }

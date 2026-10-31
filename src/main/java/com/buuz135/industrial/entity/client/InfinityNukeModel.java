@@ -24,34 +24,20 @@ package com.buuz135.industrial.entity.client;// Made with Blockbench 3.8.4
 // Exported for Minecraft version 1.15 - 1.16
 // Paste this class into your mod and generate all required imports
 
-
-import com.buuz135.industrial.entity.InfinityNukeEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.Unit;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-
-public class InfinityNukeModel extends EntityModel<InfinityNukeEntity> {
-    private final ModelPart top;
-    private final ModelPart bottom;
-    private final ModelPart core;
-    private final ModelPart leg_left;
-    private final ModelPart leg_right;
-    private final ModelPart bone;
+public class InfinityNukeModel extends Model<Unit> {
 
     public InfinityNukeModel(ModelPart model) {
-        this.top = model;
-        this.bottom = model;
-        this.core = model;
-        this.leg_left = model;
-        this.leg_right = model;
-        this.bone = model;
+        super(model, RenderTypes::entityTranslucent);
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -93,19 +79,5 @@ public class InfinityNukeModel extends EntityModel<InfinityNukeEntity> {
                 PartPose.offsetAndRotation(0.0f, 24.0f, 0.0f, 0.0f, 0.0f, 0.0f));
 
         return LayerDefinition.create(meshDefinition, 64, 64);
-    }
-
-    @Override
-    public void setupAnim(InfinityNukeEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        top.render(poseStack, buffer, packedLight, packedOverlay);
-        bottom.render(poseStack, buffer, packedLight, packedOverlay);
-        core.render(poseStack, buffer, packedLight, packedOverlay);
-        leg_left.render(poseStack, buffer, packedLight, packedOverlay);
-        leg_right.render(poseStack, buffer, packedLight, packedOverlay);
-        bone.render(poseStack, buffer, packedLight, packedOverlay);
     }
 }

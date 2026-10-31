@@ -116,7 +116,7 @@ public class ClientProxy extends CommonProxy {
         for (PlayerModelType skin : event.getSkins()) {
             if (event.getPlayerRenderer(skin) instanceof AvatarRenderer<?> playerRenderer) {
                 playerRenderer.addLayer(new ContributorsCatEarsRender(playerRenderer));
-                playerRenderer.addLayer(new InfinityLauncherProjectileArmorLayer(playerRenderer));
+                playerRenderer.addLayer(new InfinityLauncherProjectileArmorLayer<>(playerRenderer, event.getEntityModels()));
             }
         }
     }

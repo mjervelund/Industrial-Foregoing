@@ -22,23 +22,20 @@
 
 package com.buuz135.industrial.entity.client;
 
-import com.buuz135.industrial.entity.InfinityTridentEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.Unit;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public class InfinityTridentModel extends EntityModel<InfinityTridentEntity> {
-
-    private final ModelPart main;
+public class InfinityTridentModel extends Model<Unit> {
 
     public InfinityTridentModel(ModelPart model) {
-        this.main = model;
+        super(model, RenderTypes::entityTranslucent);
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -62,17 +59,4 @@ public class InfinityTridentModel extends EntityModel<InfinityTridentEntity> {
 
         return LayerDefinition.create(meshDefinition, 64, 64);
     }
-
-    @Override
-    public void setupAnim(InfinityTridentEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {
-
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        main.render(poseStack, buffer, packedLight, packedOverlay);
-    }
-
-
 }
-

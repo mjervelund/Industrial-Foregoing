@@ -25,18 +25,18 @@ package com.buuz135.industrial.entity.client;
 import com.buuz135.industrial.entity.InfinityLauncherProjectileEntity;
 import com.buuz135.industrial.utils.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
+import net.minecraft.util.Unit;
 
-public class InfinityLauncherProjectileRenderer extends EntityRenderer<InfinityLauncherProjectileEntity> {
+public class InfinityLauncherProjectileRenderer extends EntityRenderer<InfinityLauncherProjectileEntity, InfinityLauncherProjectileRenderer.State> {
 
     public static final ModelLayerLocation PROJECTILE_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_launcher_projectile"), "main");
     public static final Identifier PROJECTILE = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "textures/item/infinity_launcher_projectile.png");
@@ -48,19 +48,29 @@ public class InfinityLauncherProjectileRenderer extends EntityRenderer<InfinityL
     }
 
     @Override
-    public void render(InfinityLauncherProjectileEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void submit(State state, PoseStack matrixStackIn, SubmitNodeCollector collector, CameraRenderState camera) {
         matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
-        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot()) + 90.0F));
-        matrixStackIn.translate(0, -0.8, 0);
-        VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutout(this.getTextureLocation(entityIn)));
-        this.projectileModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0xFFFFFF);
+        matrixStackIn.rotateDegrees(Axis.YP, state.yRot - 90.0F);
+        matrixStackIn.rotateDegrees(Axis.ZP, state.xRot);
+        collector.submitModel(this.projectileModel, Unit.INSTANCE, matrixStackIn, PROJECTILE, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         matrixStackIn.popPose();
-        super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        super.submit(state, matrixStackIn, collector, camera);
     }
 
     @Override
-    public Identifier getTextureLocation(InfinityLauncherProjectileEntity p_114482_) {
-        return PROJECTILE;
+    public State createRenderState() {
+        return new State();
+    }
+
+    @Override
+    public void extractRenderState(InfinityLauncherProjectileEntity entity, State state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.yRot = entity.getYRot(partialTicks);
+        state.xRot = entity.getXRot(partialTicks);
+    }
+
+    public static class State extends EntityRenderState {
+        public float yRot;
+        public float xRot;
     }
 }
