@@ -29,7 +29,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -65,7 +65,7 @@ public class SlimeyGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<BiPredicate<ItemStack, Integer>> getSlotInputPredicates() {
-        return Arrays.asList(null, (stack, slot) -> stack.is(Tags.Items.SLIMEBALLS));
+        return Arrays.asList(null, (stack, slot) -> stack.is(Tags.Items.SLIME_BALLS));
     }
 
     @Override
@@ -107,11 +107,11 @@ public class SlimeyGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
-        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.SLIMEBALLS)))), Arrays.asList(Arrays.asList(new FluidStack(NeoForgeMod.MILK.get(), 250)), Arrays.asList()), 20 * 20, 200));
+        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(Tags.Items.SLIME_BALLS)))), Arrays.asList(Arrays.asList(new FluidStack(NeoForgeMod.MILK.get(), 250)), Arrays.asList()), 20 * 20, 200));
     }
 
     @Override
-    public ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder) {
+    public TitaniumShapedRecipeBuilder addIngredients(TitaniumShapedRecipeBuilder recipeBuilder) {
         recipeBuilder = recipeBuilder.define('B', Blocks.SLIME_BLOCK)
                 .define('C', Items.MILK_BUCKET)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_ADVANCED);

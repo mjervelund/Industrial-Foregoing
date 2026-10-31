@@ -28,7 +28,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -92,7 +92,7 @@ public class PinkGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public Item getDisplay() {
-        return Items.PINK_DYE;
+        return Items.DYE.pick(DyeColor.PINK);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class PinkGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
-        return BuiltInRegistries.ITEM.stream().map(ItemStack::new).filter(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().contains("pink")).map(item -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(item))), new ArrayList<>(), 69, 135)).collect(Collectors.toList());
+        return BuiltInRegistries.ITEM.stream().map(ItemStack::new).filter(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().contains("pink")).map(item -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(item.getItem()))), new ArrayList<>(), 69, 135)).collect(Collectors.toList());
     }
 
     private Pair<Integer, Integer> calculate(ItemStack stack) {
@@ -110,9 +110,9 @@ public class PinkGeneratorType implements IMycelialGeneratorType {
     }
 
     @Override
-    public ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder) {
+    public TitaniumShapedRecipeBuilder addIngredients(TitaniumShapedRecipeBuilder recipeBuilder) {
         recipeBuilder = recipeBuilder.define('B', Tags.Items.DYES_PINK)
-                .define('C', Blocks.PINK_WOOL)
+                .define('C', Blocks.WOOL.pick(DyeColor.PINK))
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_SIMPLE);
         return recipeBuilder;
     }

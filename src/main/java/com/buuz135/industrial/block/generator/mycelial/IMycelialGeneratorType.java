@@ -25,7 +25,7 @@ package com.buuz135.industrial.block.generator.mycelial;
 import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -66,7 +66,7 @@ public interface IMycelialGeneratorType {
 
     List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess);
 
-    ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder);
+    TitaniumShapedRecipeBuilder addIngredients(TitaniumShapedRecipeBuilder recipeBuilder);
 
     default void onTick(Level world, BlockPos pos) {
 

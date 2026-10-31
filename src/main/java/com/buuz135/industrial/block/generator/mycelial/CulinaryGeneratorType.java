@@ -28,12 +28,13 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
@@ -64,7 +65,7 @@ public class CulinaryGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<BiPredicate<ItemStack, Integer>> getSlotInputPredicates() {
-        return Arrays.asList((stack, slot) -> stack.getFoodProperties(null) != null);
+        return Arrays.asList((stack, slot) -> stack.has(DataComponents.FOOD));
     }
 
     @Override
@@ -104,17 +105,17 @@ public class CulinaryGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
-        return BuiltInRegistries.ITEM.stream().map(ItemStack::new).filter(itemStack -> itemStack.getFoodProperties(null) != null).map(item -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(item))), new ArrayList<>(), calculate(item).getLeft(), calculate(item).getRight())).collect(Collectors.toList());
+        return BuiltInRegistries.ITEM.stream().map(ItemStack::new).filter(itemStack -> itemStack.has(DataComponents.FOOD)).map(item -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(item.getItem()))), new ArrayList<>(), calculate(item).getLeft(), calculate(item).getRight())).collect(Collectors.toList());
     }
 
     private Pair<Integer, Integer> calculate(ItemStack stack) {
-        FoodProperties food = stack.getItem().getFoodProperties(stack, null);
+        FoodProperties food = stack.get(DataComponents.FOOD);
         if (food != null) return Pair.of(food.nutrition() * 160, (int) (food.saturation() * 80));
         return Pair.of(0, 0);
     }
 
     @Override
-    public ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder) {
+    public TitaniumShapedRecipeBuilder addIngredients(TitaniumShapedRecipeBuilder recipeBuilder) {
         recipeBuilder = recipeBuilder.define('B', Tags.Items.CROPS)
                 .define('C', Items.COOKED_BEEF)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_SIMPLE);

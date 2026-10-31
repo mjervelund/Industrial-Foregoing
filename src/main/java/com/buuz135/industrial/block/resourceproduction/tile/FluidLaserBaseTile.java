@@ -51,6 +51,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -63,6 +64,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -144,21 +146,22 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
                 public String getValue() {
                     return miningDepth + "";
                 }
+
+                // EditBox#setFilter is gone on 26.3: only accept digits and the sign
+                @Override
+                public void insertText(String input) {
+                    if (input.chars().allMatch(c -> Character.isDigit(c) || c == '-')) super.insertText(input);
+                }
             };
             edit.setValue(miningDepth + "");
-            edit.setFilter(string -> {
-                if (string.isEmpty()) return true;
-                try {
-                    Integer.decode(string);
-                    return true;
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-            });
             edit.setResponder(string -> {
                 if (!string.isEmpty()) {
                     CompoundTag compoundTag = new CompoundTag();
-                    compoundTag.putInt("MiningLevel", Integer.decode(string));
+                    try {
+                        compoundTag.putInt("MiningLevel", Integer.decode(string));
+                    } catch (NumberFormatException e) {
+                        return;
+                    }
                     Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(new TileEntityLocatorInstance(this.getBlockPos()), 5487, compoundTag));
                 }
             });
@@ -207,8 +210,9 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
 
                 for (var candidate : entities) {
                     if (!entityData.getData().isEmpty()) {
-                        CompoundTag data = new CompoundTag();
-                        candidate.saveWithoutId(data);
+                        TagValueOutput dataOutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, this.level.registryAccess());
+                        candidate.saveWithoutId(dataOutput);
+                        CompoundTag data = dataOutput.buildResult();
                         if (!NbtUtils.compareNbt(recipe.entityData.get().getData(), data, true)) {
                             continue;
                         }

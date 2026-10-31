@@ -53,6 +53,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -65,6 +66,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -147,21 +149,22 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 public String getValue() {
                     return miningDepth + "";
                 }
+
+                // EditBox#setFilter is gone on 26.3: only accept digits and the sign
+                @Override
+                public void insertText(String input) {
+                    if (input.chars().allMatch(c -> Character.isDigit(c) || c == '-')) super.insertText(input);
+                }
             };
             edit.setValue(miningDepth + "");
-            edit.setFilter(string -> {
-                if (string.isEmpty() || string.equals("-")) return true;
-                try {
-                    Integer.decode(string);
-                    return true;
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-            });
             edit.setResponder(string -> {
                 if (!string.isEmpty() && !string.equals("-")) {
                     CompoundTag compoundTag = new CompoundTag();
-                    compoundTag.putInt("MiningLevel", Integer.decode(string));
+                    try {
+                        compoundTag.putInt("MiningLevel", Integer.decode(string));
+                    } catch (NumberFormatException e) {
+                        return;
+                    }
                     Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(new TileEntityLocatorInstance(this.getBlockPos()), 5487, compoundTag));
                 }
             });
@@ -193,7 +196,7 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 .filter(Objects::nonNull)
                 .toList();
             if (!items.isEmpty()) {
-                ItemStack stack = WeightedRandom.getRandomItem(this.level.getRandom(), items).get().getStack();
+                ItemStack stack = WeightedRandom.getRandomItem(this.level.getRandom(), items, ItemStackWeightedItem::getWeight).get().getStack();
                 ItemUtil.insertItemReturnRemaining(output, stack, false, null);
             }
         }
@@ -206,8 +209,9 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
             if (entities.isEmpty()) return null;
 
             List<Entity> filtered = entities.stream().filter(entity -> {
-                CompoundTag data = new CompoundTag();
-                entity.saveWithoutId(data);
+                TagValueOutput dataOutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, this.level.registryAccess());
+                entity.saveWithoutId(dataOutput);
+                CompoundTag data = dataOutput.buildResult();
                 return NbtUtils.compareNbt(recipe.entityData.get().getData(), data, true);
             }).collect(Collectors.toList());
 
@@ -232,8 +236,9 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 weight += OreLaserBaseConfig.catalystModifier;
         }
         ItemStack stack = ItemStack.EMPTY;
+        List<ItemStack> outputs = recipe.output.ingredient().items().map(item -> new ItemStack(item, recipe.output.count())).toList();
         for (String modid : TagConfig.ITEM_PREFERENCE) {
-            for (ItemStack matchingStack : recipe.output.getItems()) {
+            for (ItemStack matchingStack : outputs) {
                 if (BuiltInRegistries.ITEM.getKey(matchingStack.getItem()).getNamespace().equals(modid)) {
                     stack = matchingStack;
                     break;
@@ -241,7 +246,10 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
             }
             if (!stack.isEmpty()) break;
         }
-        if (stack.isEmpty()) stack = recipe.output.getItems()[0];
+        if (stack.isEmpty()) {
+            if (outputs.isEmpty()) return null; // tag without items
+            stack = outputs.getFirst();
+        }
         return new ItemStackWeightedItem(stack.copy(), weight);
     }
 

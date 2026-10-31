@@ -46,7 +46,7 @@ import com.hrznstudio.titanium.util.AssetUtil;
 import com.hrznstudio.titanium.util.LangUtil;
 import com.hrznstudio.titanium.util.RecipeUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -57,7 +57,9 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -82,7 +84,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             new StoneWorkAction(new ItemStack(Blocks.FURNACE), (world1, itemStack) -> {
                 SmeltingRecipe recipe = RecipeUtil.getSmelingRecipeFor(world1, itemStack);
                 if (recipe != null) {
-                    return recipe.getResultItem(world1.registryAccess());
+                    return recipe.assemble(new SingleRecipeInput(itemStack));
                 }
                 return ItemStack.EMPTY;
             }, 1, "smelt"),
@@ -142,7 +144,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
-                    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+                    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         getRecipe().ifPresent(recipe -> {
                             AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                             //RenderSystem.setupGui3DDiffuseLighting();
@@ -206,7 +208,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
-                    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+                    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
                         guiGraphics.renderItem(ACTION_RECIPES[firstRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
@@ -232,7 +234,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
-                    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+                    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
                         guiGraphics.renderItem(ACTION_RECIPES[secondRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
@@ -258,7 +260,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
-                    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+                    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
                         guiGraphics.renderItem(ACTION_RECIPES[thirdRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
@@ -284,7 +286,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
             public List<IFactory<?>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
-                    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
+                    public void drawBackgroundLayer(GuiGraphicsExtractor guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
                         AssetUtil.drawAsset(guiGraphics, screen, provider.getAsset(AssetTypes.ITEM_BACKGROUND), guiX + getPosX(), guiY + getPosY());
                         //RenderSystem.setupGui3DDiffuseLighting();
                         guiGraphics.renderItem(ACTION_RECIPES[fourthRecipeId].icon, guiX + getPosX() + 1, guiY + getPosY() + 1);
@@ -332,19 +334,28 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
     }
 
     public Optional<StoneWorkGenerateRecipe> getRecipe() {
-        List<RecipeHolder<StoneWorkGenerateRecipe>> recipes = this.level.getRecipeManager().getAllRecipesFor((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get());
+        Collection<RecipeHolder<StoneWorkGenerateRecipe>> recipes = getGenerateRecipes();
         for (RecipeHolder<StoneWorkGenerateRecipe> recipe : recipes) {
 
-            if (recipe.id().equals(this.getGeneratorRecipeLocation())) {
+            if (recipe.id().identifier().equals(this.getGeneratorRecipeLocation())) {
                 return Optional.of(recipe.value());
             }
         }
-        return recipes.stream().filter(stoneWorkGenerateRecipe -> stoneWorkGenerateRecipe.id().equals(DEFAULT)).map(RecipeHolder::value).findFirst();
+        return recipes.stream().filter(stoneWorkGenerateRecipe -> stoneWorkGenerateRecipe.id().identifier().equals(DEFAULT)).map(RecipeHolder::value).findFirst();
+    }
+
+    // 26.3: recipes live on the server only (the client RecipeAccess has none), so the GUI preview is empty on a remote client
+    private Collection<RecipeHolder<StoneWorkGenerateRecipe>> getGenerateRecipes() {
+        if (this.level.recipeAccess() instanceof RecipeManager recipeManager) {
+            return recipeManager.recipeMap().byType((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get());
+        }
+        return List.of();
     }
 
     public Identifier getNextRecipe(boolean next) {
         if (generatorRecipe != null) {
-            List<Identifier> rls = this.level.getRecipeManager().getAllRecipesFor((RecipeType<StoneWorkGenerateRecipe>) ModuleCore.STONEWORK_GENERATE_TYPE.get()).stream().map(RecipeHolder::id).toList();
+            List<Identifier> rls = getGenerateRecipes().stream().map(recipe -> recipe.id().identifier()).toList();
+            if (rls.isEmpty()) return DEFAULT;
             int currentIndex = rls.indexOf(this.getGeneratorRecipeLocation());
             if (next) {
                 this.generatorRecipe = rls.get((currentIndex + 1) % rls.size()).toString();

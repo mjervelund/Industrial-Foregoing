@@ -23,6 +23,7 @@
 package com.buuz135.industrial.block.resourceproduction.tile;
 
 import com.buuz135.industrial.utils.ItemStackUtils;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import com.buuz135.industrial.block.tile.IndustrialProcessingTile;
 import com.buuz135.industrial.config.machine.resourceproduction.ResourcefulFurnaceConfig;
@@ -51,7 +52,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.crafting.BrewingInput;
+import net.minecraft.world.item.crafting.BrewingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipePropertySet;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -63,6 +70,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile> {
 
@@ -205,22 +213,26 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
     }
 
     private boolean canBrew(int slot) {
-        var potionBrewing = this.level.potionBrewing();
         ItemStack ingredient = this.brewingItems.getInventory().getStackInSlot(slot);
-        if (ingredient.isEmpty()) {
+        if (ingredient.isEmpty() || !(this.level instanceof ServerLevel serverLevel)) {
             return false;
-        } else if (!potionBrewing.isIngredient(ingredient)) {
+        } else if (!serverLevel.recipeAccess().propertySet(RecipePropertySet.BREWING_REAGENTS).test(ingredient)) {
             return false;
         } else {
             for (int i = 0; i < 3; ++i) {
                 ItemStack itemstack1 = this.output.getStackInSlot(i);
-                if (!itemstack1.isEmpty() && potionBrewing.hasMix(itemstack1, ingredient)) {
+                if (!itemstack1.isEmpty() && getBrewingRecipe(serverLevel, itemstack1, ingredient).isPresent()) {
                     return true;
                 }
             }
 
             return false;
         }
+    }
+
+    // 26.3: PotionBrewing is gone, brewing mixes are BrewingRecipes (like BrewingStandBlockEntity)
+    private static Optional<RecipeHolder<BrewingRecipe>> getBrewingRecipe(ServerLevel level, ItemStack potion, ItemStack ingredient) {
+        return level.recipeAccess().getRecipeFor(RecipeType.BREWING, new BrewingInput(potion, ingredient), level);
     }
 
     private void brewPotions(int slot) {
@@ -230,7 +242,11 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
 
         if (EventHooks.onPotionAttemptBrew(input)) return;
 
-        input.replaceAll(potionItem -> this.level.potionBrewing().mix(ingredient, potionItem));
+        ServerLevel serverLevel = (ServerLevel) this.level;
+        input.replaceAll(potionItem -> {
+            BrewingInput brewingInput = new BrewingInput(potionItem, ingredient);
+            return getBrewingRecipe(serverLevel, potionItem, ingredient).map(recipe -> recipe.value().assemble(brewingInput)).orElse(potionItem);
+        });
 
         ItemStackUtils.shrink(this.brewingItems.getInventory(), slot, 1);
 
@@ -246,7 +262,7 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
         }
         if (tag.contains("BR_filter")) {
             for (String psFilter : tag.getCompoundOrEmpty("BR_filter").keySet()) {
-                brewingItems.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("BR_filter").getCompoundOrEmpty(psFilter));
+                brewingItems.getFilter()[Integer.parseInt(psFilter)] = ItemStackSerialization.load(this.level.registryAccess(), tag.getCompoundOrEmpty("BR_filter").getCompoundOrEmpty(psFilter));
             }
         }
         this.filter.deserializeNBT(this.level.registryAccess(), tag.getCompoundOrEmpty("PB_OutputFilter"));
@@ -258,7 +274,7 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
         tag.putBoolean("BR_locked", brewingItems.isLocked());
         CompoundTag filterTag = new CompoundTag();
         for (int i = 0; i < brewingItems.getFilter().length; i++) {
-            filterTag.put(i + "", brewingItems.getFilter()[i].saveOptional(this.level.registryAccess()));
+            filterTag.put(i + "", ItemStackSerialization.save(this.level.registryAccess(), brewingItems.getFilter()[i]));
         }
         tag.put("BR_filter", filterTag);
         tag.put("PB_OutputFilter", this.filter.serializeNBT(this.level.registryAccess()));

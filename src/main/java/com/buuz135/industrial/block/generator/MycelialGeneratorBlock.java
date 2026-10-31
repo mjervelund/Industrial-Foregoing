@@ -30,7 +30,6 @@ import com.buuz135.industrial.worlddata.MycelialDataManager;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -83,17 +82,8 @@ public class MycelialGeneratorBlock extends IndustrialBlock<MycelialGeneratorTil
     }
 
     @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        BlockEntity entity = worldIn.getBlockEntity(pos);
-        if (entity instanceof MycelialGeneratorTile) {
-            MycelialDataManager.removeGeneratorInfo(((MycelialGeneratorTile) entity).getOwner(), worldIn, pos, type);
-        }
-        super.onRemove(state, worldIn, pos, newState, isMoving);
-    }
-
-    @Override
     public void registerRecipe(RecipeOutput consumer) {
-        ShapedRecipeBuilder recipe = TitaniumShapedRecipeBuilder.shapedRecipe(this).pattern("BBB").pattern("BCB").pattern("RMR")
+        TitaniumShapedRecipeBuilder recipe = TitaniumShapedRecipeBuilder.shapedRecipe(this).pattern("BBB").pattern("BCB").pattern("RMR")
                 .define('R', Items.REDSTONE);
         type.addIngredients(recipe).save(consumer);
     }

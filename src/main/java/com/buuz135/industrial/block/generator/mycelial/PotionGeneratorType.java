@@ -26,11 +26,10 @@ import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
-import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.*;
@@ -106,10 +105,10 @@ public class PotionGeneratorType implements IMycelialGeneratorType {
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes(RegistryAccess registryAccess) {
-        return registryAccess.registryOrThrow(Registries.POTION).stream().filter(potion -> potion != Potions.WATER).map(effect -> Arrays.asList(
-                        PotionContents.createItemStack(Items.POTION, Holder.direct(effect)),
-                        PotionContents.createItemStack(Items.SPLASH_POTION, Holder.direct(effect)),
-                        PotionContents.createItemStack(Items.LINGERING_POTION, Holder.direct(effect))
+        return registryAccess.lookupOrThrow(Registries.POTION).listElements().filter(potion -> potion.value() != Potions.WATER.value()).map(effect -> Arrays.asList(
+                        PotionContents.createItemStack(Items.POTION, effect),
+                        PotionContents.createItemStack(Items.SPLASH_POTION, effect),
+                        PotionContents.createItemStack(Items.LINGERING_POTION, effect)
                 ))
                 .flatMap(Collection::stream)
                 .map(stack -> new MycelialGeneratorRecipe(Collections.singletonList(Collections.singletonList(Ingredient.of(stack.getItem()))), new ArrayList<>(), calculate(stack).getLeft(), calculate(stack).getRight())).collect(Collectors.toList());
@@ -130,7 +129,7 @@ public class PotionGeneratorType implements IMycelialGeneratorType {
     }
 
     @Override
-    public ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder) {
+    public TitaniumShapedRecipeBuilder addIngredients(TitaniumShapedRecipeBuilder recipeBuilder) {
         recipeBuilder = recipeBuilder.define('B', Items.NETHER_WART)
                 .define('C', Blocks.BREWING_STAND)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_ADVANCED);

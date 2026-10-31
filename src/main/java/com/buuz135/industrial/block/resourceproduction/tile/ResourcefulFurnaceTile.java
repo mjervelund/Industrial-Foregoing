@@ -37,6 +37,7 @@ import com.hrznstudio.titanium.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -95,13 +96,14 @@ public class ResourcefulFurnaceTile extends IndustrialProcessingTile<Resourceful
 
     private void checkForRecipe(int slot) {
         Collection<SmeltingRecipe> recipes = RecipeUtil.getCookingRecipes(this.level);
-        this.recipes[slot] = recipes.stream().filter(furnaceRecipe -> furnaceRecipe.getIngredients().get(0).test(input.getStackInSlot(slot))).findAny().orElse(null);
+        this.recipes[slot] = recipes.stream().filter(furnaceRecipe -> furnaceRecipe.input().test(input.getStackInSlot(slot))).findAny().orElse(null);
     }
 
     @Override
     public boolean canIncrease() {
-        for (SmeltingRecipe recipe : this.recipes) {
-            if (recipe != null && ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), true, null).isEmpty())
+        for (int i = 0; i < this.recipes.length; i++) {
+            SmeltingRecipe recipe = this.recipes[i];
+            if (recipe != null && ItemUtil.insertItemReturnRemaining(output, recipe.assemble(new SingleRecipeInput(input.getStackInSlot(i))), true, null).isEmpty())
                 return true;
         }
         return false;
@@ -112,11 +114,12 @@ public class ResourcefulFurnaceTile extends IndustrialProcessingTile<Resourceful
         return () -> {
             for (int i = 0; i < this.recipes.length; i++) {
                 SmeltingRecipe recipe = this.recipes[i];
-                if (recipe != null && ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), true, null).isEmpty()) {
-                    if (ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), true, null).isEmpty()) {
+                ItemStack result = recipe == null ? ItemStack.EMPTY : recipe.assemble(new SingleRecipeInput(input.getStackInSlot(i)));
+                if (recipe != null && ItemUtil.insertItemReturnRemaining(output, result.copy(), true, null).isEmpty()) {
+                    if (ItemUtil.insertItemReturnRemaining(output, result.copy(), true, null).isEmpty()) {
                         input.setStackInSlot(i, ItemStack.EMPTY);
-                        ItemUtil.insertItemReturnRemaining(output, recipe.getResultItem(this.level.registryAccess()).copy(), false, null);
-                        TankUtils.fillForced(tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), (int) (recipe.getExperience() * 20)), false);
+                        ItemUtil.insertItemReturnRemaining(output, result, false, null);
+                        TankUtils.fillForced(tank, new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), (int) (recipe.experience() * 20)), false);
                     }
                 }
             }

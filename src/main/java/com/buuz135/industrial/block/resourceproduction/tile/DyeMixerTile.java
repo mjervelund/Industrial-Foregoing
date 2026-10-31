@@ -43,7 +43,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
@@ -189,7 +189,7 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
         addGuiAddonFactory(() -> new ItemGuiAddon(133, 20) {
             @Override
             public ItemStack getItemStack() {
-                return new ItemStack(DyeItem.byColor(DyeColor.byId(dye)));
+                return new ItemStack(Items.DYE.pick(DyeColor.byId(dye)));
             }
         });
     }
@@ -200,7 +200,7 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
         increaseBar(inputGreen, green);
         increaseBar(inputBlue, blue);
         ColorUsage color = colorUsages[dye];
-        ItemStack dye = new ItemStack(DyeItem.byColor(DyeColor.byId(this.dye)));
+        ItemStack dye = new ItemStack(Items.DYE.pick(DyeColor.byId(this.dye)));
         return red.getProgress() >= color.r && green.getProgress() >= color.g && blue.getProgress() >= color.b && ItemUtil.insertItemReturnRemaining(output, dye, true, null).isEmpty();
     }
 
@@ -215,7 +215,7 @@ public class DyeMixerTile extends IndustrialProcessingTile<DyeMixerTile> {
     @Override
     public Runnable onFinish() {
         return () -> {
-            ItemStack dye = new ItemStack(DyeItem.byColor(DyeColor.byId(this.dye)));
+            ItemStack dye = new ItemStack(Items.DYE.pick(DyeColor.byId(this.dye)));
             if (ItemUtil.insertItemReturnRemaining(output, dye, true, null).isEmpty()) {
                 ColorUsage color = colorUsages[this.dye];
                 red.setProgress(red.getProgress() - color.r);

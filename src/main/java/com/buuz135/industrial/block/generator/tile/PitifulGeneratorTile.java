@@ -31,7 +31,7 @@ import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.crafting.RecipeType;
+import com.buuz135.industrial.utils.FuelUtils;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -47,7 +47,7 @@ public class PitifulGeneratorTile extends IndustrialGeneratorTile<PitifulGenerat
         super(ModuleGenerator.PITIFUL_GENERATOR, blockPos, blockState);
         this.addInventory(fuel = (SidedInventoryComponent<PitifulGeneratorTile>) new SidedInventoryComponent<PitifulGeneratorTile>("fuel_input", 46, 22, 1, 0)
                 .setColor(DyeColor.ORANGE)
-                .setInputFilter((itemStack, integer) -> itemStack.getBurnTime(RecipeType.SMELTING) != 0)
+                .setInputFilter((itemStack, integer) -> FuelUtils.isFuel(itemStack))
                 .setComponentHarness(this)
         );
         this.getPowerPerTick = PitifulGeneratorConfig.powerPerTick;
@@ -55,9 +55,9 @@ public class PitifulGeneratorTile extends IndustrialGeneratorTile<PitifulGenerat
 
     @Override
     public int consumeFuel() {
-        int time = fuel.getStackInSlot(0).getBurnTime(RecipeType.SMELTING);
-        if (fuel.getStackInSlot(0).hasCraftingRemainingItem()) {
-            fuel.setStackInSlot(0, fuel.getStackInSlot(0).getCraftingRemainingItem());
+        int time = FuelUtils.getBurnTime(fuel.getStackInSlot(0));
+        if (fuel.getStackInSlot(0).getCraftingRemainder() != null) {
+            fuel.setStackInSlot(0, FuelUtils.getCraftingRemainder(fuel.getStackInSlot(0)));
         } else {
             ItemStackUtils.shrink(fuel, 0, 1);
         }
@@ -67,7 +67,7 @@ public class PitifulGeneratorTile extends IndustrialGeneratorTile<PitifulGenerat
 
     @Override
     public boolean canStart() {
-        return !fuel.getStackInSlot(0).isEmpty() && fuel.getStackInSlot(0).getBurnTime(RecipeType.SMELTING) != 0;
+        return !fuel.getStackInSlot(0).isEmpty() && FuelUtils.getBurnTime(fuel.getStackInSlot(0)) != 0;
     }
 
     @Override

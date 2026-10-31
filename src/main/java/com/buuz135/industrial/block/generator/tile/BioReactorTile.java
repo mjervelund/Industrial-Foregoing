@@ -31,6 +31,7 @@ import com.buuz135.industrial.module.ModuleGenerator;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.api.IFactory;
+import com.hrznstudio.titanium.util.ItemStackSerialization;
 import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.client.screen.addon.ProgressBarScreenAddon;
 import com.hrznstudio.titanium.component.bundle.LockableInventoryBundle;
@@ -187,7 +188,7 @@ public class BioReactorTile extends IndustrialWorkingTile<BioReactorTile> {
         }
         if (tag.contains("BR_filter")) {
             for (String psFilter : tag.getCompoundOrEmpty("BR_filter").keySet()) {
-                input.getFilter()[Integer.parseInt(psFilter)] = ItemStack.parseOptional(this.level.registryAccess(), tag.getCompoundOrEmpty("BR_filter").getCompoundOrEmpty(psFilter));
+                input.getFilter()[Integer.parseInt(psFilter)] = ItemStackSerialization.load(this.level.registryAccess(), tag.getCompoundOrEmpty("BR_filter").getCompoundOrEmpty(psFilter));
             }
         }
         super.loadSettings(player, tag);
@@ -198,7 +199,7 @@ public class BioReactorTile extends IndustrialWorkingTile<BioReactorTile> {
         tag.putBoolean("BR_locked", input.isLocked());
         CompoundTag filterTag = new CompoundTag();
         for (int i = 0; i < input.getFilter().length; i++) {
-            filterTag.put(i + "", input.getFilter()[i].saveOptional(this.level.registryAccess()));
+            filterTag.put(i + "", ItemStackSerialization.save(this.level.registryAccess(), input.getFilter()[i]));
         }
         tag.put("BR_filter", filterTag);
         super.saveSettings(player, tag);

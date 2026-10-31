@@ -39,7 +39,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.util.random.Weighted;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,7 +73,7 @@ public class MechanicalDirtTile extends IndustrialWorkingTile<MechanicalDirtTile
     public WorkAction work() {
         if (level.getRandom().nextDouble() > 0.1
                 || level.getDifficulty() == Difficulty.PEACEFUL
-                || (level.isDay() && level.getBrightness(LightLayer.SKY, worldPosition.above()) > 0.5f && level.canSeeSkyFromBelowWater(worldPosition.above()))
+                || (level.isBrightOutside() && level.getBrightness(LightLayer.SKY, worldPosition.above()) > 0.5f && level.canSeeSkyFromBelowWater(worldPosition.above()))
                 || level.getEntitiesOfClass(Mob.class, new AABB(0, 0, 0, 1, 1, 1).move(worldPosition).inflate(3)).size() > 10
                 || level.getMaxLocalRawBrightness(worldPosition.above()) > 7) {
             if (hasEnergy(getPowerPerOperation / 10)) return new WorkAction(0.5f, getPowerPerOperation / 10);
@@ -91,14 +91,15 @@ public class MechanicalDirtTile extends IndustrialWorkingTile<MechanicalDirtTile
     }
 
     private Mob getMobToSpawn() {
-        List<MobSpawnSettings.SpawnerData> spawnListEntries = ((ServerLevel) this.level).getChunkSource().getGenerator().getMobsAt(this.level.getBiome(this.worldPosition.above()), ((ServerLevel) this.level).structureManager(), MobCategory.MONSTER, this.worldPosition.above()).unwrap();
+        ServerLevel serverLevel = (ServerLevel) this.level;
+        List<MobSpawnSettings.SpawnerData> spawnListEntries = serverLevel.getChunkSource().getGenerator().getMobsAt(serverLevel, serverLevel.structureManager(), MobCategory.MONSTER, this.worldPosition.above()).unwrap().stream().map(Weighted::value).toList();
         if (spawnListEntries.isEmpty()) return null;
         MobSpawnSettings.SpawnerData spawnListEntry = spawnListEntries.get(level.getRandom().nextInt(spawnListEntries.size()));
-        if (!SpawnPlacements.checkSpawnRules(spawnListEntry.type, (ServerLevelAccessor) this.level, MobSpawnType.NATURAL, worldPosition.above(), level.getRandom()))
+        if (!SpawnPlacements.checkSpawnRules(spawnListEntry.type(), serverLevel, EntitySpawnReason.NATURAL, worldPosition.above(), level.getRandom()))
             return null;
-        Entity entity = spawnListEntry.type.create(level);
+        Entity entity = spawnListEntry.type().create(level, EntitySpawnReason.NATURAL);
         if (entity instanceof Mob) {
-            EventHooks.finalizeMobSpawn((Mob) entity, (ServerLevelAccessor) level, level.getCurrentDifficultyAt(worldPosition), MobSpawnType.NATURAL, null);
+            EventHooks.finalizeMobSpawn((Mob) entity, serverLevel, serverLevel.getCurrentDifficultyAt(worldPosition), EntitySpawnReason.NATURAL, null);
             entity.setPos(worldPosition.getX() + 0.5, worldPosition.getY() + 1.001, worldPosition.getZ() + 0.5);
             if (level.noCollision(entity) && level.isUnobstructed(entity, level.getBlockState(worldPosition.above()).getShape(level, worldPosition.above()))) { //doesNotCollide
                 return (Mob) entity;

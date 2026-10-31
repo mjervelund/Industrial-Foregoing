@@ -22,18 +22,17 @@
 
 package com.buuz135.industrial.utils;
 
-import net.minecraft.util.random.Weight;
-import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.item.ItemStack;
 
 
-public class ItemStackWeightedItem implements WeightedEntry {
+// 26.3: WeightedEntry is gone, WeightedRandom takes a weight getter (ItemStackWeightedItem::getWeight)
+public class ItemStackWeightedItem {
 
     private ItemStack stack;
-    private Weight weight;
+    private int weight;
 
     public ItemStackWeightedItem(ItemStack stack, int itemWeightIn) {
-        this.weight = Weight.of(itemWeightIn);
+        this.weight = itemWeightIn;
         this.stack = stack;
     }
 
@@ -42,8 +41,7 @@ public class ItemStackWeightedItem implements WeightedEntry {
     }
 
 
-    @Override
-    public Weight getWeight() {
+    public int getWeight() {
         return weight;
     }
 }

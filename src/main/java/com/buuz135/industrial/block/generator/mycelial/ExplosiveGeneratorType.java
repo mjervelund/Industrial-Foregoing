@@ -28,7 +28,7 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -120,7 +120,7 @@ public class ExplosiveGeneratorType implements IMycelialGeneratorType {
     }
 
     @Override
-    public ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder) {
+    public TitaniumShapedRecipeBuilder addIngredients(TitaniumShapedRecipeBuilder recipeBuilder) {
         recipeBuilder = recipeBuilder.define('B', Blocks.TNT)
                 .define('C', Items.REDSTONE_TORCH)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_ADVANCED);

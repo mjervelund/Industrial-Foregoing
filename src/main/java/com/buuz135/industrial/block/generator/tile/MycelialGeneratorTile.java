@@ -37,12 +37,13 @@ import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 import com.hrznstudio.titanium.module.BlockWithTile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -149,19 +150,28 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         for (int i = 0; i < this.inputs.length; i++) {
-            compoundTag.put("input_" + i, this.inputs[i].serializeNBT(provider));
+            output.store("input_" + i, CompoundTag.CODEC, this.inputs[i].serializeNBT(this.level.registryAccess()));
         }
     }
 
     @Override
-    public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
+    public void loadAdditional(ValueInput input) {
         for (int i = 0; i < this.inputs.length; i++) {
-            this.inputs[i].deserializeNBT(provider, compound.getCompoundOrEmpty("input_" + i));
+            this.inputs[i].deserializeNBT(input.lookup(), input.read("input_" + i, CompoundTag.CODEC).orElseGet(CompoundTag::new));
         }
-        super.loadAdditional(compound, provider);
+        super.loadAdditional(input);
+    }
+
+    // MycelialGeneratorBlock#onRemove on 1.21; the block entity is already gone in affectNeighborsAfterRemoval
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level != null) {
+            MycelialDataManager.removeGeneratorInfo(this.owner, this.level, pos, this.type);
+        }
     }
 
     @Override

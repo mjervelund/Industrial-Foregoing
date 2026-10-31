@@ -63,7 +63,7 @@ public class WashingFactoryTile extends IndustrialProcessingTile<WashingFactoryT
                 .setInputFilter((stack, integer) -> {
                     if (!stack.is(Tags.Items.RAW_MATERIALS)) return false;
 
-                    for (Identifier resourceLocation : stack.getTags().map(TagKey::location).toList()) {
+                    for (Identifier resourceLocation : stack.tags().map(TagKey::location).toList()) {
                         if (resourceLocation.toString().startsWith("c:raw_materials/") && OreTitaniumFluidType.isValid(resourceLocation)) {
                             return true;
                         }

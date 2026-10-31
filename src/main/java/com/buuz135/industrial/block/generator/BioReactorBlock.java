@@ -60,7 +60,7 @@ public class BioReactorBlock extends IndustrialBlock<BioReactorTile> {
                 .pattern("PDP").pattern("SMS").pattern("ARA")
                 .define('P', IndustrialTags.Items.PLASTIC)
                 .define('D', TagUtil.getItemTag(Identifier.fromNamespaceAndPath("c", "gears/diamond")))
-                .define('S', Tags.Items.SLIMEBALLS)
+                .define('S', Tags.Items.SLIME_BALLS)
                 .define('A', Items.BRICK)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .define('R', Items.SUGAR)

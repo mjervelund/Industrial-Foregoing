@@ -63,7 +63,7 @@ public class LaserDrillBlock extends IndustrialBlock<LaserDrillTile> {
         if (world.getBlockEntity(pos) instanceof LaserDrillTile tile) {
             if (!tile.getTarget().equals(BlockPos.ZERO) && tile.isSpawnParticles()) {
                 BlockPos target = tile.getTarget();
-                Vec3i vector = tile.getFacingDirection().getOpposite().getNormal();
+                Vec3i vector = tile.getFacingDirection().getOpposite().getUnitVec3i();
                 Vec3 vec = new Vec3(pos.getX(), pos.getY(), pos.getZ());
                 vec = vec.add(0.5, 0.5, 0.5).add(vector.getX() / 2D, vector.getY() / 2D, vector.getZ() / 2D);
                 Vec3 velocity = vec.vectorTo(new Vec3(target.getX(), target.getY(), target.getZ()).add(0.5, 0.5, 0.5));
