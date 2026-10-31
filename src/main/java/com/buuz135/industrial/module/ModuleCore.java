@@ -178,21 +178,21 @@ public class ModuleCore implements IModule {
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "milk", MilkStrawHandler::new);
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "essence", EssenceStrawHandler::new);
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "biofuel", () -> new PotionStrawHandler(ModuleCore.BIOFUEL.getSourceFluid())
-                .addPotion(MobEffects.MOVEMENT_SPEED, 800, 0)
-                .addPotion(MobEffects.DIG_SPEED, 800, 0));
+                .addPotion(MobEffects.SPEED, 800, 0)
+                .addPotion(MobEffects.HASTE, 800, 0));
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "sludge", () -> new PotionStrawHandler(ModuleCore.SLUDGE.getSourceFluid())
                 .addPotion(MobEffects.WITHER, 600, 0)
                 .addPotion(MobEffects.BLINDNESS, 1000, 0)
-                .addPotion(MobEffects.MOVEMENT_SLOWDOWN, 1200, 1));
+                .addPotion(MobEffects.SLOWNESS, 1200, 1));
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "sewage",  () -> new PotionStrawHandler(ModuleCore.SEWAGE.getSourceFluid())
-                .addPotion(MobEffects.CONFUSION, 1200, 0)
-                .addPotion(MobEffects.MOVEMENT_SLOWDOWN, 1200, 0));
+                .addPotion(MobEffects.NAUSEA, 1200, 0)
+                .addPotion(MobEffects.SLOWNESS, 1200, 0));
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "meat", () -> new PotionStrawHandler(ModuleCore.MEAT.getSourceFluid())
                 .addPotion(MobEffects.ABSORPTION, 100, 2)
                 .addPotion(MobEffects.SATURATION, 300, 2));
         helper.registerGeneric(IFRegistries.STRAW_HANDLER_REGISTRY_KEY, "latex",  () -> new PotionStrawHandler(ModuleCore.LATEX.getSourceFluid())
                 .addPotion(MobEffects.POISON, 1000, 2)
-                .addPotion(MobEffects.MOVEMENT_SLOWDOWN, 1000, 2));
+                .addPotion(MobEffects.SLOWNESS, 1000, 2));
 
         DISSOLUTION_SERIALIZER = helper.registerGeneric(Registries.RECIPE_SERIALIZER, "dissolution_chamber", () -> CodecRecipeSerializer.create(DissolutionChamberRecipe.class, DISSOLUTION_TYPE, DissolutionChamberRecipe.CODEC));
         DISSOLUTION_TYPE = helper.registerGeneric(Registries.RECIPE_TYPE, "dissolution_chamber", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "dissolution_chamber")));

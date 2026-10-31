@@ -48,7 +48,12 @@ public class ConveyorSplittingSyncEntityMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(IPayloadContext context) {
+    protected void handleServerMessage(IPayloadContext context) {
+
+    }
+
+    @Override
+    public void handleClientMessage(IPayloadContext context) {
         context.enqueueWork(() -> {
             BlockEntity entity = Minecraft.getInstance().player.level().getBlockEntity(pos);
             Direction facingDirection = Direction.byName(facingCurrent);

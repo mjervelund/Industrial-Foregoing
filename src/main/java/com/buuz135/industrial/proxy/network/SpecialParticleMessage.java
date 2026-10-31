@@ -40,7 +40,12 @@ public class SpecialParticleMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(IPayloadContext context) {
+    protected void handleServerMessage(IPayloadContext context) {
+
+    }
+
+    @Override
+    public void handleClientMessage(IPayloadContext context) {
         OneThreeFiveHandler.SPECIAL_ENTITIES.put(uuid, System.currentTimeMillis());
     }
 

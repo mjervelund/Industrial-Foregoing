@@ -49,7 +49,7 @@ public class ModuleMisc implements IModule {
     @Override
     public void generateFeatures(DeferredRegistryHelper helper) {
         EventManager.forge(EntityTickEvent.Pre.class).filter(livingUpdateEvent -> livingUpdateEvent.getEntity() instanceof Mob && livingUpdateEvent.getEntity().getPersistentData().contains("StasisChamberTime")).process(livingUpdateEvent -> {
-            long time = livingUpdateEvent.getEntity().getPersistentData().getLong("StasisChamberTime");
+            long time = livingUpdateEvent.getEntity().getPersistentData().getLongOr("StasisChamberTime", 0L);
             if (time + 50 <= livingUpdateEvent.getEntity().level().getGameTime()) {
                 ((Mob) livingUpdateEvent.getEntity()).setNoAi(false);
             }

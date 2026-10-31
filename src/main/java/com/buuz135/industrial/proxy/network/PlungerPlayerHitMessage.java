@@ -40,7 +40,12 @@ public class PlungerPlayerHitMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(IPayloadContext context) {
+    protected void handleServerMessage(IPayloadContext context) {
+
+    }
+
+    @Override
+    public void handleClientMessage(IPayloadContext context) {
         context.enqueueWork(() -> {
             int amount = InfinityLauncherProjectileArmorLayer.PROJECTILE_AMOUNT.computeIfAbsent(entity.toString(), s -> 0);
             InfinityLauncherProjectileArmorLayer.PROJECTILE_AMOUNT.put(entity.toString(), amount + 1);

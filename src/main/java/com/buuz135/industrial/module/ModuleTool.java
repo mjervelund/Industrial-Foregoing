@@ -52,6 +52,7 @@ import com.hrznstudio.titanium.tab.TitaniumTab;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -63,7 +64,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -108,20 +109,20 @@ public class ModuleTool implements IModule {
         INFINITY_TRIDENT = registryHelper.registerGeneric(Registries.ITEM, "infinity_trident", () -> new ItemInfinityTrident(TAB_TOOL));
         TRIDENT_ENTITY_TYPE = registryHelper.registerEntityType("trident_entity", () -> EntityType.Builder.<InfinityTridentEntity>of(InfinityTridentEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
                 .setShouldReceiveVelocityUpdates(true)
-                /*.setCustomClientFactory((spawnEntity, world) -> new InfinityTridentEntity((EntityType<? extends InfinityTridentEntity>) TRIDENT_ENTITY_TYPE.get(), world))*/.clientTrackingRange(5).updateInterval(1).build("trident_entity"));
+                /*.setCustomClientFactory((spawnEntity, world) -> new InfinityTridentEntity((EntityType<? extends InfinityTridentEntity>) TRIDENT_ENTITY_TYPE.get(), world))*/.clientTrackingRange(5).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "trident_entity"))));
         INFINITY_BACKPACK = registryHelper.registerGeneric(Registries.ITEM, "infinity_backpack", () -> new ItemInfinityBackpack());
         INFINITY_BACKPACK_BLOCK = new BlockWithTile(
                 registryHelper.registerGeneric(Registries.BLOCK, "infinity_backpack_block", InfinityBackpackBlock::new),
-                registryHelper.registerBlockEntityType("infinity_backpack", () -> BlockEntityType.Builder.of(((BasicTileBlock) INFINITY_BACKPACK_BLOCK.getBlock()).getTileEntityFactory(), new Block[]{INFINITY_BACKPACK_BLOCK.getBlock()}).build((Type) null))
+                registryHelper.registerBlockEntityType("infinity_backpack", () -> new BlockEntityType<>(((BasicTileBlock) INFINITY_BACKPACK_BLOCK.getBlock()).getTileEntityFactory(), INFINITY_BACKPACK_BLOCK.getBlock()))
         );
         INFINITY_LAUNCHER = registryHelper.registerGeneric(Registries.ITEM, "infinity_launcher", () -> new ItemInfinityLauncher(TAB_TOOL));
         INFINITY_LAUNCHER_PROJECTILE_ENTITY_TYPE = registryHelper.registerEntityType("launcher_projectile_entity", () -> EntityType.Builder.<InfinityLauncherProjectileEntity>of(InfinityLauncherProjectileEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
                 .setShouldReceiveVelocityUpdates(true)
-                /*.setCustomClientFactory((spawnEntity, world) -> new InfinityLauncherProjectileEntity((EntityType<? extends InfinityLauncherProjectileEntity>) INFINITY_LAUNCHER_PROJECTILE_ENTITY_TYPE.get(), world))*/.clientTrackingRange(4).updateInterval(20).build("launcher_projectile_entity"));
+                /*.setCustomClientFactory((spawnEntity, world) -> new InfinityLauncherProjectileEntity((EntityType<? extends InfinityLauncherProjectileEntity>) INFINITY_LAUNCHER_PROJECTILE_ENTITY_TYPE.get(), world))*/.clientTrackingRange(4).updateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "launcher_projectile_entity"))));
         INFINITY_NUKE = registryHelper.registerGeneric(Registries.ITEM, "infinity_nuke", () -> new ItemInfinityNuke(TAB_TOOL));
         INFINITY_NUKE_ENTITY_TYPE = registryHelper.registerEntityType("infinity_nuke", () -> EntityType.Builder.<InfinityNukeEntity>of(InfinityNukeEntity::new, MobCategory.MISC).sized(0.5F, 1.5F)
                 .setShouldReceiveVelocityUpdates(true)
-                /*.setCustomClientFactory((spawnEntity, world) -> new InfinityNukeEntity((EntityType<? extends InfinityNukeEntity>) INFINITY_NUKE_ENTITY_TYPE.get(), world))*/.fireImmune().clientTrackingRange(8).updateInterval(20).build("infinity_nuke"));
+                /*.setCustomClientFactory((spawnEntity, world) -> new InfinityNukeEntity((EntityType<? extends InfinityNukeEntity>) INFINITY_NUKE_ENTITY_TYPE.get(), world))*/.fireImmune().clientTrackingRange(8).updateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Reference.MOD_ID, "infinity_nuke"))));
         NUKE_CHARGING = registryHelper.registerGeneric(Registries.SOUND_EVENT, "nuke_charging", () -> SoundEvent.createFixedRangeEvent(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nuke_charging"), 128));
         NUKE_ARMING = registryHelper.registerGeneric(Registries.SOUND_EVENT, "nuke_arming", () -> SoundEvent.createFixedRangeEvent(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nuke_arming"), 16));
         NUKE_EXPLOSION = registryHelper.registerGeneric(Registries.SOUND_EVENT, "nuke_explosion", () -> SoundEvent.createFixedRangeEvent(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "nuke_explosion"), 128));
@@ -133,7 +134,7 @@ public class ModuleTool implements IModule {
         ItemStackHarnessRegistry.register(INFINITY_BACKPACK, ModuleTool::createInfinityHarness);
         ItemStackHarnessRegistry.register(INFINITY_LAUNCHER, ModuleTool::createInfinityHarness);
         ItemStackHarnessRegistry.register(INFINITY_NUKE, ModuleTool::createInfinityHarness);
-        EventManager.forge(BlockEvent.BreakEvent.class).filter(breakEvent -> breakEvent.getPlayer().getMainHandItem().getItem() == INFINITY_SAW.get() && BlockUtils.isLog((Level) breakEvent.getLevel(), breakEvent.getPos())).process(breakEvent -> {
+        EventManager.forge(BreakBlockEvent.class).filter(breakEvent -> breakEvent.getPlayer().getMainHandItem().getItem() == INFINITY_SAW.get() && BlockUtils.isLog((Level) breakEvent.getLevel(), breakEvent.getPos())).process(breakEvent -> {
             breakEvent.setCanceled(true);
             breakEvent.getPlayer().getMainHandItem().mineBlock((Level) breakEvent.getLevel(), breakEvent.getState(), breakEvent.getPos(), breakEvent.getPlayer());
         }).subscribe();
