@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.gui.component;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.buuz135.industrial.utils.IFAttachments;
 import com.buuz135.industrial.utils.NumberUtils;
 import com.buuz135.industrial.worlddata.BackpackDataManager;
@@ -94,7 +95,8 @@ public abstract class SlotDefinitionGuiAddon extends BasicButtonAddon {
             CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.putString("Id", getItemStack().get(IFAttachments.INFINITY_BACKPACK_ID));
             compoundNBT.putInt("Slot", slotId);
-            compoundNBT.putInt("Button", button);
+            // ItemInfinityBackpack reads the old numbering (0 = left, 1 = right, 2 = middle); 26.3 events use SDL numbers.
+            compoundNBT.putInt("Button", button == InputConstants.MOUSE_BUTTON_LEFT ? 0 : button == InputConstants.MOUSE_BUTTON_RIGHT ? 1 : button);
             compoundNBT.putBoolean("Shift", Minecraft.getInstance().hasShiftDown());
             compoundNBT.putBoolean("Ctrl", Minecraft.getInstance().hasControlDown());
             Titanium.NETWORK.sendToServer(new ButtonClickNetworkMessage(locatable.getLocatorInstance(), 4, compoundNBT));
