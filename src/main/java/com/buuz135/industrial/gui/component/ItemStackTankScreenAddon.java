@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.gui.component;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.hrznstudio.titanium.api.client.assets.types.ITankAsset;
 import com.hrznstudio.titanium.client.screen.addon.BasicScreenAddon;
 import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
@@ -166,8 +167,8 @@ public class ItemStackTankScreenAddon extends BasicScreenAddon {
                         canFillFromItem = tank.fill(iFluidHandlerItem.drain(amount, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.SIMULATE) > 0;
                         canDrainFromItem = iFluidHandlerItem.fill(tank.drain(amount, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.SIMULATE) > 0;
                     }
-                    if (canFillFromItem && button == 0) compoundNBT.putBoolean("Fill", true);
-                    if (canDrainFromItem && button == 1) compoundNBT.putBoolean("Fill", false);
+                    if (canFillFromItem && button == InputConstants.MOUSE_BUTTON_LEFT) compoundNBT.putBoolean("Fill", true);
+                    if (canDrainFromItem && button == InputConstants.MOUSE_BUTTON_RIGHT) compoundNBT.putBoolean("Fill", false);
                 });
                 Titanium.NETWORK.get().sendToServer(new ButtonClickNetworkMessage(locatable.getLocatorInstance(), -3, compoundNBT));
                 return true;
