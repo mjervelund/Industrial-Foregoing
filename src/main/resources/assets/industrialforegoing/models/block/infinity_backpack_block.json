@@ -1,8 +1,8 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "industrialforegoing:item/infinity_backpack",
-    "particle": "industrialforegoing:item/infinity_backpack"
+    "0": "industrialforegoing:block/infinity_backpack",
+    "particle": "industrialforegoing:block/infinity_backpack"
   },
   "elements": [
     {
@@ -578,15 +578,6 @@
         ]
       },
       "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            4,
-            15
-          ],
-          "texture": "#missing"
-        },
         "east": {
           "uv": [
             12.5,
@@ -1024,17 +1015,6 @@
           ],
           "rotation": 180,
           "texture": "#0",
-          "tintindex": 0
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            3,
-            1
-          ],
-          "rotation": 180,
-          "texture": "#missing",
           "tintindex": 0
         }
       }
