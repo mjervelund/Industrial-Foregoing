@@ -267,7 +267,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel worldIn, Entity entityIn, @Nullable EquipmentSlot slot) {
         if (isMagnetEnabled(stack)) {
-            for (ItemEntity itemEntity : entityIn.level().getEntitiesOfClass(ItemEntity.class, new AABB(entityIn.getX(), entityIn.getY(), entityIn.getY(), entityIn.getX(), entityIn.getY(), entityIn.getZ()).inflate(5))) {
+            for (ItemEntity itemEntity : entityIn.level().getEntitiesOfClass(ItemEntity.class, new AABB(entityIn.getX(), entityIn.getY(), entityIn.getZ(), entityIn.getX(), entityIn.getY(), entityIn.getZ()).inflate(5))) {
                 // inventoryTick is server-only in 26.3: the portal particles 1.21 spawned client side are sent from here
                 if (enoughFuel(stack) && itemEntity.onGround() && worldIn.getRandom().nextInt(5) < 1)
                     worldIn.sendParticles(ParticleTypes.PORTAL, itemEntity.getX(), itemEntity.getY() + 0.5, itemEntity.getZ(), 0, 0, -0.5, 0, 1);
