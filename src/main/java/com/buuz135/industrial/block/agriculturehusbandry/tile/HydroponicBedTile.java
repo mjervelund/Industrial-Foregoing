@@ -28,7 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -106,7 +106,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
             var planted = ItemStack.EMPTY;
             if (level.isEmptyBlock(up)) {
                 for (ItemStack drop : drops) {
-                    if (!drop.isEmpty() && drop.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof BushBlock bushBlock) {
+                    if (!drop.isEmpty() && drop.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof VegetationBlock) {
                         planted = drop.copyWithCount(1);
                         BlockState blockstate1 = blockItem.getBlock().defaultBlockState();
                         level.setBlockAndUpdate(up, blockstate1);
