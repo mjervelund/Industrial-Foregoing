@@ -140,6 +140,17 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
         return false;
     }
 
+    private boolean harvestAndReplant(BlockPos up, BlockState state, Supplier<PlantRecollectable> plantSupplier) {
+        //getStackInSlot returns a copy on 26.3: store the processor the harvest recorded into
+        ItemStack processor = this.simulation_slot.getStackInSlot(0);
+        ItemStack before = processor.copy();
+        boolean harvested = tryToHarvestAndReplant(this.level, up, state, this.output, this.etherBuffer, this, plantSupplier, processor);
+        if (!ItemStack.matches(before, processor)) {
+            this.simulation_slot.setStackInSlot(0, processor);
+        }
+        return harvested;
+    }
+
     private void findRecollectable(Level level, BlockPos up, BlockState state) {
         Optional<PlantRecollectable> optional = IFRegistries.PLANT_RECOLLECTABLES_REGISTRY.stream().filter(plantRecollectable -> plantRecollectable.canBeHarvested(level, up, state)).findFirst();
         if (optional.isPresent()) {
@@ -187,11 +198,11 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                         TankUtils.drainForced(this.water, 10, false);
                         return new WorkAction(1, HydroponicBedConfig.powerPerOperation);
                     } else if (this.etherBuffer.getProgress() > 0) {
-                        tryToHarvestAndReplant(this.level, up, state, this.output, this.etherBuffer, this, plantRecollectableSupplier, this.simulation_slot.getStackInSlot(0));
+                        harvestAndReplant(up, state, plantRecollectableSupplier);
                         return new WorkAction(1, HydroponicBedConfig.powerPerOperation);
                     }
                 } else {
-                    if (!tryToHarvestAndReplant(this.level, up, state, this.output, this.etherBuffer, this, plantRecollectableSupplier, this.simulation_slot.getStackInSlot(0))) {
+                    if (!harvestAndReplant(up, state, plantRecollectableSupplier)) {
                         if (this.etherBuffer.getProgress() > 0) {
                             for (int i = 0; i < 10; i++) {
                                 this.level.getBlockState(up).randomTick((ServerLevel) this.level, up, this.level.getRandom());

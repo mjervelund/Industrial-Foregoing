@@ -132,6 +132,8 @@ public class SimulatedHydroponicBedTile extends IndustrialWorkingTile<SimulatedH
                         }
                         this.simulation.acceptExecution(crop, boostDrops);
                         simulationProcessor.set(IFAttachments.HYDROPONIC_SIMULATION_PROCESSOR, simulation.toNBT(level.registryAccess()));
+                        //getStackInSlot returns a copy on 26.3: store the processor (its slot change resets the cached simulation, rebuilt from it)
+                        this.simulation_slot.setStackInSlot(0, simulationProcessor);
 
                     }
 
