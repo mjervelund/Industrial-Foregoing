@@ -281,14 +281,18 @@ public class ItemInfinityBackpack extends ItemInfinity {
             if (enoughFuel(stack)) {
                 var handlerItem = ItemAccess.forStack(stack).getCapability(Capabilities.Fluid.ITEM);
                 if ((((Player) entityIn).getFoodData().needsFood() || ((Player) entityIn).getFoodData().getSaturationLevel() < 10) && handlerItem != null) {
+                    // Feed only from the meat tank, and only when 400 mB of meat were really taken (IF#1654: any
+                    // tank with >= 400 mB fed the player, and the meat tank refuses external extraction, so feeding was free)
                     for (int i = 0; i < handlerItem.size(); i++) {
-                        if (!handlerItem.getResource(i).isEmpty() && handlerItem.getAmountAsInt(i) >= 400) {
+                        if (handlerItem.getResource(i).is(ModuleCore.MEAT.getSourceFluid().get()) && handlerItem.getAmountAsInt(i) >= 400
+                                && handlerItem instanceof InfinityTankStorage tanks) {
                             try (var transaction = Transaction.open(null)) {
-                                handlerItem.extract(FluidResource.of(ModuleCore.MEAT.getSourceFluid().get()), 400, transaction);
-                                transaction.commit();
+                                if (tanks.extractInternal(i, FluidResource.of(ModuleCore.MEAT.getSourceFluid().get()), 400, transaction) == 400) {
+                                    transaction.commit();
+                                    ((Player) entityIn).getFoodData().eat(1, 1);
+                                    consumeFuel(stack);
+                                }
                             }
-                            ((Player) entityIn).getFoodData().eat(1, 1);
-                            consumeFuel(stack);
                         }
                     }
                 }
