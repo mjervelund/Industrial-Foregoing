@@ -35,6 +35,7 @@ import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -62,9 +63,12 @@ public class BlockPlacerTile extends IndustrialAreaWorkingTile<BlockPlacerTile> 
             BlockPos pointed = getPointedBlockPos();
             if (isLoaded(pointed) && level.isEmptyBlock(pointed)) {
                 for (int i = 0; i < input.getSlots(); i++) {
-                    if (!input.getStackInSlot(i).isEmpty() && input.getStackInSlot(i).getItem() instanceof BlockItem) {
+                    ItemStack stack = input.getStackInSlot(i);
+                    if (!stack.isEmpty() && stack.getItem() instanceof BlockItem) {
                         IFFakePlayer fakePlayer = (IFFakePlayer) IndustrialForegoing.getFakePlayer(level, pointed, this.getUuid());
-                        if (fakePlayer.placeBlock(this.level, pointed, input.getStackInSlot(i))) {
+                        if (fakePlayer.placeBlock(this.level, pointed, stack)) {
+                            //getStackInSlot returns a copy on 26.3: store the stack placing shrank
+                            input.setStackInSlot(i, stack);
                             increasePointer();
                             return new WorkAction(1, getPowerPerOperation);
                         }
