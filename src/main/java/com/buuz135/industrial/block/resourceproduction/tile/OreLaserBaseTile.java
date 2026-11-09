@@ -177,6 +177,9 @@ public class OreLaserBaseTile extends IndustrialMachineTile<OreLaserBaseTile> im
                 .filter(laserDrillOreRecipe -> LaserDrillRarity.getValidRarity(this.level, laserDrillOreRecipe.rarity, this.level.dimensionType(), this.level.getBiome(this.worldPosition), this.miningDepth) != null)
                 .map(recipe -> processRecipe(recipe, box))
                 .filter(Objects::nonNull)
+                // a datapack can set weights to 0 (and the catalyst modifier can be negative): with no positive
+                // total, WeightedRandom returns an empty Optional (or throws), so drop those entries (IF#1590)
+                .filter(item -> item.getWeight() > 0)
                 .toList();
             if (!items.isEmpty()) {
                 ItemStack stack = WeightedRandom.getRandomItem(this.level.getRandom(), items, ItemStackWeightedItem::getWeight).get().getStack();
