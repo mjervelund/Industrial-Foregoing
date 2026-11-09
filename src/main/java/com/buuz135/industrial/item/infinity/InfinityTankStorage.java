@@ -92,6 +92,14 @@ public class InfinityTankStorage extends ItemAccessResourceHandler<FluidResource
         return super.extract(index, resource, amount, transaction);
     }
 
+    /**
+     * Extracts from a tank for the item's own use, ignoring the tank's external {@code extract} flag (the backpack's meat
+     * tank refuses pipes and players but feeds its wearer).
+     */
+    public int extractInternal(int index, FluidResource resource, int amount, TransactionContext transaction) {
+        return super.extract(index, resource, amount, transaction);
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public @NotNull List<IFactory<?>> getScreenAddons() {
