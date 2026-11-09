@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.agriculturehusbandry.tile;
 
+import com.buuz135.industrial.utils.FuelUtils;
 import com.buuz135.industrial.utils.ItemStackUtils;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
@@ -33,6 +34,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 
@@ -51,7 +54,8 @@ public class AnimalFeederTile extends IndustrialAreaWorkingTile<AnimalFeederTile
         super(ModuleAgricultureHusbandry.ANIMAL_FEEDER, RangeManager.RangeType.BEHIND, true, AnimalFeederConfig.powerPerOperation, blockPos, blockState);
         addInventory(input = (SidedInventoryComponent<AnimalFeederTile>) new SidedInventoryComponent<AnimalFeederTile>("food", 53, 22, 6 * 3, 0)
                 .setColor(DyeColor.BLUE)
-                .setOutputFilter((stack, integer) -> false)
+                // food stays in, but the remainders fed animals leave (water buckets ...) can be pulled out
+                .setOutputFilter((stack, integer) -> isRemainder(stack))
                 .setRange(6, 3)
                 .setComponentHarness(this)
         );
@@ -77,7 +81,10 @@ public class AnimalFeederTile extends IndustrialAreaWorkingTile<AnimalFeederTile
                         ItemUtil.insertItemReturnRemaining(input, original, false, null);
                         continue;
                     }
+                    ItemStack secondFood = input.getStackInSlot(secondSlot).copyWithCount(1);
                     ItemStackUtils.shrink(input, secondSlot, 1);
+                    giveBackRemainder(original);
+                    giveBackRemainder(secondFood);
                     firstParent.setInLove(null);
                     secondParent.setInLove(null);
                     return new WorkAction(0.5f, powerPerOperation);
@@ -85,6 +92,21 @@ public class AnimalFeederTile extends IndustrialAreaWorkingTile<AnimalFeederTile
             }
         }
         return new WorkAction(1, 0);
+    }
+
+    /**
+     * What a player gets back when feeding this item (Axolotl#usePlayerItem: tropical fish bucket -> water bucket;
+     * otherwise the crafting remainder). Put back into the food slots, dropped on top of the feeder if they are full.
+     */
+    private void giveBackRemainder(ItemStack food) {
+        ItemStack remainder = food.is(Items.TROPICAL_FISH_BUCKET) ? new ItemStack(Items.WATER_BUCKET) : FuelUtils.getCraftingRemainder(food);
+        if (remainder.isEmpty()) return;
+        ItemStack left = ItemUtil.insertItemReturnRemaining(input, remainder, false, null);
+        if (!left.isEmpty()) Block.popResource(this.level, this.worldPosition.above(), left);
+    }
+
+    private static boolean isRemainder(ItemStack stack) {
+        return stack.is(Items.WATER_BUCKET) || stack.is(Items.BUCKET) || stack.is(Items.BOWL) || stack.is(Items.GLASS_BOTTLE);
     }
 
     private int getFeedingSlot(Animal entity) {
