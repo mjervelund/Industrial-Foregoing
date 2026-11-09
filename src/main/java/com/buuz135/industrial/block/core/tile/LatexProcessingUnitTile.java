@@ -91,6 +91,11 @@ public class LatexProcessingUnitTile extends IndustrialProcessingTile<LatexProce
         return LatexProcessingUnitConfig.powerPerTick;
     }
 
+    @Override
+    public int getMaxProgress() {
+        return LatexProcessingUnitConfig.maxProgress;
+    }
+
     @Nonnull
     @Override
     public LatexProcessingUnitTile getSelf() {
