@@ -34,22 +34,25 @@ import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractorTile> {
 
-    public static HashMap<DimensionType, HashMap<ChunkPos, HashMap<BlockPos, FluidExtractionProgress>>> EXTRACTION = new HashMap<>();
+    public static HashMap<ResourceKey<Level>, HashMap<ChunkPos, HashMap<BlockPos, FluidExtractionProgress>>> EXTRACTION = new HashMap<>();
 
     private int maxProgress;
     private int powerPerOperation;
@@ -78,7 +81,13 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
             if (currentRecipe != null) {//GetDimensionType
                 boolean powered = hasEnergy(powerPerOperation);
 
-                FluidExtractionProgress extractionProgress = EXTRACTION.computeIfAbsent(this.level.dimensionType(), dimensionType -> new HashMap<>()).computeIfAbsent(this.level.getChunkAt(pos).getPos(), chunkPos -> new HashMap<>()).computeIfAbsent(pos, pos1 -> new FluidExtractionProgress(this.level));
+                HashMap<BlockPos, FluidExtractionProgress> chunkProgress = EXTRACTION.computeIfAbsent(this.level.dimension(), dimension -> new HashMap<>()).computeIfAbsent(this.level.getChunkAt(pos).getPos(), chunkPos -> new HashMap<>());
+                FluidExtractionProgress extractionProgress = chunkProgress.get(pos);
+                if (extractionProgress == null || !extractionProgress.matches(this.level, pos)) {
+                    if (extractionProgress != null) extractionProgress.clear(this.level, pos);
+                    extractionProgress = new FluidExtractionProgress(this.level, this.level.getBlockState(pos));
+                    chunkProgress.put(pos, extractionProgress);
+                }
                 if (currentRecipe.outputsLatex()) {
                     TankUtils.fillForced(tank, currentRecipe.output.withAmount(currentRecipe.output.amount() * (powered ? 3 : 1)).create(), false);
                 } else {
@@ -88,7 +97,8 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
                     extractionProgress.setProgress(extractionProgress.getProgress() + 1);
                 }
                 if (extractionProgress.getProgress() > 7) {
-                    extractionProgress.setProgress(0);
+                    chunkProgress.remove(pos);
+                    extractionProgress.clear(this.level, pos);
                     this.level.setBlockAndUpdate(pos, currentRecipe.result);
                     if (currentRecipe.outputsLatex()) {
                         TankUtils.fillForced(tank, currentRecipe.output.withAmount(currentRecipe.output.amount() * (powered ? 200 : 1)).create(), false);
@@ -130,14 +140,53 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
         return this;
     }
 
+    /**
+     * Sends the crack overlay of every tracked extraction in this level, and drops the entries whose block is no
+     * longer the one being extracted (log broken, replaced or stripped), clearing their overlay.
+     */
+    public static void tickProgress(Level level) {
+        if (level.isClientSide()) return;
+        HashMap<ChunkPos, HashMap<BlockPos, FluidExtractionProgress>> dimension = EXTRACTION.get(level.dimension());
+        if (dimension == null) return;
+        Iterator<HashMap<BlockPos, FluidExtractionProgress>> chunks = dimension.values().iterator();
+        while (chunks.hasNext()) {
+            Iterator<Map.Entry<BlockPos, FluidExtractionProgress>> entries = chunks.next().entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<BlockPos, FluidExtractionProgress> entry = entries.next();
+                BlockPos pos = entry.getKey();
+                FluidExtractionProgress progress = entry.getValue();
+                if (!level.isLoaded(pos)) continue;
+                if (!progress.matches(level, pos)) {
+                    progress.clear(level, pos);
+                    entries.remove();
+                } else {
+                    level.destroyBlockProgress(progress.getBreakID(), pos, progress.getProgress());
+                }
+            }
+        }
+        dimension.values().removeIf(HashMap::isEmpty);
+    }
+
     public static class FluidExtractionProgress {
 
         private int progress;
         private int breakID;
+        private final Block block;
 
-        public FluidExtractionProgress(Level world) {
+        public FluidExtractionProgress(Level world, BlockState state) {
             this.progress = 0;
             this.breakID = world.getRandom().nextInt();
+            this.block = state.getBlock();
+        }
+
+        /** Whether the block at {@code pos} is still the one this progress belongs to. */
+        public boolean matches(Level level, BlockPos pos) {
+            return level.getBlockState(pos).is(block);
+        }
+
+        /** Removes the crack overlay this progress put on {@code pos}. */
+        public void clear(Level level, BlockPos pos) {
+            level.destroyBlockProgress(breakID, pos, -1);
         }
 
         public int getProgress() {

@@ -132,8 +132,8 @@ public class ModuleCore implements IModule {
         SUPREME = helper.registerBlockWithItem("machine_frame_supreme", () -> new MachineFrameBlock(CustomRarity.SUPREME.getValue(), TAB_CORE), (block) -> () -> new MachineFrameBlock.MachineFrameItem(block.get(), CustomRarity.SUPREME.getValue(), TAB_CORE), TAB_CORE);
         //DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::onClient);
         EventManager.forge(LevelTickEvent.Post.class).
-                filter(worldTickEvent -> worldTickEvent.getLevel().getGameTime() % 40 == 0 && FluidExtractorTile.EXTRACTION.containsKey(worldTickEvent.getLevel().dimensionType())).
-                process(worldTickEvent -> FluidExtractorTile.EXTRACTION.get(worldTickEvent.getLevel().dimensionType()).values().forEach(blockPosFluidExtractionProgressHashMap -> blockPosFluidExtractionProgressHashMap.keySet().forEach(pos -> worldTickEvent.getLevel().destroyBlockProgress(blockPosFluidExtractionProgressHashMap.get(pos).getBreakID(), pos, blockPosFluidExtractionProgressHashMap.get(pos).getProgress())))).subscribe();
+                filter(worldTickEvent -> worldTickEvent.getLevel().getGameTime() % 40 == 0 && FluidExtractorTile.EXTRACTION.containsKey(worldTickEvent.getLevel().dimension())).
+                process(worldTickEvent -> FluidExtractorTile.tickProgress(worldTickEvent.getLevel())).subscribe();
         for (int i = 0; i < RANGE_ADDONS.length; i++) {
             int finalI = i;
             RANGE_ADDONS[i] = helper.registerGeneric(Registries.ITEM, "range_addon_tier_" + i, () -> new RangeAddonItem(finalI, TAB_CORE));
