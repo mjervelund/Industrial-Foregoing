@@ -124,7 +124,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
             if (planted.isEmpty()) {
                 planted = cachedRecollectable.getSeedDrop(level, up, state);
             }
-            if (!planted.is(IndustrialTags.Items.HYDROPONIC_SIMULATION_BLACKLIST) && !simulationOutput.isEmpty() && simulationOutput.getItem() instanceof HydroponicSimulationProcessorItem) {
+            if (!planted.isEmpty() && !planted.is(IndustrialTags.Items.HYDROPONIC_SIMULATION_BLACKLIST) && !simulationOutput.isEmpty() && simulationOutput.getItem() instanceof HydroponicSimulationProcessorItem) {
                 var sim = new HydroponicSimulationProcessorItem.Simulation(simulationOutput.get(IFAttachments.HYDROPONIC_SIMULATION_PROCESSOR));
                 sim.acceptExecution(planted, drops);
                 simulationOutput.set(IFAttachments.HYDROPONIC_SIMULATION_PROCESSOR, sim.toNBT(level.registryAccess()));
