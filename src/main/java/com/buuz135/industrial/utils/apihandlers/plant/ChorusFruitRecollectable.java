@@ -26,6 +26,7 @@ import com.buuz135.industrial.api.plant.PlantRecollectable;
 import com.buuz135.industrial.utils.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -65,6 +66,11 @@ public class ChorusFruitRecollectable extends PlantRecollectable {
             if (chorusCache.getChorus().isEmpty()) chorusCacheHashMap.remove(pos);
         }
         return stacks;
+    }
+
+    @Override
+    public ItemStack getSeedDrop(Level world, BlockPos pos, BlockState blockState) {
+        return new ItemStack(Items.CHORUS_FLOWER);
     }
 
     @Override
