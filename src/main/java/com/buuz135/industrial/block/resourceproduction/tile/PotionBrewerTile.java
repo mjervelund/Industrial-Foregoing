@@ -168,7 +168,15 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
             return this.water.getFluidAmount() == 1000 && !this.bottleInput.getStackInSlot(0).isEmpty();
         }
         if (this.state >= 7) this.state = 1;
-        return canBrew(this.state - 1) && this.blaze.getProgress() > 0;
+        // Skip empty or non-brewable ingredient slots instead of stalling on them: try each slot once, from the current one
+        for (int i = 0; i < 6; i++) {
+            int slot = (this.state - 1 + i) % 6;
+            if (canBrew(slot)) {
+                this.state = slot + 1;
+                return this.blaze.getProgress() > 0;
+            }
+        }
+        return false;
     }
 
     @Override
