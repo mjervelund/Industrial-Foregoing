@@ -222,6 +222,13 @@ public abstract class IndustrialMachineTile<T extends IndustrialMachineTile<T>> 
                 }
             }
         }
+        // The side handlers are built from the face modes: rebuild them (as a GUI side click does) and drop the
+        // capabilities that pipes cached, or the pasted sides only show in the GUI.
+        if (tag.contains(sidenessInventory) && this.getMultiInventoryComponent() != null)
+            this.getMultiInventoryComponent().rebuildCapability(FacingUtil.Sideness.values());
+        if (tag.contains(sidenessTank) && this.getMultiTankComponent() != null)
+            this.getMultiTankComponent().rebuildCapability(FacingUtil.Sideness.values());
+        invalidateCapabilities();
         markForUpdate();
     }
 
