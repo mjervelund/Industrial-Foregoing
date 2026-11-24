@@ -104,9 +104,18 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
         var filterSlot = new FilterSlot<>(140, 63, 0, ItemStack.EMPTY);
         filterSlot.setColor(DyeColor.LIME);
         this.filter.setFilter(0, filterSlot);
+        // Fuel first: blaze powder inserted from a side goes to the fuel slot before the ingredient slots (IF#1512).
+        addInventory(blazeInput = (SidedInventoryComponent<PotionBrewerTile>) new SidedInventoryComponent<PotionBrewerTile>("blazeInput", 45, 61, 1, 2)
+                .setColor(DyeColor.ORANGE)
+                .setInputFilter((stack, integer) -> stack.getItem().equals(Items.BLAZE_POWDER))
+                .setOutputFilter((stack, integer) -> false)
+                .setSlotToItemStackRender(0, new ItemStack(Items.BLAZE_POWDER))
+        );
         addBundle(brewingItems = new LockableInventoryBundle<>(this, new SidedInventoryComponent<PotionBrewerTile>("brewingInput", 55, 19, 6, 3)
                 .setColor(DyeColor.BLUE)
-                .setInputFilter((stack, integer) -> true)
+                // Brewing reagents only (like the brewing stand's ingredient slot): bottles and other items inserted
+                // from a side reach their own slots instead of filling and stalling the ingredient slots (IF#1512).
+                .setInputFilter((stack, integer) -> this.level != null && this.level.recipeAccess().propertySet(RecipePropertySet.BREWING_REAGENTS).test(stack))
                 .setOutputFilter((stack, integer) -> false),
                 148, 40, false));
         addTank(water = (SidedFluidTankComponent<PotionBrewerTile>) new SidedFluidTankComponent<PotionBrewerTile>("water", 1000, 75, 40, 0)
@@ -133,12 +142,6 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
                         .setColor(DyeColor.ORANGE)
                         .setCanReset(potionBrewerTile -> false)
                         .setCanIncrease(iComponentHarness -> false)
-        );
-        addInventory(blazeInput = (SidedInventoryComponent<PotionBrewerTile>) new SidedInventoryComponent<PotionBrewerTile>("blazeInput", 45, 61, 1, 2)
-                .setColor(DyeColor.ORANGE)
-                .setInputFilter((stack, integer) -> stack.getItem().equals(Items.BLAZE_POWDER))
-                .setOutputFilter((stack, integer) -> false)
-                .setSlotToItemStackRender(0, new ItemStack(Items.BLAZE_POWDER))
         );
         addInventory(bottleInput = (SidedInventoryComponent<PotionBrewerTile>) new SidedInventoryComponent<PotionBrewerTile>("bottleInput", 123, 42, 1, 1)
                 .setColor(DyeColor.YELLOW)
