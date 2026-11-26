@@ -265,6 +265,12 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
                 brewingItems.getFilter()[Integer.parseInt(psFilter)] = ItemStackSerialization.load(this.level.registryAccess(), tag.getCompoundOrEmpty("BR_filter").getCompoundOrEmpty(psFilter));
             }
         }
+        if (tag.contains("BR_locked") || tag.contains("BR_filter")) {
+            //Apply the pasted lock and filter to the ingredient slots' insert filter: the bundle only rebuilds it when it is loaded
+            // (its updateFilter is private), so run it through its own save and load, then send the new state to the client
+            brewingItems.deserializeNBT(this.level.registryAccess(), brewingItems.serializeNBT(this.level.registryAccess()));
+            syncObject(brewingItems);
+        }
         this.filter.deserializeNBT(this.level.registryAccess(), tag.getCompoundOrEmpty("PB_OutputFilter"));
         super.loadSettings(player, tag);
     }
